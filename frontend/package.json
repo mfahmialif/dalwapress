@@ -1,0 +1,32 @@
+{
+  "name": "frontend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "dev:full": "concurrently -n \"BE,FE\" -c \"green,blue\" \"cd ../backend && C:\\\\laragon\\\\bin\\\\php\\\\php-8.3.26-nts-Win32-vs16-x64\\\\php.exe artisan serve\" \"vite\"",
+    "preview": "vite preview",
+    "build": "vite build",
+    "prod:full": "vite build && concurrently -n \"BE,FE\" -c \"green,blue\" \"cd ../backend && C:\\\\laragon\\\\bin\\\\php\\\\php-8.3.26-nts-Win32-vs16-x64\\\\php.exe artisan serve --host=0.0.0.0 --port=8000\" \"npx -y serve dist -l 3000 --single\""
+  },
+  "dependencies": {
+    "@fontsource-variable/playfair-display": "^5.2.8",
+    "@fontsource-variable/space-grotesk": "^5.2.10",
+    "@tailwindcss/vite": "^4.2.1",
+    "@vueup/vue-quill": "^1.2.0",
+    "axios": "^1.13.6",
+    "pinia": "^3.0.4",
+    "quill-resize-image": "^1.0.11",
+    "simplebar-vue": "^2.4.2",
+    "tailwindcss": "^4.2.1",
+    "vue": "^3.5.25",
+    "vue-multiselect": "^3.0.0-beta.3",
+    "vue-router": "^4.6.4"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.2",
+    "concurrently": "^9.2.1",
+    "vite": "^7.3.1"
+  }
+}

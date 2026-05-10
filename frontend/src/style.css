@@ -1,0 +1,114 @@
+/* ============================================
+   UII Dalwa Press - Tailwind v4 + Design System
+   Fully Offline - No External CDN
+   ============================================ */
+
+@import "tailwindcss";
+
+/* Local Fonts via Fontsource */
+@import "@fontsource-variable/space-grotesk";
+@import "@fontsource-variable/playfair-display";
+
+/* Material Symbols - Local */
+@font-face {
+  font-family: 'Material Symbols Outlined';
+  font-style: normal;
+  font-weight: 100 700;
+  src: url('/fonts/material-symbols/MaterialSymbolsOutlined.woff2') format('woff2');
+}
+
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  vertical-align: middle;
+}
+
+/* ── Tailwind v4 Theme ── */
+@theme {
+  --font-display: 'Space Grotesk Variable', sans-serif;
+  --font-serif: 'Playfair Display Variable', serif;
+
+  --color-primary: #3b82f6;
+  --color-primary-dark: #1e3a8a;
+  --color-primary-light: #60a5fa;
+
+  --color-accent: #fbbf24;
+  --color-accent-light: #fef3c7;
+  --color-accent-dark: #d97706;
+
+  --color-navy-deep: #0f172a;
+  --color-bg-deepest: #020617;
+  --color-bg-deep: #0f172a;
+
+  --color-card-glass: rgba(15, 23, 42, 0.5);
+  --color-card-hover: rgba(30, 58, 138, 0.4);
+
+  --animate-marquee: marquee 35s linear infinite;
+  --animate-pulse-slow: pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+
+  --radius-2xl: 1.5rem;
+
+  @keyframes marquee {
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
+  }
+
+  @keyframes pulse-slow {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+}
+
+/* ── Base Styles ── */
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-display);
+  background-color: var(--color-bg-deepest);
+  color: #f0f4f8;
+  overflow: auto;
+  min-height: 100vh;
+}
+
+::selection {
+  background: var(--color-accent);
+  color: #000;
+}
+
+/* Hide scrollbar util */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Glass panels */
+.glass-panel {
+  background: var(--color-card-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+}
+
+.glass-panel-hover:hover {
+  background: var(--color-card-hover);
+  border-color: rgba(251, 191, 36, 0.5);
+  box-shadow: 0 0 25px rgba(251, 191, 36, 0.2);
+}
+
+/* Text utilities */
+.text-shadow { text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); }
+.text-glow { text-shadow: 0 0 10px rgba(255, 255, 255, 0.3); }
