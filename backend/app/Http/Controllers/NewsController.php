@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\News;
+use App\Models\NewsCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -10,7 +11,7 @@ class NewsController extends Controller
 {
     public function index(Request $request)
     {
-        $query = News::query();
+        $query = News::with('category');
 
         if ($request->filled('search')) {
             $s = $request->search;
@@ -20,8 +21,17 @@ class NewsController extends Controller
             });
         }
 
+        if ($request->filled('category_id')) {
+            $query->where('news_category_id', $request->category_id);
+        }
+
         if ($request->filled('category')) {
-            $query->where('category', $request->category);
+            $category = $request->category;
+            $query->whereHas('category', function ($q) use ($category) {
+                $q->where('slug', $category)
+                    ->orWhere('name', $category)
+                    ->orWhere('type', $category);
+            });
         }
 
         if ($request->filled('status')) {
@@ -31,7 +41,7 @@ class NewsController extends Controller
         // Sorting
         $sortBy = $request->input('sort_by', 'created_at');
         $sortDir = $request->input('sort_dir', 'desc');
-        $allowedSort = ['created_at', 'title', 'category'];
+        $allowedSort = ['created_at', 'title', 'news_category_id'];
         if (in_array($sortBy, $allowedSort)) {
             $query->orderBy($sortBy, $sortDir === 'asc' ? 'asc' : 'desc');
         } else {
@@ -45,20 +55,28 @@ class NewsController extends Controller
 
     public function show(News $news)
     {
-        return response()->json($news);
+        return response()->json($news->load('category'));
+    }
+
+    public function categories()
+    {
+        return NewsCategory::query()
+            ->where('is_active', true)
+            ->orderBy('name')
+            ->get();
     }
 
     public function store(Request $request)
     {
         $request->validate([
             'title'    => 'required|string|max:255',
-            'category' => 'required|in:Artikel,Video,Gambar',
+            'news_category_id' => 'required|exists:news_categories,id',
             'status'   => 'in:Published,Draft',
             'image'    => 'nullable|image|max:5120',
             'video'    => 'nullable|mimes:mp4,webm,ogg|max:51200',
         ]);
 
-        $data = $request->only(['title', 'category', 'body', 'speaker', 'duration', 'status']);
+        $data = $request->only(['title', 'news_category_id', 'body', 'speaker', 'duration', 'status']);
         $data['created_by'] = $request->user()?->id;
 
         if ($request->hasFile('image')) {
@@ -68,20 +86,20 @@ class NewsController extends Controller
             $data['video_path'] = $request->file('video')->store('news', 'public');
         }
 
-        return response()->json(News::create($data), 201);
+        return response()->json(News::create($data)->load('category'), 201);
     }
 
     public function update(Request $request, News $news)
     {
         $request->validate([
             'title'    => 'required|string|max:255',
-            'category' => 'required|in:Artikel,Video,Gambar',
+            'news_category_id' => 'required|exists:news_categories,id',
             'status'   => 'in:Published,Draft',
             'image'    => 'nullable|image|max:5120',
             'video'    => 'nullable|mimes:mp4,webm,ogg|max:51200',
         ]);
 
-        $data = $request->only(['title', 'category', 'body', 'speaker', 'duration', 'status']);
+        $data = $request->only(['title', 'news_category_id', 'body', 'speaker', 'duration', 'status']);
 
         if ($request->hasFile('image')) {
             if ($news->image_path) Storage::disk('public')->delete($news->image_path);
@@ -101,7 +119,7 @@ class NewsController extends Controller
         }
 
         $news->update($data);
-        return response()->json($news);
+        return response()->json($news->load('category'));
     }
 
     public function destroy(News $news)

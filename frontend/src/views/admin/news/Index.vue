@@ -67,13 +67,13 @@
               <td class="px-4 py-4">
                 <div class="w-16 h-10 rounded-lg overflow-hidden bg-cover bg-center border"
                      :style="{ backgroundImage: item.image_path ? `url('${storageUrl(item.image_path)}')` : `url('/img/default-news.png')`, borderColor: 'var(--border)' }">
-                  <div v-if="item.category === 'Video'" class="w-full h-full flex items-center justify-center bg-black/40">
+                  <div v-if="item.category?.type === 'Video'" class="w-full h-full flex items-center justify-center bg-black/40">
                     <span class="material-symbols-outlined text-white text-[18px]">play_arrow</span>
                   </div>
                 </div>
               </td>
               <td class="px-4 py-4"><span class="text-sm font-bold line-clamp-1" style="color: var(--text-heading)">{{ item.title }}</span></td>
-              <td class="px-4 py-4"><span :class="categoryBadge(item.category)">{{ item.category }}</span></td>
+              <td class="px-4 py-4"><span :class="categoryBadge(item.category?.type)">{{ item.category?.name || '-' }}</span></td>
               <td class="px-4 py-4 text-sm" style="color: var(--text-muted)">{{ timeAgo(item.created_at) }}</td>
               <td class="px-4 py-4"><span :class="statusBadge(item.status)">{{ item.status }}</span></td>
               <td class="px-4 py-4 text-right">
@@ -143,7 +143,7 @@ const totalItems = ref(0)
 const perPage = 10
 
 const searchQuery = ref('')
-const categoryOptions = [{ name: 'Semua', value: 'all' }, { name: 'Artikel', value: 'Artikel' }, { name: 'Video', value: 'Video' }, { name: 'Gambar', value: 'Gambar' }]
+const categoryOptions = ref([{ name: 'Semua', value: 'all' }])
 const statusOptions = [{ name: 'All Status', value: 'all' }, { name: 'Published', value: 'Published' }, { name: 'Draft', value: 'Draft' }]
 const filterCategory = ref(categoryOptions[0])
 const filterStatus = ref(statusOptions[0])
@@ -151,9 +151,9 @@ const filterStatus = ref(statusOptions[0])
 // ── Stats ──
 const statsCards = ref([
   { label: 'Total News', value: 0, icon: 'article', iconBg: 'bg-accent/10', iconColor: 'text-accent' },
-  { label: 'Artikel', value: 0, icon: 'description', iconBg: 'bg-blue-500/10', iconColor: 'text-blue-400' },
-  { label: 'Video', value: 0, icon: 'videocam', iconBg: 'bg-red-500/10', iconColor: 'text-red-400' },
-  { label: 'Gambar', value: 0, icon: 'image', iconBg: 'bg-green-500/10', iconColor: 'text-green-400' },
+  { label: 'Kategori', value: 0, icon: 'category', iconBg: 'bg-blue-500/10', iconColor: 'text-blue-400' },
+  { label: 'Published', value: 0, icon: 'task_alt', iconBg: 'bg-green-500/10', iconColor: 'text-green-400' },
+  { label: 'Draft', value: 0, icon: 'draft', iconBg: 'bg-yellow-500/10', iconColor: 'text-yellow-400' },
 ])
 
 // ── Delete ──
@@ -179,32 +179,50 @@ async function fetchData() {
   try {
     const params = { page: currentPage.value, per_page: perPage }
     if (searchQuery.value) params.search = searchQuery.value
-    if (filterCategory.value?.value !== 'all') params.category = filterCategory.value.value
+    if (filterCategory.value?.value !== 'all') params.category_id = filterCategory.value.value
     if (filterStatus.value?.value !== 'all') params.status = filterStatus.value.value
 
     const { data } = await api.get('/news', { params })
-    items.value = data.data
-    totalPages.value = data.last_page
-    totalItems.value = data.total
-    currentPage.value = data.current_page
-  } catch { showToast('Gagal memuat data', 'error') }
+    const rows = Array.isArray(data?.data) ? data.data : (Array.isArray(data) ? data : [])
+    items.value = rows
+    totalPages.value = data?.last_page || 1
+    totalItems.value = data?.total || rows.length
+    currentPage.value = data?.current_page || currentPage.value
+  } catch (e) {
+    console.error('Failed to load news:', e)
+    showToast(e.response?.data?.message || 'Gagal memuat data', 'error')
+  }
   loading.value = false
 }
 
 async function fetchStats() {
   try {
-    // Count by fetching all with category filters
-    const [all, artikel, video, gambar] = await Promise.all([
+    const [all, published, draft, categories] = await Promise.all([
       api.get('/news', { params: { per_page: 1 } }),
-      api.get('/news', { params: { per_page: 1, category: 'Artikel' } }),
-      api.get('/news', { params: { per_page: 1, category: 'Video' } }),
-      api.get('/news', { params: { per_page: 1, category: 'Gambar' } }),
+      api.get('/news', { params: { per_page: 1, status: 'Published' } }),
+      api.get('/news', { params: { per_page: 1, status: 'Draft' } }),
+      api.get('/news-categories'),
     ])
     statsCards.value[0].value = all.data.total
-    statsCards.value[1].value = artikel.data.total
-    statsCards.value[2].value = video.data.total
-    statsCards.value[3].value = gambar.data.total
+    statsCards.value[1].value = categories.data.length
+    statsCards.value[2].value = published.data.total
+    statsCards.value[3].value = draft.data.total
   } catch { /* silent */ }
+}
+
+async function fetchCategories() {
+  try {
+    const { data } = await api.get('/news-categories')
+    categoryOptions.value = [
+      { name: 'Semua', value: 'all' },
+      ...(data || []).map((item) => ({ name: item.name, value: item.id, type: item.type })),
+    ]
+    filterCategory.value = categoryOptions.value[0]
+  } catch (e) {
+    console.error('Failed to load news categories:', e)
+    categoryOptions.value = [{ name: 'Semua', value: 'all' }]
+    filterCategory.value = categoryOptions.value[0]
+  }
 }
 
 function goPage(p) { if (p < 1 || p > totalPages.value) return; currentPage.value = p; fetchData() }
@@ -247,7 +265,7 @@ function statusBadge(s) {
   return `${b} text-yellow-400 border border-yellow-500/30 bg-yellow-900/20 shadow-[0_0_10px_rgba(250,204,21,0.2)]`
 }
 
-onMounted(() => { fetchData(); fetchStats() })
+onMounted(async () => { await fetchCategories(); fetchData(); fetchStats() })
 </script>
 
 <style scoped>

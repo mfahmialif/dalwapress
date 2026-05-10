@@ -27,9 +27,8 @@ class AuthController extends Controller
             ]);
         }
 
-        // Hanya Admin dan Operator yang boleh login
         $user->load('role:id,name');
-        if (! $user->role || ! in_array($user->role->name, ['Admin', 'Operator'])) {
+        if (! $user->role || ! in_array($user->role->name, ['Admin', 'Operator', 'Author', 'Editor'])) {
             throw ValidationException::withMessages([
                 'username' => ['Akun Anda tidak memiliki akses ke dashboard.'],
             ]);

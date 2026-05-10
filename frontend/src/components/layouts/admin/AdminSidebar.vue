@@ -70,6 +70,10 @@ const navSections = [
   {
     label: 'Konten',
     items: [
+      { icon: 'menu_book', label: 'Books', route: '/administrator/books' },
+      { icon: 'category', label: 'Kategori Buku', route: '/administrator/book-categories' },
+      { icon: 'edit_square', label: 'Authors', route: '/administrator/authors' },
+      { icon: 'assignment', label: 'Submissions', route: '/administrator/submissions' },
       { icon: 'newspaper', label: 'News', route: '/administrator/news' },
     ],
   },
@@ -90,7 +94,10 @@ const navSections = [
 ]
 
 function isActiveRoute(itemRoute) {
-  return route.path === itemRoute || (itemRoute === '/administrator/news' && route.path.startsWith('/administrator/news'))
+  return route.path === itemRoute
+    || (itemRoute === '/administrator/news' && route.path.startsWith('/administrator/news'))
+    || (itemRoute === '/administrator/books' && route.path.startsWith('/administrator/books'))
+    || (itemRoute === '/administrator/submissions' && route.path.startsWith('/administrator/submissions'))
 }
 
 function handleLogout() {

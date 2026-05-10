@@ -36,7 +36,7 @@
           <label class="text-sm font-medium" style="color: var(--text-body)">Status</label>
           <VueMultiselect v-model="formStatusOption" :options="statusOptions" :close-on-select="true" :searchable="false" :allow-empty="false" :show-labels="false" label="name" track-by="value" placeholder="Pilih Status" />
         </div>
-        <div v-if="form.category === 'Video'" class="flex flex-col gap-1.5">
+        <div v-if="selectedCategoryType === 'Video'" class="flex flex-col gap-1.5">
           <label class="text-sm font-medium" style="color: var(--text-body)">Speaker</label>
           <input v-model="form.speaker" class="filter-input rounded-xl py-2.5 px-4 text-sm focus:outline-none focus:ring-1 focus:ring-accent" placeholder="Nama pembicara" />
         </div>
@@ -44,7 +44,7 @@
 
       <!-- ── Image Upload ── -->
       <div class="flex flex-col gap-1.5">
-        <label class="text-sm font-medium" style="color: var(--text-body)">{{ form.category === 'Gambar' ? 'Upload Gambar *' : 'Upload Banner / Thumbnail' }}</label>
+        <label class="text-sm font-medium" style="color: var(--text-body)">{{ selectedCategoryType === 'Gambar' ? 'Upload Gambar *' : 'Upload Banner / Thumbnail' }}</label>
         <div class="upload-zone rounded-xl p-6 flex flex-col items-center gap-3 cursor-pointer transition-all"
              @click="$refs.imageInput.click()"
              @dragover.prevent="imageDragOver = true" @dragleave="imageDragOver = false" @drop.prevent="handleImageDrop"
@@ -62,7 +62,7 @@
       </div>
 
       <!-- ── Video Upload ── -->
-      <div v-if="form.category === 'Video'" class="flex flex-col gap-1.5">
+      <div v-if="selectedCategoryType === 'Video'" class="flex flex-col gap-1.5">
         <label class="text-sm font-medium" style="color: var(--text-body)">Upload Video *</label>
         <div class="upload-zone rounded-xl p-6 flex flex-col items-center gap-3 cursor-pointer transition-all"
              @click="$refs.videoInput.click()"
@@ -81,7 +81,7 @@
       </div>
 
       <!-- ── Body (Quill) ── -->
-      <div v-if="form.category !== 'Gambar'" class="flex flex-col gap-1.5">
+      <div v-if="selectedCategoryType !== 'Gambar'" class="flex flex-col gap-1.5">
         <label class="text-sm font-medium" style="color: var(--text-body)">Isi Konten</label>
         <QuillEditor ref="quillRef" v-model:content="form.body" content-type="html" theme="snow" :toolbar="quillToolbar" :modules="quillModules" class="quill-dark" @ready="onQuillReady" />
       </div>
@@ -119,7 +119,7 @@ const formLoading = ref(false)
 const formError = ref('')
 
 const form = ref({
-  title: '', category: 'Artikel', body: '',
+  title: '', news_category_id: null, body: '',
   speaker: '', duration: '', status: 'Published',
 })
 
@@ -127,13 +127,14 @@ const imageFile = ref(null); const imagePreview = ref(null); const imageDragOver
 const videoFile = ref(null); const videoPreview = ref(null); const videoDragOver = ref(false); const removeVideoFlag = ref(false)
 
 // ── Options ──
-const categoryOptions = [{ name: 'Artikel', value: 'Artikel' }, { name: 'Video', value: 'Video' }, { name: 'Gambar', value: 'Gambar' }]
+const categoryOptions = ref([])
 const statusOptions = [{ name: 'Published', value: 'Published' }, { name: 'Draft', value: 'Draft' }]
 
 const formCategoryOption = computed({
-  get: () => categoryOptions.find(o => o.value === form.value.category) || categoryOptions[0],
-  set: (val) => { form.value.category = val.value }
+  get: () => categoryOptions.value.find(o => o.value === form.value.news_category_id) || categoryOptions.value[0],
+  set: (val) => { form.value.news_category_id = val.value }
 })
+const selectedCategoryType = computed(() => formCategoryOption.value?.type || 'Artikel')
 const formStatusOption = computed({
   get: () => statusOptions.find(o => o.value === form.value.status) || statusOptions[0],
   set: (val) => { form.value.status = val.value }
@@ -194,30 +195,47 @@ function removeVideo() { videoFile.value = null; videoPreview.value = null; remo
 
 // ── Load for edit ──
 onMounted(async () => {
+  pageLoading.value = true
+  try {
+    await loadCategories()
+  } catch {
+    formError.value = 'Gagal memuat kategori.'
+  }
   if (isEdit.value) {
-    pageLoading.value = true
     try {
       const { data } = await api.get(`/news/${route.params.id}`)
       form.value = {
-        title: data.title || '', category: data.category || 'Artikel',
+        title: data.title || '', news_category_id: data.news_category_id || data.category?.id || categoryOptions.value[0]?.value,
         body: data.body || '', speaker: data.speaker || '',
         duration: data.duration || '', status: data.status || 'Published',
       }
       if (data.image_path) imagePreview.value = storageUrl(data.image_path)
       if (data.video_path) videoPreview.value = storageUrl(data.video_path)
     } catch { formError.value = 'Gagal memuat data.' }
-    pageLoading.value = false
   }
+  pageLoading.value = false
 })
+
+async function loadCategories() {
+  const { data } = await api.get('/news-categories')
+  categoryOptions.value = (data || []).map((item) => ({
+    name: `${item.name} (${item.type})`,
+    value: item.id,
+    type: item.type,
+  }))
+  if (!form.value.news_category_id && categoryOptions.value.length) {
+    form.value.news_category_id = categoryOptions.value[0].value
+  }
+}
 
 // ── Submit ──
 async function handleSubmit() {
   formError.value = ''; formLoading.value = true
   try {
-    if (form.value.category !== 'Gambar') await uploadPendingEditorMedia()
+    if (selectedCategoryType.value !== 'Gambar') await uploadPendingEditorMedia()
     const fd = new FormData()
     fd.append('title', form.value.title)
-    fd.append('category', form.value.category)
+    fd.append('news_category_id', form.value.news_category_id)
     fd.append('status', form.value.status)
     if (form.value.body) fd.append('body', form.value.body)
     if (form.value.speaker) fd.append('speaker', form.value.speaker)

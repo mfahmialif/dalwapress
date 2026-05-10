@@ -17,6 +17,10 @@ const route = useRoute()
 
 const navItems = [
   { icon: 'dashboard', label: 'Dashboard', route: '/administrator/dashboard' },
+  { icon: 'menu_book', label: 'Books', route: '/administrator/books' },
+  { icon: 'category', label: 'Kategori', route: '/administrator/book-categories' },
+  { icon: 'edit_square', label: 'Authors', route: '/administrator/authors' },
+  { icon: 'assignment', label: 'Submissions', route: '/administrator/submissions' },
   { icon: 'newspaper', label: 'News', route: '/administrator/news' },
   { icon: 'group', label: 'User', route: '/administrator/manajemen-user' },
   { icon: 'admin_panel_settings', label: 'Role', route: '/administrator/manajemen-role' },
@@ -25,7 +29,10 @@ const navItems = [
 ]
 
 function isActiveRoute(r) {
-  return route.path === r || (r === '/administrator/news' && route.path.startsWith('/administrator/news'))
+  return route.path === r
+    || (r === '/administrator/news' && route.path.startsWith('/administrator/news'))
+    || (r === '/administrator/books' && route.path.startsWith('/administrator/books'))
+    || (r === '/administrator/submissions' && route.path.startsWith('/administrator/submissions'))
 }
 </script>
 

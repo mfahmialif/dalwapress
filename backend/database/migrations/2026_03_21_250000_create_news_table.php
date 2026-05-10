@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('news', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->enum('category', ['Artikel', 'Video', 'Gambar']);
+            $table->foreignId('news_category_id')->constrained('news_categories')->cascadeOnUpdate()->restrictOnDelete();
             $table->longText('body')->nullable();
             $table->string('image_path')->nullable();
             $table->string('video_path')->nullable();

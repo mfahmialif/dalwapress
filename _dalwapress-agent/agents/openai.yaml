@@ -1,0 +1,4 @@
+interface:
+  display_name: "Dalwa Press Agent"
+  short_description: "Project guide for Dalwa Press Laravel/Vue coding agents."
+  default_prompt: "Use this skill when working on the Dalwa Press codebase to follow its Laravel API, Vue dashboard, roles, portals, routing, and validation conventions."
