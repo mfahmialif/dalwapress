@@ -1,5 +1,5 @@
 <template>
-  <main class="pt-32">
+  <main class="news-detail-page pt-28">
     <section v-if="loading" class="mx-auto max-w-5xl px-5 py-24 text-center lg:px-8">
       <div class="mx-auto size-16 animate-spin rounded-full border-4 border-sky-100 border-t-sky-600"></div>
       <p class="mt-5 font-bold text-slate-500">Memuat news...</p>
@@ -16,47 +16,80 @@
       </section>
 
       <template v-else-if="newsItem">
-        <article>
-          <header class="mx-auto max-w-5xl px-5 pb-10 pt-8 text-center lg:px-8" data-aos="fade-up">
-            <router-link to="/news" class="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-black text-slate-600 shadow-sm ring-1 ring-slate-200 transition hover:-translate-y-0.5 hover:text-sky-700">
-              <span class="material-symbols-outlined text-[18px]">arrow_back</span>
-              Kembali ke News
-            </router-link>
-            <div class="mt-8 flex justify-center">
-              <span class="news-badge" :class="categoryClass(newsItem.categoryType)">{{ newsItem.categoryName }}</span>
-            </div>
-            <h1 class="mx-auto mt-5 max-w-4xl text-4xl font-black leading-tight tracking-tight text-[#101418] md:text-6xl">
-              {{ newsItem.title }}
-            </h1>
-            <div class="mt-6 flex flex-wrap items-center justify-center gap-4 text-sm font-bold text-slate-500">
-              <span class="inline-flex items-center gap-2">
-                <span class="material-symbols-outlined text-[18px] text-sky-600">calendar_month</span>
-                {{ formatDate(newsItem.created_at, { weekday: 'long' }) }}
-              </span>
-              <span class="inline-flex items-center gap-2">
-                <span class="material-symbols-outlined text-[18px] text-sky-600">schedule</span>
-                {{ formatRelative(newsItem.created_at) }}
-              </span>
+        <article class="article-detail">
+          <header class="article-detail-hero" data-aos="fade-up">
+            <div class="mx-auto max-w-6xl px-5 lg:px-8">
+              <router-link to="/news" class="article-back-link">
+                <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+                Kembali ke News
+              </router-link>
+
+              <div class="article-hero-grid">
+                <div>
+                  <div class="flex flex-wrap items-center gap-3">
+                    <span class="news-badge" :class="categoryClass(newsItem.categoryType)">{{ newsItem.categoryName }}</span>
+                    <span class="article-reading-pill">
+                      <span class="material-symbols-outlined text-[17px]">schedule</span>
+                      {{ formatRelative(newsItem.created_at) }}
+                    </span>
+                  </div>
+                  <h1 class="article-title" :class="titleSizeClass">
+                    {{ newsItem.title }}
+                  </h1>
+                </div>
+
+                <div class="article-intro">
+                  <p class="article-kicker">UII Dalwa Press</p>
+                  <p>{{ newsItem.excerpt }}</p>
+                  <div class="article-meta-line">
+                    <span class="inline-flex items-center gap-2">
+                      <span class="material-symbols-outlined text-[18px]">calendar_month</span>
+                      {{ formatDate(newsItem.created_at, { weekday: 'long' }) }}
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
           </header>
 
-          <div class="mx-auto max-w-6xl px-5 lg:px-8" data-aos="zoom-in">
-            <div class="detail-media">
+          <figure class="mx-auto max-w-6xl px-5 lg:px-8" data-aos="zoom-in">
+            <div class="detail-media article-featured-media">
               <video v-if="newsItem.categoryType === 'Video' && newsItem.video" :src="newsItem.video" controls class="h-full w-full object-cover"></video>
               <img v-else :src="newsItem.image" :alt="newsItem.title" class="h-full w-full object-cover" />
             </div>
-          </div>
+            <figcaption class="article-media-caption">
+              <span>{{ newsItem.categoryName }}</span>
+              <span>{{ formatDate(newsItem.created_at) }}</span>
+            </figcaption>
+          </figure>
 
-          <div class="mx-auto grid max-w-6xl gap-8 px-5 py-14 lg:grid-cols-[1fr_18rem] lg:px-8">
-            <div class="article-body" data-aos="fade-up">
+          <div class="article-content-wrap">
+            <article class="article-body article-body--story" data-aos="fade-up">
+              <div class="article-body-meta">
+                <span>Artikel</span>
+                <span>{{ newsItem.categoryName }}</span>
+              </div>
               <div v-if="newsItem.bodyHtml" v-html="newsItem.bodyHtml"></div>
               <p v-else>Konten news belum tersedia.</p>
-            </div>
+            </article>
 
-            <aside class="detail-sidebar" data-aos="fade-left">
+            <aside class="detail-sidebar article-sidebar" data-aos="fade-left">
               <div class="sidebar-card">
-                <p class="text-xs font-black uppercase tracking-[0.18em] text-sky-700">Ringkasan</p>
-                <p class="mt-3 leading-7 text-slate-600">{{ newsItem.excerpt }}</p>
+                <p class="text-xs font-black uppercase tracking-[0.18em] text-sky-700">Info Artikel</p>
+                <dl class="article-info-list">
+                  <div>
+                    <dt>Kategori</dt>
+                    <dd>{{ newsItem.categoryName }}</dd>
+                  </div>
+                  <div>
+                    <dt>Diterbitkan</dt>
+                    <dd>{{ formatDate(newsItem.created_at) }}</dd>
+                  </div>
+                  <div>
+                    <dt>Format</dt>
+                    <dd>{{ newsItem.categoryType === 'Video' ? 'Video' : 'Artikel' }}</dd>
+                  </div>
+                </dl>
               </div>
               <div class="sidebar-card">
                 <p class="text-xs font-black uppercase tracking-[0.18em] text-sky-700">Bagikan</p>
@@ -75,7 +108,7 @@
           </div>
         </article>
 
-        <section v-if="relatedNews.length" class="bg-white py-16">
+        <section v-if="relatedNews.length" class="article-related-section py-16">
           <div class="mx-auto max-w-6xl px-5 lg:px-8">
             <div class="mb-8 flex items-end justify-between gap-5">
               <div>
@@ -101,7 +134,7 @@
           </div>
         </section>
 
-        <section class="bg-[#f6f8f7] py-16">
+        <section class="article-comments-section py-16">
           <div class="mx-auto max-w-5xl px-5 lg:px-8">
             <Comments :news-id="newsItem.id" />
           </div>
@@ -129,6 +162,12 @@ const relatedNews = ref([])
 const copied = ref(false)
 
 const encodedShareText = computed(() => encodeURIComponent(`${newsItem.value?.title || 'UII Dalwa Press News'} ${window.location.href}`))
+const titleSizeClass = computed(() => {
+  const length = newsItem.value?.title?.length || 0
+  if (length > 95) return 'article-title--long'
+  if (length > 68) return 'article-title--medium'
+  return ''
+})
 
 async function loadDetail() {
   loading.value = true

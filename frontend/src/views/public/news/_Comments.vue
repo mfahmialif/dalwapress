@@ -1,18 +1,18 @@
 <template>
   <section class="comments-panel">
-    <div class="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+    <div class="comments-heading">
       <div>
         <p class="news-kicker compact">
           <span class="size-2.5 rounded-full bg-sky-600"></span>
           Diskusi Pembaca
         </p>
-        <h2 class="mt-3 text-3xl font-black tracking-tight text-[#101418]">Kolom Komentar</h2>
+        <h2 class="comments-title">Kolom Komentar</h2>
       </div>
-      <p class="text-sm font-bold text-slate-500">{{ comments.length }} komentar</p>
+      <p class="comments-count">{{ comments.length }} komentar</p>
     </div>
 
     <form class="comment-form mt-8" @submit.prevent="submitComment">
-      <div v-if="replyingTo" class="mb-4 flex items-center justify-between rounded-lg bg-sky-50 px-4 py-2 text-sm font-bold text-sky-700">
+      <div v-if="replyingTo" class="comment-replying">
         <span>Membalas <span class="font-black">{{ replyingTo }}</span></span>
         <button @click="cancelReply" class="text-slate-500 hover:text-slate-700 inline-flex items-center" type="button">
           <span class="material-symbols-outlined text-[18px]">close</span>
@@ -24,8 +24,8 @@
       </div>
       <textarea v-model.trim="form.message" class="comment-input mt-4 min-h-32 resize-none py-4" placeholder="Tulis komentar yang sopan dan membangun..." maxlength="600"></textarea>
       <div class="mt-4 flex flex-wrap items-center justify-between gap-3">
-        <p class="text-sm font-semibold text-slate-500">{{ form.message.length }}/600 karakter</p>
-        <button class="cta-primary disabled:opacity-70 disabled:cursor-not-allowed" type="submit" :disabled="sending">
+        <p class="comment-counter">{{ form.message.length }}/600 karakter</p>
+        <button class="comment-submit disabled:opacity-70 disabled:cursor-not-allowed" type="submit" :disabled="sending">
           <template v-if="sending">
             <span class="size-5 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
             Mengirim...
@@ -51,7 +51,7 @@
                 <p class="text-xs font-bold uppercase tracking-[0.14em] text-slate-400">{{ formatDate(comment.created_at, { hour: '2-digit', minute: '2-digit' }) }}</p>
               </div>
               <div class="flex items-center gap-3">
-                <button @click="setReply(comment)" class="text-sm font-bold text-sky-700 hover:text-sky-800" type="button">Balas</button>
+                <button @click="setReply(comment)" class="comment-reply-button" type="button">Balas</button>
                 <button @click="likeComment(comment.id)" class="like-button" :class="{ '!text-red-600 !bg-red-50 !border-red-200': comment.is_liked }" type="button">
                   <span class="material-symbols-outlined text-[18px]">favorite</span>
                   {{ comment.likes }}
@@ -63,9 +63,9 @@
         </article>
 
         <!-- Replies -->
-        <div v-if="comment.replies && comment.replies.length" class="ml-10 grid gap-4 border-l-2 border-slate-100 pl-4">
-          <article v-for="reply in comment.replies" :key="reply.id" class="comment-card bg-slate-50">
-            <div class="comment-avatar bg-slate-600">{{ initials(reply.name) }}</div>
+        <div v-if="comment.replies && comment.replies.length" class="comment-replies">
+          <article v-for="reply in comment.replies" :key="reply.id" class="comment-card comment-card--reply">
+            <div class="comment-avatar comment-avatar--reply">{{ initials(reply.name) }}</div>
             <div class="min-w-0 flex-1">
               <div class="flex flex-wrap items-center justify-between gap-2">
                 <div>
