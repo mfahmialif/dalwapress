@@ -1,1 +1,0 @@
-import{_ as t}from"./SimpleList-UN8kH3YT.js";import{J as a,j as e}from"./index-D-AaOhg8.js";const s={__name:"Index",setup(o){return(r,_)=>(e(),a(t,{endpoint:"/author/activity","empty-text":"Belum ada aktivitas."}))}};export{s as default};

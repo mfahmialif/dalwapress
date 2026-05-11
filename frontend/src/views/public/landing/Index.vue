@@ -4,7 +4,7 @@
     <Books :books="books" />
     <Services :services="services" />
     <Supporter :supporters="supporters" />
-    <NewsUpdate :updates="updates" />
+    <NewsUpdate :updates="latestNews" />
     <About :stats="stats" />
     <PublishCta />
     <Strengths :strengths="strengths" />
@@ -44,8 +44,10 @@ import {
   testimonials,
   updates,
 } from './data'
+import { normalizeNews } from '../news/utils'
 
 const books = ref([])
+const latestNews = ref(updates)
 const fallbackCovers = [
   '/img/thumb1.jpg',
   '/img/thumb2.jpg',
@@ -86,9 +88,48 @@ async function fetchBooks() {
     }))
   } catch {
     books.value = []
-  } finally {
-    await nextTick()
-    AOS.refreshHard()
+  }
+}
+
+function formatNewsDate(dateStr) {
+  if (!dateStr) return { day: '', month: '' }
+  const date = new Date(dateStr)
+  if (Number.isNaN(date.getTime())) return { day: '', month: '' }
+
+  return {
+    day: new Intl.DateTimeFormat('id-ID', { day: '2-digit' }).format(date),
+    month: new Intl.DateTimeFormat('id-ID', { month: 'short' }).format(date),
+  }
+}
+
+async function fetchLatestNews() {
+  try {
+    const { data } = await api.get('/news', {
+      params: {
+        status: 'Published',
+        per_page: 3,
+        sort_by: 'created_at',
+        sort_dir: 'desc',
+      },
+    })
+
+    const items = (data.data || []).map((item) => {
+      const normalized = normalizeNews(item)
+      const date = formatNewsDate(normalized.created_at)
+
+      return {
+        id: normalized.id,
+        day: date.day,
+        month: date.month,
+        category: normalized.categoryName,
+        title: normalized.title,
+        body: normalized.excerpt,
+      }
+    })
+
+    latestNews.value = items.length ? items : updates
+  } catch {
+    latestNews.value = updates
   }
 }
 
@@ -99,6 +140,8 @@ onMounted(async () => {
     once: true,
     offset: 90,
   })
-  await fetchBooks()
+  await Promise.all([fetchBooks(), fetchLatestNews()])
+  await nextTick()
+  AOS.refreshHard()
 })
 </script>

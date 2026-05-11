@@ -15,14 +15,17 @@
         </div>
 
         <div class="grid gap-4">
-          <article v-for="(item, index) in updates" :key="item.title" class="update-row" data-aos="fade-left" :data-aos-delay="index * 100">
+          <article v-for="(item, index) in updates" :key="item.id || item.title" class="update-row" data-aos="fade-left" :data-aos-delay="index * 100">
             <div class="date-badge">
               <span>{{ item.day }}</span>
               <small>{{ item.month }}</small>
             </div>
             <div>
               <p class="text-xs font-black uppercase tracking-[0.18em] text-sky-700">{{ item.category }}</p>
-              <h3 class="mt-2 text-xl font-black text-[#101418]">{{ item.title }}</h3>
+              <router-link v-if="item.id" :to="`/news/${item.id}`" class="group inline-flex">
+                <h3 class="mt-2 text-xl font-black text-[#101418] transition-colors group-hover:text-sky-700">{{ item.title }}</h3>
+              </router-link>
+              <h3 v-else class="mt-2 text-xl font-black text-[#101418]">{{ item.title }}</h3>
               <p class="mt-2 leading-7 text-slate-600">{{ item.body }}</p>
             </div>
           </article>
