@@ -16,5 +16,5 @@ const navItems = [
 function isActiveRoute(r){ return route.path === r || (r === '/editor/submissions' && route.path.startsWith('/editor/submissions')) }
 </script>
 <style scoped>
-.horiz-link{color:var(--text-muted)}.horiz-link:hover{color:var(--text-heading);background:var(--hover-nav-bg)}.horiz-link.active{color:var(--text-btn);background:var(--color-accent);font-weight:700;box-shadow:0 0 12px rgba(251,191,36,.25)}
+.horiz-link{color:var(--text-muted)}.horiz-link:hover{color:var(--text-heading);background:var(--hover-nav-bg)}.horiz-link.active{color:var(--text-btn);background:var(--color-accent);font-weight:700;box-shadow:0 0 12px rgba(37, 99, 235,.25)}
 </style>

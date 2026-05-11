@@ -50,4 +50,9 @@ class Book extends Model
     {
         return $this->hasMany(BookGallery::class);
     }
+
+    public function royalties(): HasMany
+    {
+        return $this->hasMany(Royalty::class);
+    }
 }

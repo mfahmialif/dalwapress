@@ -99,6 +99,6 @@ onMounted(loadProfile)
 <style scoped>
 .field { display: flex; flex-direction: column; gap: 0.45rem; color: var(--text-body); font-size: 0.9rem; font-weight: 900; }
 .input { border-radius: 0.85rem; background: var(--bg-input); border: 1px solid var(--border); color: var(--text-heading); padding: 0.75rem 0.9rem; outline: none; }
-.input:focus { border-color: var(--color-accent); box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.15); }
+.input:focus { border-color: var(--color-accent); box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15); }
 .btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 0.45rem; border-radius: 0.85rem; padding: 0.75rem 1rem; font-weight: 900; background: var(--color-accent); color: var(--text-btn); }
 </style>

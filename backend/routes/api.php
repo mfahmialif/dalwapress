@@ -9,6 +9,7 @@ use App\Http\Controllers\EditorPortalController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\NewsCommentController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\RoyaltyController;
 use App\Http\Controllers\SubmissionController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -43,6 +44,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/submissions/{submission}', [AuthorPortalController::class, 'deleteSubmission']);
         Route::post('/submissions/{submission}/revision', [AuthorPortalController::class, 'uploadRevision']);
         Route::get('/books', [AuthorPortalController::class, 'publishedBooks']);
+        Route::get('/royalties', [RoyaltyController::class, 'authorIndex']);
+        Route::get('/royalties/summary', [RoyaltyController::class, 'authorSummary']);
         Route::get('/profile', [AuthorPortalController::class, 'profile']);
         Route::post('/profile', [AuthorPortalController::class, 'updateProfile']);
         Route::get('/notifications', [AuthorPortalController::class, 'notifications']);
@@ -64,6 +67,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('book-categories', BookCategoryController::class)->except(['index']);
     Route::apiResource('authors', AuthorController::class)->except(['index', 'show']);
     Route::apiResource('books', BookController::class)->except(['index', 'show']);
+    Route::get('/royalties/summary', [RoyaltyController::class, 'summary']);
+    Route::apiResource('royalties', RoyaltyController::class);
     Route::apiResource('submissions', SubmissionController::class)->except(['store']);
     Route::post('/submissions/{submission}/reviews', [SubmissionController::class, 'review']);
     Route::get('/editors', [SubmissionController::class, 'editors']);

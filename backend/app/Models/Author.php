@@ -33,4 +33,9 @@ class Author extends Model
     {
         return $this->hasMany(Book::class);
     }
+
+    public function royalties(): HasMany
+    {
+        return $this->hasMany(Royalty::class);
+    }
 }

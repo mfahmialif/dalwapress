@@ -270,7 +270,7 @@ function statusBadge(value) {
   const base = 'inline-flex rounded-full px-3 py-1 text-xs font-black'
   if (value === 'accepted' || value === 'published') return `${base} bg-green-500/10 text-green-400 border border-green-500/30`
   if (value === 'rejected') return `${base} bg-red-500/10 text-red-400 border border-red-500/30`
-  if (value === 'revision') return `${base} bg-yellow-500/10 text-yellow-400 border border-yellow-500/30`
+  if (value === 'revision') return `${base} bg-blue-500/10 text-blue-400 border border-blue-500/30`
   return `${base} bg-sky-500/10 text-sky-400 border border-sky-500/30`
 }
 
@@ -292,7 +292,7 @@ onMounted(async () => {
 .assignment-field :deep(.multiselect__content-wrapper) { z-index: 80; }
 .input { border-radius: 0.85rem; background: var(--bg-input); border: 1px solid var(--border); color: var(--text-heading); padding: 0.7rem 0.9rem; outline: none; }
 .file-btn { display: inline-flex; align-items: center; gap: 0.5rem; border-radius: 999px; background: var(--bg-input); border: 1px solid var(--border); color: var(--text-heading); padding: 0.7rem 1rem; font-weight: 800; }
-.editor-tag { display: inline-flex; align-items: center; gap: 0.35rem; margin: 0 0.25rem 0.25rem 0; border-radius: 999px; background: rgba(251, 191, 36, 0.16); color: var(--color-accent); padding: 0.25rem 0.55rem; font-size: 0.75rem; font-weight: 900; }
+.editor-tag { display: inline-flex; align-items: center; gap: 0.35rem; margin: 0 0.25rem 0.25rem 0; border-radius: 999px; background: rgba(37, 99, 235, 0.16); color: var(--color-accent); padding: 0.25rem 0.55rem; font-size: 0.75rem; font-weight: 900; }
 .editor-tag button { color: inherit; font-weight: 900; line-height: 1; }
 .editor-check { display: inline-flex; align-items: center; justify-content: center; width: 1.1rem; height: 1.1rem; margin-top: 0.1rem; border-radius: 0.3rem; border: 1px solid var(--border-light); color: var(--text-btn); background: var(--bg-card); flex-shrink: 0; }
 .editor-check.selected { border-color: var(--color-accent); background: var(--color-accent); }

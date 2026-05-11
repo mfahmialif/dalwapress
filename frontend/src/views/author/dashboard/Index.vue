@@ -5,7 +5,7 @@
       <p class="text-sm" style="color: var(--text-muted)">Ringkasan submission, notifikasi, dan progres naskah terakhir.</p>
     </div>
 
-    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
       <article v-for="item in cards" :key="item.label" class="stat-card rounded-2xl border p-5" style="border-color: var(--border)">
         <div class="flex items-start justify-between gap-3">
           <div>
@@ -83,7 +83,12 @@ const cards = computed(() => [
   { icon: 'rate_review', label: 'Under Review', value: dashboard.value.stats?.under_review || 0 },
   { icon: 'task_alt', label: 'Accepted', value: dashboard.value.stats?.accepted || 0 },
   { icon: 'library_books', label: 'Published', value: dashboard.value.stats?.published || 0 },
+  { icon: 'payments', label: 'Royalti', value: formatCurrency(dashboard.value.stats?.royalty_amount) },
 ])
+
+function formatCurrency(value) {
+  return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(Number(value || 0))
+}
 
 function isStepDone(key) {
   if (!latest.value) return false
@@ -105,7 +110,7 @@ function statusBadge(value) {
   const base = 'inline-flex rounded-full px-3 py-1 text-xs font-black'
   if (value === 'accepted' || value === 'published') return `${base} bg-green-500/10 text-green-400 border border-green-500/30`
   if (value === 'rejected') return `${base} bg-red-500/10 text-red-400 border border-red-500/30`
-  if (value === 'revision') return `${base} bg-yellow-500/10 text-yellow-400 border border-yellow-500/30`
+  if (value === 'revision') return `${base} bg-blue-500/10 text-blue-400 border border-blue-500/30`
   return `${base} bg-sky-500/10 text-sky-400 border border-sky-500/30`
 }
 

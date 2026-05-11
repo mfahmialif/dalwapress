@@ -3,7 +3,7 @@
 
     <!-- ═══ ACTION BAR ═══ -->
     <div class="flex items-center justify-between">
-      <button @click="openCreateModal" class="flex items-center gap-2 rounded-lg h-10 px-5 bg-accent text-btn-text font-bold transition-colors hover:bg-accent/90 shadow-[0_0_15px_rgba(251,191,36,0.3)] shrink-0 cursor-pointer active:scale-95"
+      <button @click="openCreateModal" class="flex items-center gap-2 rounded-lg h-10 px-5 bg-accent text-btn-text font-bold transition-colors hover:bg-accent/90 shadow-[0_0_15px_rgba(37, 99, 235,0.3)] shrink-0 cursor-pointer active:scale-95"
               style="color: var(--text-btn)">
         <span class="material-symbols-outlined text-[20px]">add_circle</span>
         <span>Tambah Role</span>
@@ -305,8 +305,8 @@ function statusBadge(status) {
   transition: box-shadow 0.3s ease;
 }
 .filter-input::placeholder { color: var(--text-muted); }
-.filter-input:hover { box-shadow: 0 0 15px rgba(251, 191, 36, 0.15); }
-.filter-input:focus { border-color: var(--color-accent); box-shadow: 0 0 12px rgba(251, 191, 36, 0.3); }
+.filter-input:hover { box-shadow: 0 0 15px rgba(37, 99, 235, 0.15); }
+.filter-input:focus { border-color: var(--color-accent); box-shadow: 0 0 12px rgba(37, 99, 235, 0.3); }
 
 /* ═══ Action Buttons ═══ */
 .action-btn { color: var(--text-muted); }
@@ -317,7 +317,7 @@ function statusBadge(status) {
 .pagination-bar { border-top: 1px solid var(--border); background: var(--bg-card); }
 .page-btn { color: var(--text-muted); border: 1px solid transparent; transition: all 0.2s ease; }
 .page-btn:hover { background: var(--bg-input); color: var(--text-heading); }
-.page-btn-active { background: var(--color-accent); color: var(--text-btn); box-shadow: 0 0 10px rgba(251, 191, 36, 0.4); }
+.page-btn-active { background: var(--color-accent); color: var(--text-btn); box-shadow: 0 0 10px rgba(37, 99, 235, 0.4); }
 
 /* ═══ Modal ═══ */
 .modal-card { background: var(--bg-card); border: 1px solid var(--border); box-shadow: 0 20px 60px rgba(0,0,0,0.5); }

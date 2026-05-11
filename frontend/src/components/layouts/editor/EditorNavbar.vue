@@ -17,5 +17,5 @@ defineProps({ pageTitle: { type: String, default: 'Dashboard Editor' }, isDark: 
 defineEmits(['toggle-theme', 'toggle-sidebar', 'toggle-layout'])
 </script>
 <style scoped>
-.top-header{background:var(--bg-header);backdrop-filter:blur(12px)}.top-header.horiz-mode{background:var(--bg-card);border-bottom:1px solid var(--border)}.theme-toggle,.avatar-ring{background:var(--toggle-bg);color:var(--toggle-text)}.theme-toggle:hover{background:var(--color-accent);color:var(--text-btn);box-shadow:0 0 20px rgba(251,191,36,.4)}.hamburger-btn{color:var(--text-heading)}.hamburger-btn:hover{background:var(--bg-input);color:var(--color-accent)}
+.top-header{background:var(--bg-header);backdrop-filter:blur(12px)}.top-header.horiz-mode{background:var(--bg-card);border-bottom:1px solid var(--border)}.theme-toggle,.avatar-ring{background:var(--toggle-bg);color:var(--toggle-text)}.theme-toggle:hover{background:var(--color-accent);color:var(--text-btn);box-shadow:0 0 20px rgba(37, 99, 235,.4)}.hamburger-btn{color:var(--text-heading)}.hamburger-btn:hover{background:var(--bg-input);color:var(--color-accent)}
 </style>

@@ -78,11 +78,10 @@
 import { ref } from 'vue'
 
 const systemName = ref('UII Dalwa Press')
-const selectedAccent = ref('#047857')
+const selectedAccent = ref('#2563eb')
 const accentColors = [
-  { name: 'Emerald', value: '#047857' },
-  { name: 'Gold', value: '#fbbf24' },
   { name: 'Blue', value: '#2563eb' },
+  { name: 'Emerald', value: '#047857' },
   { name: 'Slate', value: '#0f172a' },
   { name: 'Rose', value: '#e11d48' },
   { name: 'Cyan', value: '#0891b2' }
@@ -103,7 +102,7 @@ const accentColors = [
   border: 1px solid var(--border);
   color: var(--text-heading);
 }
-.setting-input:focus { border-color: var(--color-accent); box-shadow: 0 0 12px rgba(251, 191, 36, 0.3); }
+.setting-input:focus { border-color: var(--color-accent); box-shadow: 0 0 12px rgba(37, 99, 235, 0.3); }
 .upload-btn {
   background: var(--bg-input);
   color: var(--text-heading);
@@ -118,6 +117,6 @@ const accentColors = [
 .save-btn {
   background: var(--color-accent);
   color: var(--text-btn);
-  box-shadow: 0 0 15px rgba(251, 191, 36, 0.3);
+  box-shadow: 0 0 15px rgba(37, 99, 235, 0.3);
 }
 </style>

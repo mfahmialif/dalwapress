@@ -92,7 +92,7 @@
       <!-- ── Actions ── -->
       <div class="flex justify-end gap-3 pt-2">
         <router-link to="/administrator/news" class="px-6 py-2.5 rounded-lg text-sm font-medium cursor-pointer" style="color: var(--text-body); border: 1px solid var(--border)">Batal</router-link>
-        <button @click="handleSubmit" :disabled="formLoading" class="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-accent text-sm font-bold cursor-pointer active:scale-95 disabled:opacity-50 shadow-[0_0_15px_rgba(251,191,36,0.3)]" style="color: var(--text-btn)">
+        <button @click="handleSubmit" :disabled="formLoading" class="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-accent text-sm font-bold cursor-pointer active:scale-95 disabled:opacity-50 shadow-[0_0_15px_rgba(37, 99, 235,0.3)]" style="color: var(--text-btn)">
           <span v-if="formLoading" class="material-symbols-outlined text-[18px] animate-spin">progress_activity</span>
           {{ isEdit ? 'Update' : 'Simpan' }}
         </button>
@@ -263,10 +263,10 @@ async function handleSubmit() {
 .form-card { background: var(--bg-card); border: 1px solid var(--border); box-shadow: var(--shadow-card); }
 .filter-input { background: var(--bg-input); border: 1px solid var(--border); color: var(--text-heading); transition: box-shadow 0.3s ease; }
 .filter-input::placeholder { color: var(--text-muted); }
-.filter-input:hover { box-shadow: 0 0 15px rgba(251, 191, 36, 0.15); }
-.filter-input:focus { border-color: var(--color-accent); box-shadow: 0 0 12px rgba(251, 191, 36, 0.3); }
+.filter-input:hover { box-shadow: 0 0 15px rgba(37, 99, 235, 0.15); }
+.filter-input:focus { border-color: var(--color-accent); box-shadow: 0 0 12px rgba(37, 99, 235, 0.3); }
 .upload-zone { background: var(--bg-input); border: 2px dashed var(--border); transition: all 0.3s ease; }
-.upload-zone:hover, .upload-zone.drag-over { border-color: var(--color-accent); background: rgba(251, 191, 36, 0.05); box-shadow: 0 0 20px rgba(251, 191, 36, 0.1); }
+.upload-zone:hover, .upload-zone.drag-over { border-color: var(--color-accent); background: rgba(37, 99, 235, 0.05); box-shadow: 0 0 20px rgba(37, 99, 235, 0.1); }
 .quill-dark :deep(.ql-toolbar) { background: var(--bg-input); border-color: var(--border) !important; border-radius: 12px 12px 0 0; }
 .quill-dark :deep(.ql-toolbar .ql-stroke) { stroke: var(--text-muted); }
 .quill-dark :deep(.ql-toolbar .ql-fill) { fill: var(--text-muted); }

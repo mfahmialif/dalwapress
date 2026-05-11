@@ -121,16 +121,16 @@ watch(() => route.path, () => {
   --text-heading: #ffffff;
   --text-body: #cbd5e1;
   --text-muted: #64748b;
-  --text-btn: #020617;
-  --color-accent: #fbbf24;
+  --text-btn: #ffffff;
+  --color-accent: #2563eb;
   --uptime-bg: #0e1628;
   --uptime-globe: #1c2850;
   --uptime-gradient: linear-gradient(to top, #111a33, transparent);
   --progress-track: #0e1628;
-  --hover-nav-bg: rgba(251, 191, 36, 0.08);
+  --hover-nav-bg: rgba(37, 99, 235, 0.08);
   --shadow-card: 0 4px 24px rgba(0,0,0,0.4), 0 1px 3px rgba(0,0,0,0.2);
   --toggle-bg: #141d38;
-  --toggle-text: #fbbf24;
+  --toggle-text: #2563eb;
   --color-scheme: dark;
 }
 
@@ -139,7 +139,7 @@ watch(() => route.path, () => {
   --bg-sidebar: #eef2f7;
   --bg-header: rgba(238, 242, 247, 0.92);
   --bg-card: #ffffff;
-  --bg-input: #e2e8f0;
+  --bg-input: #ffffff;
   --bg-table-head: #e8ecf1;
   --bg-table-body: #ffffff;
   --border: #dce3ec;
@@ -147,13 +147,13 @@ watch(() => route.path, () => {
   --text-heading: #0f172a;
   --text-body: #475569;
   --text-muted: #94a3b8;
-  --text-btn: #0f172a;
-  --color-accent: #fbbf24;
+  --text-btn: #ffffff;
+  --color-accent: #2563eb;
   --uptime-bg: #e2e8f0;
   --uptime-globe: #cbd5e1;
   --uptime-gradient: linear-gradient(to top, #ffffff, transparent);
   --progress-track: #dce3ec;
-  --hover-nav-bg: rgba(251, 191, 36, 0.12);
+  --hover-nav-bg: rgba(37, 99, 235, 0.12);
   --shadow-card: 0 4px 24px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.04);
   --toggle-bg: #e2e8f0;
   --toggle-text: #475569;
@@ -193,7 +193,7 @@ watch(() => route.path, () => {
   background: var(--color-accent);
   color: var(--text-btn);
   border-color: var(--color-accent);
-  box-shadow: 0 0 12px rgba(251, 191, 36, 0.4);
+  box-shadow: 0 0 12px rgba(37, 99, 235, 0.4);
   transform: scale(1.15) !important;
 }
 .content-scroll :deep(.simplebar-scrollbar::before) {
@@ -218,11 +218,11 @@ watch(() => route.path, () => {
 }
 .author-root :deep(.stat-card:hover) {
   transform: translateY(-6px);
-  border-color: rgba(251, 191, 36, 0.7);
+  border-color: rgba(37, 99, 235, 0.7);
   box-shadow:
-    0 0 25px rgba(251, 191, 36, 0.15),
+    0 0 25px rgba(37, 99, 235, 0.15),
     0 20px 40px -15px rgba(0, 0, 0, 0.3),
-    inset 0 1px 0 rgba(251, 191, 36, 0.1);
+    inset 0 1px 0 rgba(37, 99, 235, 0.1);
 }
 .author-root :deep(.table-row-hover) {
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);

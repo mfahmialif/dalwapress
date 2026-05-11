@@ -56,7 +56,7 @@ const myAssignment = computed(() => submission.value?.editor_assignments?.find((
 async function loadData(){ loading.value = true; submission.value = (await api.get(`/editor/submissions/${route.params.id}`)).data; loading.value = false }
 async function sendReview(){ await api.post(`/editor/submissions/${route.params.id}/reviews`, review.value); review.value = { status:'revision', note:'' }; await loadData() }
 function statusLabel(value){ return { submitted:'Submitted', under_review:'Under Review', revision:'Revision', accepted:'Accepted', rejected:'Rejected', published:'Published' }[value] || value }
-function statusBadge(value){ const base='inline-flex rounded-full px-3 py-1 text-xs font-black'; if(value==='accepted'||value==='published')return `${base} bg-green-500/10 text-green-400 border border-green-500/30`; if(value==='rejected')return `${base} bg-red-500/10 text-red-400 border border-red-500/30`; if(value==='revision')return `${base} bg-yellow-500/10 text-yellow-400 border border-yellow-500/30`; return `${base} bg-sky-500/10 text-sky-400 border border-sky-500/30` }
+function statusBadge(value){ const base='inline-flex rounded-full px-3 py-1 text-xs font-black'; if(value==='accepted'||value==='published')return `${base} bg-green-500/10 text-green-400 border border-green-500/30`; if(value==='rejected')return `${base} bg-red-500/10 text-red-400 border border-red-500/30`; if(value==='revision')return `${base} bg-blue-500/10 text-blue-400 border border-blue-500/30`; return `${base} bg-sky-500/10 text-sky-400 border border-sky-500/30` }
 function formatDate(date){ return date ? new Date(date).toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'}) : '-' }
 onMounted(loadData)
 </script>

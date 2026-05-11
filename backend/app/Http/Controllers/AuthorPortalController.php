@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Author;
 use App\Models\Book;
+use App\Models\Royalty;
 use App\Models\Submission;
 use App\Models\SubmissionRevision;
 use Illuminate\Http\Request;
@@ -27,6 +28,9 @@ class AuthorPortalController extends Controller
                 'revision' => (clone $submissions)->where('status', 'revision')->count(),
                 'under_review' => (clone $submissions)->where('status', 'under_review')->count(),
                 'published' => $this->publishedBooksQuery($user->id)->count(),
+                'royalty_amount' => $this->royaltiesQuery($user->id)->sum('royalty_amount'),
+                'royalty_paid_amount' => $this->royaltiesQuery($user->id)->where('status', 'paid')->sum('royalty_amount'),
+                'royalty_pending_amount' => $this->royaltiesQuery($user->id)->where('status', 'pending')->sum('royalty_amount'),
             ],
             'latest_submission' => $latest,
             'notifications' => $this->notificationsFor($user->id)->take(5)->values(),
@@ -295,6 +299,11 @@ class AuthorPortalController extends Controller
         return Book::query()
             ->where('status', 'published')
             ->whereHas('author', fn ($query) => $query->where('user_id', $userId));
+    }
+
+    private function royaltiesQuery(int $userId)
+    {
+        return Royalty::query()->whereHas('author', fn ($query) => $query->where('user_id', $userId));
     }
 
     private function notificationsFor(int $userId)

@@ -38,7 +38,7 @@
 
     <div class="pt-4 shrink-0">
       <button @click="handleLogout"
-              class="flex items-center justify-center gap-2 rounded-lg h-10 px-4 bg-accent text-btn-text font-bold transition-colors hover:bg-accent/90 w-full shadow-[0_0_15px_rgba(251,191,36,0.3)] cursor-pointer active:scale-95"
+              class="flex items-center justify-center gap-2 rounded-lg h-10 px-4 bg-accent text-btn-text font-bold transition-colors hover:bg-accent/90 w-full shadow-[0_0_15px_rgba(37, 99, 235,0.3)] cursor-pointer active:scale-95"
               :title="collapsed ? 'Logout' : ''">
         <span class="material-symbols-outlined text-[20px] shrink-0">logout</span>
         <span v-if="!collapsed">Logout</span>
@@ -74,6 +74,7 @@ const navSections = [
       { icon: 'category', label: 'Kategori Buku', route: '/administrator/book-categories' },
       { icon: 'edit_square', label: 'Authors', route: '/administrator/authors' },
       { icon: 'assignment', label: 'Submissions', route: '/administrator/submissions' },
+      { icon: 'payments', label: 'Royalti', route: '/administrator/royalties' },
       { icon: 'newspaper', label: 'News', route: '/administrator/news' },
     ],
   },
@@ -98,6 +99,7 @@ function isActiveRoute(itemRoute) {
     || (itemRoute === '/administrator/news' && route.path.startsWith('/administrator/news'))
     || (itemRoute === '/administrator/books' && route.path.startsWith('/administrator/books'))
     || (itemRoute === '/administrator/submissions' && route.path.startsWith('/administrator/submissions'))
+    || (itemRoute === '/administrator/royalties' && route.path.startsWith('/administrator/royalties'))
 }
 
 function handleLogout() {

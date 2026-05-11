@@ -15,13 +15,15 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { nextTick, onMounted, ref } from 'vue'
 import AOS from 'aos'
 import 'aos/dist/aos.css'
 import 'swiper/css'
 import 'swiper/css/navigation'
 import 'swiper/css/pagination'
 import './styles.css'
+import api from '../../../axios'
+import { assetUrl, storageUrl } from '../../../utils/asset'
 import About from './_About.vue'
 import Books from './_Books.vue'
 import Contact from './_Contact.vue'
@@ -34,7 +36,6 @@ import Strengths from './_Strengths.vue'
 import Supporter from './_Supporter.vue'
 import Testimonials from './_Testimonials.vue'
 import {
-  books,
   publishingFlow,
   services,
   stats,
@@ -44,12 +45,59 @@ import {
   updates,
 } from './data'
 
-onMounted(() => {
+const books = ref([])
+const fallbackCovers = [
+  '/img/thumb1.jpg',
+  '/img/thumb2.jpg',
+  '/img/hero-bg.jpg',
+  '/img/galeri-bg.jpg',
+  '/img/agenda-bg.jpg',
+  '/img/news/news1.jpg',
+]
+
+function bookCoverUrl(book) {
+  if (book.cover) {
+    if (book.cover.startsWith('http') || book.cover.startsWith('/storage/')) {
+      return assetUrl(book.cover)
+    }
+    return storageUrl(book.cover)
+  }
+
+  return fallbackCovers[Number(book.id || 0) % fallbackCovers.length]
+}
+
+async function fetchBooks() {
+  try {
+    const { data } = await api.get('/books', {
+      params: {
+        status: 'published',
+        per_page: 8,
+        sort_by: 'published_at',
+      },
+    })
+
+    books.value = (data.data || []).map((book) => ({
+      id: book.id,
+      image: bookCoverUrl(book),
+      category: book.category?.name || 'Buku',
+      title: book.title,
+      author: book.author?.name || '-',
+    }))
+  } catch {
+    books.value = []
+  } finally {
+    await nextTick()
+    AOS.refreshHard()
+  }
+}
+
+onMounted(async () => {
   AOS.init({
     duration: 850,
     easing: 'ease-out-cubic',
     once: true,
     offset: 90,
   })
+  await fetchBooks()
 })
 </script>

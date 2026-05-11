@@ -38,7 +38,7 @@
 
     <div class="pt-4 shrink-0">
       <button @click="handleLogout"
-              class="flex items-center justify-center gap-2 rounded-lg h-10 px-4 bg-accent text-btn-text font-bold transition-colors hover:bg-accent/90 w-full shadow-[0_0_15px_rgba(251,191,36,0.3)] cursor-pointer active:scale-95"
+              class="flex items-center justify-center gap-2 rounded-lg h-10 px-4 bg-accent text-btn-text font-bold transition-colors hover:bg-accent/90 w-full shadow-[0_0_15px_rgba(37, 99, 235,0.3)] cursor-pointer active:scale-95"
               :title="collapsed ? 'Logout' : ''">
         <span class="material-symbols-outlined text-[20px] shrink-0">logout</span>
         <span v-if="!collapsed">Logout</span>
@@ -72,6 +72,7 @@ const navSections = [
       { icon: 'assignment', label: 'My Submissions', route: '/author/submissions' },
       { icon: 'upload_file', label: 'Create Submission', route: '/author/submissions/create' },
       { icon: 'library_books', label: 'Published Books', route: '/author/books' },
+      { icon: 'payments', label: 'Royalti Saya', route: '/author/royalties' },
     ],
   },
   {
@@ -94,6 +95,7 @@ function isActiveRoute(itemRoute) {
   return route.path === itemRoute
     || (itemRoute === '/author/submissions' && route.path.startsWith('/author/submissions') && route.path !== '/author/submissions/create')
     || (itemRoute === '/author/books' && route.path.startsWith('/author/books'))
+    || (itemRoute === '/author/royalties' && route.path.startsWith('/author/royalties'))
 }
 
 function handleLogout() {

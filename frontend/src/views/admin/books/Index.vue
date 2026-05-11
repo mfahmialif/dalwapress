@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col gap-6">
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-      <router-link :to="{ name: 'AdminBookCreate' }" class="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-accent px-5 font-bold shadow-[0_0_15px_rgba(251,191,36,0.3)] transition hover:bg-accent/90" style="color: var(--text-btn)">
+      <router-link :to="{ name: 'AdminBookCreate' }" class="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-accent px-5 font-bold shadow-[0_0_15px_rgba(37, 99, 235,0.3)] transition hover:bg-accent/90" style="color: var(--text-btn)">
         <span class="material-symbols-outlined text-[20px]">add_circle</span>
         Tambah Buku
       </router-link>
@@ -173,7 +173,7 @@ function statusBadge(value) {
   if (value === 'published') return `${base} bg-green-500/10 text-green-400 border border-green-500/30`
   if (value === 'review') return `${base} bg-sky-500/10 text-sky-400 border border-sky-500/30`
   if (value === 'archived') return `${base} bg-slate-500/10 text-slate-400 border border-slate-500/30`
-  return `${base} bg-yellow-500/10 text-yellow-400 border border-yellow-500/30`
+  return `${base} bg-blue-500/10 text-blue-400 border border-blue-500/30`
 }
 
 onMounted(() => {

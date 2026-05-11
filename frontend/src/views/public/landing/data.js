@@ -13,45 +13,6 @@ export const stats = [
   { value: '35+', label: 'E-Book Terbit' },
 ]
 
-export const books = [
-  {
-    image: '/img/thumb1.jpg',
-    category: 'Buku Baru',
-    title: 'Metodologi Riset Pendidikan Islam Kontemporer',
-    author: 'Tim Akademik UII Dalwa',
-  },
-  {
-    image: '/img/thumb2.jpg',
-    category: 'Buku Ajar',
-    title: 'Literasi Pesantren dan Transformasi Digital',
-    author: 'Pusat Kajian Literasi',
-  },
-  {
-    image: '/img/hero-bg.jpg',
-    category: 'Monograf',
-    title: 'Manajemen Publikasi Ilmiah di Perguruan Tinggi',
-    author: 'Editor UII Dalwa Press',
-  },
-  {
-    image: '/img/galeri-bg.jpg',
-    category: 'E-Book',
-    title: 'Panduan Penulisan Karya Akademik Mahasiswa',
-    author: 'Divisi Editorial',
-  },
-  {
-    image: '/img/agenda-bg.jpg',
-    category: 'Referensi',
-    title: 'Tradisi Keilmuan Pesantren dan Perguruan Tinggi',
-    author: 'Lembaga Riset Kampus',
-  },
-  {
-    image: '/img/news/news1.jpg',
-    category: 'Kajian',
-    title: 'Etika Publikasi dan Integritas Akademik',
-    author: 'Komite Editorial Press',
-  },
-]
-
 export const services = [
   { icon: 'upload_file', title: 'Daftar Terbitkan Buku', body: 'Kirim naskah dan data penulis untuk proses awal penerbitan.', href: '#contact' },
   { icon: 'track_changes', title: 'Cek Progress Naskah', body: 'Pantau tahap review, editing, layout, dan produksi buku.', href: '#flow' },

@@ -20,6 +20,7 @@ const navItems = [
   { icon: 'assignment', label: 'Submissions', route: '/author/submissions' },
   { icon: 'upload_file', label: 'Create', route: '/author/submissions/create' },
   { icon: 'library_books', label: 'Books', route: '/author/books' },
+  { icon: 'payments', label: 'Royalti', route: '/author/royalties' },
   { icon: 'notifications', label: 'Notifications', route: '/author/notifications' },
   { icon: 'history', label: 'Activity', route: '/author/activity' },
   { icon: 'bookmark', label: 'Bookmarks', route: '/author/bookmarks' },
@@ -30,6 +31,7 @@ function isActiveRoute(r) {
   return route.path === r
     || (r === '/author/submissions' && route.path.startsWith('/author/submissions') && route.path !== '/author/submissions/create')
     || (r === '/author/books' && route.path.startsWith('/author/books'))
+    || (r === '/author/royalties' && route.path.startsWith('/author/royalties'))
 }
 </script>
 
@@ -44,6 +46,6 @@ function isActiveRoute(r) {
   color: var(--text-btn);
   background: var(--color-accent);
   font-weight: 700;
-  box-shadow: 0 0 12px rgba(251, 191, 36, 0.25);
+  box-shadow: 0 0 12px rgba(37, 99, 235, 0.25);
 }
 </style>

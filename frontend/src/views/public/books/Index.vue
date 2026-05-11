@@ -35,15 +35,18 @@
       <div v-else class="book-grid">
         <router-link v-for="book in books" :key="book.id" :to="`/books/${book.id}`" class="book-card" data-aos="fade-up">
           <div class="book-cover">
-            <img v-if="book.cover" :src="storageUrl(book.cover)" :alt="book.title" />
-            <div v-else class="book-cover-fallback"><span class="material-symbols-outlined text-[42px]">menu_book</span></div>
-          </div>
-          <div>
-            <p class="book-meta">{{ book.category?.name || 'Buku' }} · {{ book.year || '-' }}</p>
-            <h3>{{ book.title }}</h3>
-            <p class="book-meta mt-2">{{ book.author?.name || '-' }}</p>
-            <p class="book-description line-clamp-3">{{ book.description || 'Deskripsi buku belum tersedia.' }}</p>
-            <span class="book-action">Detail <span class="material-symbols-outlined text-[18px]">arrow_forward</span></span>
+            <img :src="bookCoverUrl(book)" :alt="book.title" />
+            <span class="book-category-tag">{{ bookCategory(book) }}</span>
+            <div class="book-cover-overlay">
+              <div>
+                <h3>{{ book.title }}</h3>
+                <p>{{ bookAuthor(book) }}</p>
+              </div>
+              <span class="book-detail-link">
+                <span>Detail</span>
+                <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+              </span>
+            </div>
           </div>
         </router-link>
       </div>
@@ -52,10 +55,11 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { nextTick, onMounted, ref } from 'vue'
 import AOS from 'aos'
+import 'aos/dist/aos.css'
 import api from '../../../axios'
-import { storageUrl } from '../../../utils/asset'
+import { assetUrl, storageUrl } from '../../../utils/asset'
 import './styles.css'
 
 const books = ref([])
@@ -66,6 +70,37 @@ const categoryId = ref('')
 const sortBy = ref('published_at')
 let timer = null
 
+const fallbackCovers = [
+  '/img/thumb1.jpg',
+  '/img/thumb2.jpg',
+  '/img/hero-bg.jpg',
+  '/img/galeri-bg.jpg',
+  '/img/agenda-bg.jpg',
+  '/img/news/news1.jpg',
+]
+
+function bookCoverUrl(book) {
+  if (book.image) return assetUrl(book.image)
+
+  if (book.cover) {
+    if (book.cover.startsWith('http') || book.cover.startsWith('/storage/')) {
+      return assetUrl(book.cover)
+    }
+    return storageUrl(book.cover)
+  }
+
+  const fallbackIndex = Number(book.id || 0) % fallbackCovers.length
+  return fallbackCovers[fallbackIndex]
+}
+
+function bookCategory(book) {
+  return book.category?.name || book.category || 'Buku'
+}
+
+function bookAuthor(book) {
+  return book.author?.name || book.author || '-'
+}
+
 function debouncedFetch() {
   clearTimeout(timer)
   timer = setTimeout(fetchBooks, 300)
@@ -73,12 +108,17 @@ function debouncedFetch() {
 
 async function fetchBooks() {
   loading.value = true
-  const params = { status: 'published', per_page: 30, sort_by: sortBy.value }
-  if (search.value) params.search = search.value
-  if (categoryId.value) params.category_id = categoryId.value
-  const { data } = await api.get('/books', { params })
-  books.value = data.data || []
-  loading.value = false
+  try {
+    const params = { status: 'published', per_page: 30, sort_by: sortBy.value }
+    if (search.value) params.search = search.value
+    if (categoryId.value) params.category_id = categoryId.value
+    const { data } = await api.get('/books', { params })
+    books.value = data.data || []
+  } finally {
+    loading.value = false
+    await nextTick()
+    AOS.refreshHard()
+  }
 }
 
 async function fetchCategories() {
@@ -87,8 +127,12 @@ async function fetchCategories() {
 }
 
 onMounted(async () => {
-  AOS.refresh()
-  await fetchCategories()
-  await fetchBooks()
+  AOS.init({
+    duration: 780,
+    easing: 'ease-out-cubic',
+    once: true,
+    offset: 80,
+  })
+  await Promise.all([fetchCategories(), fetchBooks()])
 })
 </script>

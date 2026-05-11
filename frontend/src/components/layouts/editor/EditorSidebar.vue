@@ -28,7 +28,7 @@
       </simplebar>
     </div>
     <div class="pt-4 shrink-0">
-      <button @click="authStore.logout()" class="flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-accent px-4 font-bold text-btn-text shadow-[0_0_15px_rgba(251,191,36,0.3)]">
+      <button @click="authStore.logout()" class="flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-accent px-4 font-bold text-btn-text shadow-[0_0_15px_rgba(37, 99, 235,0.3)]">
         <span class="material-symbols-outlined text-[20px]">logout</span><span v-if="!collapsed">Logout</span>
       </button>
     </div>

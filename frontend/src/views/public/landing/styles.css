@@ -110,8 +110,50 @@ html {
   transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
 .book-card {
+  height: 100%;
   overflow: hidden;
   border-radius: 1.4rem;
+}
+.books-header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.7rem;
+}
+.books-cta-primary,
+.books-cta-secondary {
+  display: inline-flex;
+  height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  border-radius: 999px;
+  padding: 0 1.05rem;
+  font-size: 0.88rem;
+  font-weight: 900;
+  transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.books-cta-primary {
+  background: #0b1020;
+  color: white;
+  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.16);
+}
+.books-cta-secondary {
+  border: 1px solid rgb(203 213 225);
+  background: white;
+  color: rgb(3 105 161);
+}
+.books-cta-primary:hover,
+.books-cta-secondary:hover {
+  transform: translateY(-2px);
+}
+.books-cta-primary:hover {
+  background: rgb(3 105 161);
+  box-shadow: 0 16px 32px rgba(3, 105, 161, 0.22);
+}
+.books-cta-secondary:hover {
+  border-color: rgba(3, 105, 161, 0.35);
+  color: #0b1020;
 }
 .book-swiper-wrap {
   position: relative;
@@ -120,18 +162,30 @@ html {
 .book-swiper {
   overflow: visible;
 }
+.book-swiper .swiper-slide {
+  height: auto;
+}
 .book-cover {
   position: relative;
+  aspect-ratio: 3 / 4;
+  height: 100%;
+  min-height: 25rem;
   overflow: hidden;
+  background: rgb(15 23 42);
+}
+.book-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 .book-cover img {
   transition: transform 0.55s ease, filter 0.55s ease;
 }
 .book-card:hover .book-cover img {
-  transform: scale(1.08);
+  transform: scale(1.03);
   filter: saturate(1.12) contrast(1.04);
 }
-.book-cover span {
+.book-category-tag {
   position: absolute;
   left: 1rem;
   top: 1rem;
@@ -144,6 +198,54 @@ html {
   letter-spacing: 0.12em;
   text-transform: uppercase;
   backdrop-filter: blur(14px);
+}
+.book-cover-overlay {
+  position: absolute;
+  inset: auto 0 0;
+  display: flex;
+  min-height: 45%;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding: 5rem 1.1rem 1.1rem;
+  background: linear-gradient(180deg, rgba(11, 16, 32, 0), rgba(11, 16, 32, 0.86) 62%, rgba(11, 16, 32, 0.96));
+}
+.book-cover-overlay h3 {
+  display: -webkit-box;
+  overflow: hidden;
+  color: white;
+  font-size: 1.08rem;
+  font-weight: 900;
+  line-height: 1.38;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+.book-cover-overlay p {
+  margin-top: 0.45rem;
+  color: rgb(203 213 225);
+  font-size: 0.92rem;
+  font-weight: 700;
+  line-height: 1.55;
+}
+.book-detail-link {
+  display: inline-flex;
+  width: fit-content;
+  height: 2.55rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  border-radius: 999px;
+  background: white;
+  padding: 0 1rem;
+  color: #0b1020;
+  font-size: 0.86rem;
+  font-weight: 900;
+  transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+.book-detail-link:hover {
+  transform: translateY(-2px);
+  background: rgb(125 211 252);
+  box-shadow: 0 14px 28px rgba(3, 105, 161, 0.2);
 }
 .book-nav {
   position: absolute;
@@ -167,6 +269,24 @@ html {
   transform: translateY(-3px);
   background: rgb(3 105 161);
   box-shadow: 0 14px 30px rgba(3, 105, 161, 0.24);
+}
+.books-empty {
+  margin-top: 2.5rem;
+  display: flex;
+  min-height: 12rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  border: 1px dashed rgb(203 213 225);
+  border-radius: 1.5rem;
+  background: rgb(248 250 252);
+  color: rgb(71 85 105);
+  font-weight: 900;
+}
+.books-empty .material-symbols-outlined {
+  color: rgb(3 105 161);
+  font-size: 2.5rem;
 }
 .book-swiper .swiper-pagination {
   bottom: -2.65rem;
@@ -347,6 +467,16 @@ html {
   .section-head {
     align-items: start;
     flex-direction: column;
+  }
+  .books-header-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  .book-card {
+    min-height: 0;
+  }
+  .book-cover {
+    min-height: 24rem;
   }
   .floating-card {
     left: 1rem;

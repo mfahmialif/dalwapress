@@ -33,12 +33,12 @@
 
       <router-link to="/author/notifications" class="notif-btn relative p-2 rounded-full transition-colors cursor-pointer">
         <span class="material-symbols-outlined">notifications</span>
-        <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-accent rounded-full shadow-[0_0_5px_rgba(251,191,36,0.8)]"></span>
+        <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-accent rounded-full shadow-[0_0_5px_rgba(37, 99, 235,0.8)]"></span>
       </router-link>
 
       <div class="relative" ref="profileDropdownRef">
         <div @click="profileOpen = !profileOpen"
-             class="avatar-ring w-9 h-9 sm:w-10 sm:h-10 rounded-full border-2 border-accent overflow-hidden shrink-0 cursor-pointer hover:opacity-80 transition-opacity shadow-[0_0_10px_rgba(251,191,36,0.3)] flex items-center justify-center">
+             class="avatar-ring w-9 h-9 sm:w-10 sm:h-10 rounded-full border-2 border-accent overflow-hidden shrink-0 cursor-pointer hover:opacity-80 transition-opacity shadow-[0_0_10px_rgba(37, 99, 235,0.3)] flex items-center justify-center">
           <span class="material-symbols-outlined text-accent text-xl sm:text-2xl">person</span>
         </div>
 
@@ -103,7 +103,7 @@ onBeforeUnmount(() => document.removeEventListener('click', handleClickOutside))
 .top-header { background: var(--bg-header); backdrop-filter: blur(12px); }
 .top-header.horiz-mode { background: var(--bg-card); border-bottom: 1px solid var(--border); }
 .quick-create { background: var(--color-accent); color: var(--text-btn); }
-.quick-create:hover { box-shadow: 0 0 20px rgba(251, 191, 36, 0.25); }
+.quick-create:hover { box-shadow: 0 0 20px rgba(37, 99, 235, 0.25); }
 .avatar-ring { background: var(--bg-input); }
 .text-heading { color: var(--text-heading); }
 .text-muted { color: var(--text-muted); }
@@ -113,7 +113,7 @@ onBeforeUnmount(() => document.removeEventListener('click', handleClickOutside))
 .theme-toggle:hover {
   background: var(--color-accent);
   color: var(--text-btn);
-  box-shadow: 0 0 20px rgba(251, 191, 36, 0.4);
+  box-shadow: 0 0 20px rgba(37, 99, 235, 0.4);
   transform: rotate(15deg) scale(1.1);
 }
 .theme-toggle:active { transform: rotate(0deg) scale(0.95); }

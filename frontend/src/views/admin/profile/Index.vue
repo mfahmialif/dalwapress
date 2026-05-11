@@ -7,7 +7,7 @@
       <div class="relative z-10 flex flex-col sm:flex-row items-center sm:items-start gap-6">
         <!-- Avatar -->
         <div class="relative">
-          <div class="w-28 h-28 rounded-full border-4 border-accent flex items-center justify-center shadow-[0_0_25px_rgba(251,191,36,0.3)]" style="background: var(--bg-input)">
+          <div class="w-28 h-28 rounded-full border-4 border-accent flex items-center justify-center shadow-[0_0_25px_rgba(37, 99, 235,0.3)]" style="background: var(--bg-input)">
             <span class="material-symbols-outlined text-accent text-6xl">person</span>
           </div>
           <button class="absolute bottom-0 right-0 w-9 h-9 rounded-full bg-accent flex items-center justify-center shadow-lg cursor-pointer hover:scale-110 transition-transform" style="color: var(--text-btn)">
@@ -152,10 +152,10 @@ const activityLog = [
 .btn-edit {
   background: var(--color-accent);
   color: var(--text-btn);
-  box-shadow: 0 0 15px rgba(251, 191, 36, 0.2);
+  box-shadow: 0 0 15px rgba(37, 99, 235, 0.2);
 }
 .btn-edit:hover {
-  box-shadow: 0 0 25px rgba(251, 191, 36, 0.4);
+  box-shadow: 0 0 25px rgba(37, 99, 235, 0.4);
   transform: translateY(-1px);
 }
 

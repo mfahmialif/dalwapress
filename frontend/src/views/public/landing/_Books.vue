@@ -2,16 +2,22 @@
   <section id="books" class="bg-white py-20">
     <div class="mx-auto max-w-7xl px-5 lg:px-8">
       <SectionHeader kicker="Buku Terbaru" title="Katalog karya akademik pilihan.">
-        <a href="#contact" class="text-sm font-black text-sky-700 hover:text-[#0b1020]">Ajukan naskah</a>
+        <div class="books-header-actions">
+          <RouterLink :to="{ name: 'Books' }" class="books-cta-primary">
+            <span>Lihat semua buku</span>
+            <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+          </RouterLink>
+          <a href="#contact" class="books-cta-secondary">Ajukan naskah</a>
+        </div>
       </SectionHeader>
 
-      <div class="book-swiper-wrap mt-10" data-aos="fade-up" data-aos-delay="120">
+      <div v-if="books.length" class="book-swiper-wrap mt-10" data-aos="fade-up" data-aos-delay="120">
         <Swiper
           :modules="swiperModules"
           :slides-per-view="1.08"
           :space-between="18"
-          :loop="true"
-          :autoplay="{ delay: 2600, disableOnInteraction: false, pauseOnMouseEnter: true }"
+          :loop="books.length > 4"
+          :autoplay="books.length > 1 ? { delay: 2600, disableOnInteraction: false, pauseOnMouseEnter: true } : false"
           :pagination="{ clickable: true }"
           :navigation="{ nextEl: '.book-next', prevEl: '.book-prev' }"
           :breakpoints="bookBreakpoints"
@@ -20,12 +26,18 @@
           <SwiperSlide v-for="book in books" :key="book.title">
             <article class="book-card">
               <div class="book-cover">
-                <img :src="book.image" :alt="book.title" class="h-60 w-full object-cover" />
-                <span>{{ book.category }}</span>
-              </div>
-              <div class="p-5">
-                <h3 class="text-lg font-black leading-snug text-[#101418]">{{ book.title }}</h3>
-                <p class="mt-3 text-sm leading-6 text-slate-600">{{ book.author }}</p>
+                <img :src="book.image" :alt="book.title" />
+                <span class="book-category-tag">{{ book.category }}</span>
+                <div class="book-cover-overlay">
+                  <div>
+                    <h3>{{ book.title }}</h3>
+                    <p>{{ book.author }}</p>
+                  </div>
+                  <RouterLink :to="bookDetailTarget(book)" class="book-detail-link">
+                    <span>Detail</span>
+                    <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                  </RouterLink>
+                </div>
               </div>
             </article>
           </SwiperSlide>
@@ -38,6 +50,11 @@
             <span class="material-symbols-outlined">arrow_forward</span>
           </button>
         </div>
+      </div>
+
+      <div v-else class="books-empty" data-aos="fade-up" data-aos-delay="120">
+        <span class="material-symbols-outlined">auto_stories</span>
+        <p>Belum ada buku published.</p>
       </div>
     </div>
   </section>
@@ -60,5 +77,11 @@ const bookBreakpoints = {
   640: { slidesPerView: 2.05 },
   1024: { slidesPerView: 3.1 },
   1280: { slidesPerView: 4 },
+}
+
+function bookDetailTarget(book) {
+  if (book.href) return book.href
+  if (book.id) return { name: 'BookDetail', params: { id: book.id } }
+  return { name: 'Books' }
 }
 </script>

@@ -152,6 +152,24 @@ const routes = [
         meta: { title: `${appName} - Detail Submission`, pageTitle: 'Detail Submission', requiresAuth: true }
       },
       {
+        path: 'royalties',
+        name: 'AdminRoyalties',
+        component: () => import('../views/admin/royalties/Index.vue'),
+        meta: { title: `${appName} - Royalti`, pageTitle: 'Royalti Author', requiresAuth: true }
+      },
+      {
+        path: 'royalties/create',
+        name: 'AdminRoyaltyCreate',
+        component: () => import('../views/admin/royalties/Form.vue'),
+        meta: { title: `${appName} - Tambah Royalti`, pageTitle: 'Tambah Royalti', requiresAuth: true }
+      },
+      {
+        path: 'royalties/:id/edit',
+        name: 'AdminRoyaltyEdit',
+        component: () => import('../views/admin/royalties/Form.vue'),
+        meta: { title: `${appName} - Edit Royalti`, pageTitle: 'Edit Royalti', requiresAuth: true }
+      },
+      {
         path: 'info-terkini',
         redirect: '/administrator/news'
       },
@@ -237,6 +255,12 @@ const routes = [
         name: 'AuthorBooks',
         component: () => import('../views/author/books/Index.vue'),
         meta: { title: `${appName} - My Published Books`, pageTitle: 'My Published Books', requiresAuth: true, roles: ['Author'] }
+      },
+      {
+        path: 'royalties',
+        name: 'AuthorRoyalties',
+        component: () => import('../views/author/royalties/Index.vue'),
+        meta: { title: `${appName} - Royalti Saya`, pageTitle: 'Royalti Saya', requiresAuth: true, roles: ['Author'] }
       },
       {
         path: 'profile',

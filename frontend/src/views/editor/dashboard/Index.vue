@@ -51,7 +51,7 @@ function statusBadge(value) {
   const base = 'inline-flex rounded-full px-3 py-1 text-xs font-black'
   if (value === 'accepted' || value === 'published') return `${base} bg-green-500/10 text-green-400 border border-green-500/30`
   if (value === 'rejected') return `${base} bg-red-500/10 text-red-400 border border-red-500/30`
-  if (value === 'revision') return `${base} bg-yellow-500/10 text-yellow-400 border border-yellow-500/30`
+  if (value === 'revision') return `${base} bg-blue-500/10 text-blue-400 border border-blue-500/30`
   return `${base} bg-sky-500/10 text-sky-400 border border-sky-500/30`
 }
 onMounted(async () => { data.value = (await api.get('/editor/dashboard')).data })

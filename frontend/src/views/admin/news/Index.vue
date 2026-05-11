@@ -3,7 +3,7 @@
 
     <!-- ═══ ACTION BAR ═══ -->
     <div class="flex items-center justify-between">
-      <router-link :to="{ name: 'AdminNewsCreate' }" class="flex items-center gap-2 rounded-lg h-10 px-5 bg-accent text-btn-text font-bold transition-colors hover:bg-accent/90 shadow-[0_0_15px_rgba(251,191,36,0.3)] shrink-0 cursor-pointer active:scale-95" style="color: var(--text-btn)">
+      <router-link :to="{ name: 'AdminNewsCreate' }" class="flex items-center gap-2 rounded-lg h-10 px-5 bg-accent text-btn-text font-bold transition-colors hover:bg-accent/90 shadow-[0_0_15px_rgba(37, 99, 235,0.3)] shrink-0 cursor-pointer active:scale-95" style="color: var(--text-btn)">
         <span class="material-symbols-outlined text-[20px]">add_circle</span>
         <span>Tambah News</span>
       </router-link>
@@ -153,7 +153,7 @@ const statsCards = ref([
   { label: 'Total News', value: 0, icon: 'article', iconBg: 'bg-accent/10', iconColor: 'text-accent' },
   { label: 'Kategori', value: 0, icon: 'category', iconBg: 'bg-blue-500/10', iconColor: 'text-blue-400' },
   { label: 'Published', value: 0, icon: 'task_alt', iconBg: 'bg-green-500/10', iconColor: 'text-green-400' },
-  { label: 'Draft', value: 0, icon: 'draft', iconBg: 'bg-yellow-500/10', iconColor: 'text-yellow-400' },
+  { label: 'Draft', value: 0, icon: 'draft', iconBg: 'bg-blue-500/10', iconColor: 'text-blue-400' },
 ])
 
 // ── Delete ──
@@ -262,7 +262,7 @@ function categoryBadge(c) {
 function statusBadge(s) {
   const b = 'inline-flex items-center justify-center px-3 py-1 rounded-full text-xs font-bold'
   if (s === 'Published') return `${b} text-green-400 border border-green-500/30 bg-green-900/20 shadow-[0_0_10px_rgba(74,222,128,0.3)]`
-  return `${b} text-yellow-400 border border-yellow-500/30 bg-yellow-900/20 shadow-[0_0_10px_rgba(250,204,21,0.2)]`
+  return `${b} text-blue-400 border border-blue-500/30 bg-blue-900/20 shadow-[0_0_10px_rgba(37,99,235,0.2)]`
 }
 
 onMounted(async () => { await fetchCategories(); fetchData(); fetchStats() })
@@ -271,15 +271,15 @@ onMounted(async () => { await fetchCategories(); fetchData(); fetchStats() })
 <style scoped>
 .filter-input { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-heading); transition: box-shadow 0.3s ease; }
 .filter-input::placeholder { color: var(--text-muted); }
-.filter-input:hover { box-shadow: 0 0 15px rgba(251, 191, 36, 0.15); }
-.filter-input:focus { border-color: var(--color-accent); box-shadow: 0 0 12px rgba(251, 191, 36, 0.3); }
+.filter-input:hover { box-shadow: 0 0 15px rgba(37, 99, 235, 0.15); }
+.filter-input:focus { border-color: var(--color-accent); box-shadow: 0 0 12px rgba(37, 99, 235, 0.3); }
 .action-btn { color: var(--text-muted); }
 .action-btn:hover { color: var(--color-accent); background: var(--bg-input); }
 .action-btn-delete:hover { color: #f87171; background: var(--bg-input); }
 .pagination-bar { border-top: 1px solid var(--border); background: var(--bg-card); }
 .page-btn { color: var(--text-muted); border: 1px solid transparent; transition: all 0.2s ease; }
 .page-btn:hover { background: var(--bg-input); color: var(--text-heading); }
-.page-btn-active { background: var(--color-accent); color: var(--text-btn); box-shadow: 0 0 10px rgba(251, 191, 36, 0.4); }
+.page-btn-active { background: var(--color-accent); color: var(--text-btn); box-shadow: 0 0 10px rgba(37, 99, 235, 0.4); }
 
 .modal-enter-active { animation: modalIn 0.3s ease-out; }
 .modal-leave-active { animation: modalOut 0.2s ease-in; }

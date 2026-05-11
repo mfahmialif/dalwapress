@@ -21,6 +21,7 @@ const navItems = [
   { icon: 'category', label: 'Kategori', route: '/administrator/book-categories' },
   { icon: 'edit_square', label: 'Authors', route: '/administrator/authors' },
   { icon: 'assignment', label: 'Submissions', route: '/administrator/submissions' },
+  { icon: 'payments', label: 'Royalti', route: '/administrator/royalties' },
   { icon: 'newspaper', label: 'News', route: '/administrator/news' },
   { icon: 'group', label: 'User', route: '/administrator/manajemen-user' },
   { icon: 'admin_panel_settings', label: 'Role', route: '/administrator/manajemen-role' },
@@ -33,6 +34,7 @@ function isActiveRoute(r) {
     || (r === '/administrator/news' && route.path.startsWith('/administrator/news'))
     || (r === '/administrator/books' && route.path.startsWith('/administrator/books'))
     || (r === '/administrator/submissions' && route.path.startsWith('/administrator/submissions'))
+    || (r === '/administrator/royalties' && route.path.startsWith('/administrator/royalties'))
 }
 </script>
 
@@ -47,6 +49,6 @@ function isActiveRoute(r) {
   color: var(--text-btn);
   background: var(--color-accent);
   font-weight: 700;
-  box-shadow: 0 0 12px rgba(251, 191, 36, 0.25);
+  box-shadow: 0 0 12px rgba(37, 99, 235, 0.25);
 }
 </style>
