@@ -1,0 +1,19 @@
+{
+  "status": "commited",
+  "type": "frontend",
+  "scope": "codebase",
+  "localEndpoint": "http://localhost:5173",
+  "loginUser": "admin",
+  "loginPassword": "password",
+  "executionArgs": {
+    "projectName": "frontend",
+    "projectPath": "c:\\laragon\\www\\dalwapress\\frontend",
+    "testIds": [],
+    "additionalInstruction": "Use the generated PRD to execute testing. Backend is running on port 8000 and frontend is running on 5173.",
+    "serverMode": "development",
+    "envs": {
+      "API_KEY": "sk-user-yYFvOg_s0RoioBiIL38BqlWDCdNIPXefLqjKmIWmYBao1_DvX99OtC33jfsGQNV5y_lhmYT7-ZbjmNX1aUfJgmJ08DrXLTrG03qSTZEnHfkVf9kiNuGCuyYDhUfWgYB42T8"
+    }
+  },
+  "serverPort": 50789
+}

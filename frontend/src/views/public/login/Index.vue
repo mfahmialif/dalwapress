@@ -1,5 +1,14 @@
 <template>
-  <main class="min-h-screen bg-[#0b1020] text-white">
+  <main class="login-page min-h-screen" :data-theme="resolvedTheme">
+    <button
+      class="login-theme-toggle"
+      type="button"
+      :title="resolvedTheme === 'dark' ? 'Aktifkan light mode' : 'Aktifkan dark mode'"
+      @click="toggleTheme"
+    >
+      <span class="material-symbols-outlined text-[20px]">{{ resolvedTheme === 'dark' ? 'light_mode' : 'dark_mode' }}</span>
+    </button>
+
     <div class="grid min-h-screen lg:grid-cols-[1.08fr_0.92fr]">
       <section class="relative hidden overflow-hidden lg:block">
         <img src="/img/hero-bg.jpg" alt="UII Dalwa Press" class="absolute inset-0 h-full w-full object-cover" />
@@ -133,12 +142,15 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../../../stores/auth'
+import { usePublicTheme } from '../usePublicTheme'
+import '../../../components/layouts/public/styles.css'
 
 const router = useRouter()
 const authStore = useAuthStore()
+const { resolvedTheme, initTheme, toggleTheme } = usePublicTheme()
 
 const username = ref('')
 const password = ref('')
@@ -183,9 +195,64 @@ async function handleLogin() {
     isLoading.value = false
   }
 }
+
+onMounted(() => {
+  initTheme()
+})
 </script>
 
 <style scoped>
+.login-page {
+  background: var(--public-bg);
+  color: var(--public-heading);
+}
+.login-page[data-theme='dark'] {
+  background: #0b1020;
+  color: white;
+}
+.login-theme-toggle {
+  position: fixed;
+  right: 1rem;
+  top: 1rem;
+  z-index: 30;
+  display: inline-flex;
+  width: 2.6rem;
+  height: 2.6rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 1px solid var(--public-border);
+  background: var(--public-surface);
+  color: var(--public-heading);
+  box-shadow: var(--public-shadow);
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+.login-theme-toggle:hover {
+  transform: translateY(-2px);
+  background: var(--public-surface-soft);
+}
+.login-page[data-theme='light'] :deep(.bg-\[\#0b1020\]) {
+  background: var(--public-surface-solid);
+}
+.login-page[data-theme='light'] :deep(.bg-white\/\[0\.06\]) {
+  background: var(--public-surface);
+}
+.login-page[data-theme='light'] :deep(.border-white\/10) {
+  border-color: var(--public-border);
+}
+.login-page[data-theme='light'] :deep(.text-white) {
+  color: var(--public-heading);
+}
+.login-page[data-theme='light'] :deep(.text-slate-400),
+.login-page[data-theme='light'] :deep(.text-slate-500) {
+  color: var(--public-muted);
+}
+.login-page[data-theme='light'] :deep(.text-slate-200) {
+  color: var(--public-body);
+}
+.login-page[data-theme='light'] :deep(.shadow-black\/30) {
+  --tw-shadow-color: rgba(15, 23, 42, 0.12);
+}
 .field-shell {
   position: relative;
   display: flex;
@@ -202,11 +269,11 @@ async function handleLogin() {
   height: 3.5rem;
   width: 100%;
   border-radius: 0.75rem;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--login-input-border, rgba(255, 255, 255, 0.12));
+  background: var(--login-input-bg, rgba(255, 255, 255, 0.06));
   padding-left: 3rem;
   padding-right: 1rem;
-  color: white;
+  color: var(--login-input-text, white);
   outline: none;
   transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
@@ -217,6 +284,11 @@ async function handleLogin() {
   border-color: rgb(125 211 252);
   background: rgba(255, 255, 255, 0.08);
   box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.16);
+}
+.login-page[data-theme='light'] {
+  --login-input-border: var(--public-border);
+  --login-input-bg: var(--public-surface-soft);
+  --login-input-text: var(--public-heading);
 }
 .fade-enter-active,
 .fade-leave-active {

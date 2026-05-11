@@ -1,0 +1,2370 @@
+[
+  {
+    "id": "TC001",
+    "title": "Admin logs in and reaches the dashboard",
+    "description": "This verifies an admin can sign in successfully and land on the protected dashboard with the expected admin navigation available.",
+    "category": "Admin Authentication",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the username or email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the admin dashboard is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the protected admin navigation is visible"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC002",
+    "title": "Admin login opens the protected dashboard",
+    "description": "This verifies an admin can log in and reach the protected dashboard with the admin layout visible.",
+    "category": "Admin Authentication and Protected Navigation",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the username field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the admin dashboard is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the protected admin navigation is visible"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC003",
+    "title": "Access the admin dashboard after login",
+    "description": "An admin can log in and reach the protected dashboard with the expected admin navigation available.",
+    "category": "Submission Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the admin dashboard is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the protected admin navigation is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC004",
+    "title": "Admin dashboard loads essential overview content",
+    "description": "This verifies the dashboard loads successfully after login and shows the main operational overview content.",
+    "category": "Admin Authentication and Protected Navigation",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the username field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the dashboard overview content is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify key admin status information is visible"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC005",
+    "title": "Logged-in admin sees the dashboard layout",
+    "description": "This verifies the dashboard loads as the admin entry point and presents the main dashboard content and navigation structure.",
+    "category": "Admin Dashboard",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the username or email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the dashboard navigation link"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the admin dashboard content is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the main admin navigation is visible"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC006",
+    "title": "Create a published book with all attachments",
+    "description": "This verifies an admin can create a published book with cover, preview, full PDF, and gallery images and then find it in the list.",
+    "category": "Book Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the username field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open the book creation page"
+      },
+      {
+        "type": "action",
+        "description": "Select a category"
+      },
+      {
+        "type": "action",
+        "description": "Select an author"
+      },
+      {
+        "type": "action",
+        "description": "Fill in a unique published book title and metadata"
+      },
+      {
+        "type": "action",
+        "description": "Set the book status to published"
+      },
+      {
+        "type": "action",
+        "description": "Upload a valid cover image"
+      },
+      {
+        "type": "action",
+        "description": "Upload a valid preview PDF"
+      },
+      {
+        "type": "action",
+        "description": "Upload a valid full PDF"
+      },
+      {
+        "type": "action",
+        "description": "Upload valid gallery images"
+      },
+      {
+        "type": "action",
+        "description": "Submit the book form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the published book appears in the book list"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the book is shown with published status"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC007",
+    "title": "Prevent deleting the currently logged-in admin",
+    "description": "An admin cannot delete their own account and sees a blocked deletion message.",
+    "category": "User Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation link to manage users"
+      },
+      {
+        "type": "action",
+        "description": "Select the currently logged-in admin account"
+      },
+      {
+        "type": "action",
+        "description": "Delete the selected user"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the deletion is blocked"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a validation message is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC008",
+    "title": "Create a draft book and see it in the list",
+    "description": "This verifies an admin can create a draft book with required metadata and then find it in the book list.",
+    "category": "Book Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the username field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open the book creation page"
+      },
+      {
+        "type": "action",
+        "description": "Select a category"
+      },
+      {
+        "type": "action",
+        "description": "Select an author"
+      },
+      {
+        "type": "action",
+        "description": "Fill in a unique book title"
+      },
+      {
+        "type": "action",
+        "description": "Set the book status to draft"
+      },
+      {
+        "type": "action",
+        "description": "Submit the book form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the new book appears in the book list"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the saved book is marked as draft"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC009",
+    "title": "Update submission metadata and accept it",
+    "description": "An admin can edit a submission's metadata, change its status to accepted, and save the updated data.",
+    "category": "Submission Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation link to manage submissions"
+      },
+      {
+        "type": "action",
+        "description": "Open a submission from the list"
+      },
+      {
+        "type": "action",
+        "description": "Update the submission metadata"
+      },
+      {
+        "type": "action",
+        "description": "Change the submission status to accepted"
+      },
+      {
+        "type": "action",
+        "description": "Save the submission changes"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the updated submission data is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the submission status is accepted"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC010",
+    "title": "Create and publish a news item",
+    "description": "This verifies an admin can create a news item with content, media, and published status and see it in the news list.",
+    "category": "News Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the username field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open news management"
+      },
+      {
+        "type": "action",
+        "description": "Create a news item with a unique title and body"
+      },
+      {
+        "type": "action",
+        "description": "Select a news category"
+      },
+      {
+        "type": "action",
+        "description": "Upload valid media for the news item"
+      },
+      {
+        "type": "action",
+        "description": "Set the news status to published"
+      },
+      {
+        "type": "action",
+        "description": "Save the news item"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the published news item appears in the news list"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the news item is shown with published status"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC011",
+    "title": "Create a royalty entry for a published book",
+    "description": "This verifies a finance admin can create a royalty record for a published book and see the calculated amounts in the saved record.",
+    "category": "Royalty Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the username field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open royalty management"
+      },
+      {
+        "type": "action",
+        "description": "Create a royalty record for a published book"
+      },
+      {
+        "type": "action",
+        "description": "Enter the royalty period and sales fields"
+      },
+      {
+        "type": "action",
+        "description": "Set the royalty status"
+      },
+      {
+        "type": "action",
+        "description": "Save the royalty record"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the royalty record is displayed with calculated amounts"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the saved status is shown"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC012",
+    "title": "Create a draft royalty for a published book",
+    "description": "An admin can create a royalty for a published book and see the calculated amounts saved as a draft.",
+    "category": "Royalty Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation link to create royalties"
+      },
+      {
+        "type": "action",
+        "description": "Select a published book"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the royalty period month"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the royalty period year"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the sold quantity"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the sale price per unit"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the royalty per unit"
+      },
+      {
+        "type": "action",
+        "description": "Set the royalty status to draft"
+      },
+      {
+        "type": "action",
+        "description": "Submit the royalty form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the new royalty is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the calculated royalty amounts are displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC013",
+    "title": "Admin creates a draft news item",
+    "description": "This verifies an admin can create a news item with required content and save it as a draft that appears in the news list.",
+    "category": "News Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the username or email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the news create navigation link"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the news title field with Draft news item"
+      },
+      {
+        "type": "action",
+        "description": "Select a news category"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the body content field with Draft body content for the news item"
+      },
+      {
+        "type": "action",
+        "description": "Select draft status"
+      },
+      {
+        "type": "action",
+        "description": "Submit the news form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a success confirmation is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the new news item appears in the news list"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC014",
+    "title": "Create a new role",
+    "description": "This verifies that an admin can create a unique role and find it in the role list afterward.",
+    "category": "Role Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to the role management page"
+      },
+      {
+        "type": "action",
+        "description": "Create a new role with a unique name and description"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the new role appears in the role list"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC015",
+    "title": "Update submission metadata and assign reviewers",
+    "description": "This verifies a submission can be updated, assigned to primary and co-editors, and saved with the new review status.",
+    "category": "Submission Review",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the username field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open the submissions page"
+      },
+      {
+        "type": "action",
+        "description": "Open a submission from the results"
+      },
+      {
+        "type": "action",
+        "description": "Update the submission metadata"
+      },
+      {
+        "type": "action",
+        "description": "Assign a primary editor"
+      },
+      {
+        "type": "action",
+        "description": "Assign one or more co-editors"
+      },
+      {
+        "type": "action",
+        "description": "Save the submission changes"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the updated assignment and metadata are shown"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the submission status reflects the saved changes"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC016",
+    "title": "Admin publishes a news item with media",
+    "description": "This verifies an admin can create a published news item with valid image and video uploads and see it listed successfully.",
+    "category": "News Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the username or email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the news create navigation link"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the news title field with Published news item"
+      },
+      {
+        "type": "action",
+        "description": "Select a news category"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the body content field with Published body content for the news item"
+      },
+      {
+        "type": "action",
+        "description": "Upload a valid image"
+      },
+      {
+        "type": "action",
+        "description": "Upload a valid video"
+      },
+      {
+        "type": "action",
+        "description": "Select published status"
+      },
+      {
+        "type": "action",
+        "description": "Submit the news form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a success confirmation is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the published news item appears in the news list"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC017",
+    "title": "Book list supports searching and filtering",
+    "description": "This verifies an admin can search and filter the book list to narrow results to relevant books.",
+    "category": "Book Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the username field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open the books management page"
+      },
+      {
+        "type": "action",
+        "description": "Search for a book using title, ISBN, description, or author"
+      },
+      {
+        "type": "action",
+        "description": "Apply filters for category, author, status, or featured status"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the book list updates to match the applied search and filters"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify only relevant book results are displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC018",
+    "title": "Create and manage a user account",
+    "description": "An admin can create a user with a role and active status, then find and update that user in the user list.",
+    "category": "User Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation link to manage users"
+      },
+      {
+        "type": "action",
+        "description": "Create a new user with a unique username and email"
+      },
+      {
+        "type": "action",
+        "description": "Select a role"
+      },
+      {
+        "type": "action",
+        "description": "Set the user status to active"
+      },
+      {
+        "type": "action",
+        "description": "Save the user"
+      },
+      {
+        "type": "action",
+        "description": "Search for the new user"
+      },
+      {
+        "type": "action",
+        "description": "Update the user details or role"
+      },
+      {
+        "type": "action",
+        "description": "Update the user password"
+      },
+      {
+        "type": "action",
+        "description": "Save the user changes"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the user is displayed in the list"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the updated user data is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC019",
+    "title": "Admin sees validation when signing in with incorrect credentials",
+    "description": "This verifies the login form rejects invalid credentials and shows a visible authentication error instead of entering the dashboard.",
+    "category": "Admin Authentication",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the username or email field with invalid-user@example.com"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with invalid-password"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a login error message is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the admin dashboard is not displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC020",
+    "title": "Search and filter submissions",
+    "description": "An admin can search and filter submissions and see the list update to matching results.",
+    "category": "Submission Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation link to manage submissions"
+      },
+      {
+        "type": "action",
+        "description": "Search for a submission by title or author details"
+      },
+      {
+        "type": "action",
+        "description": "Filter submissions by category or status"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify matching submissions are displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the submission list reflects the applied filters"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC021",
+    "title": "Edit and delete an existing book",
+    "description": "This verifies an admin can update book details and then delete the book from the book list.",
+    "category": "Book Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the username field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open the books management page"
+      },
+      {
+        "type": "action",
+        "description": "Open an existing book for editing"
+      },
+      {
+        "type": "action",
+        "description": "Change the book title or metadata"
+      },
+      {
+        "type": "action",
+        "description": "Save the book changes"
+      },
+      {
+        "type": "action",
+        "description": "Delete the same book from the book list"
+      },
+      {
+        "type": "action",
+        "description": "Confirm the deletion"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the updated book details are shown before deletion"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the book no longer appears in the list"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC022",
+    "title": "Search submissions and open a submission for review",
+    "description": "This verifies a reviewer can search submissions and open a submission detail page for review.",
+    "category": "Submission Review",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the username field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open the submissions page"
+      },
+      {
+        "type": "action",
+        "description": "Search for a submission"
+      },
+      {
+        "type": "action",
+        "description": "Open a submission from the results"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the submission detail view is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the submission metadata is visible"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC023",
+    "title": "Open a submission and inspect its details",
+    "description": "An admin can open a submission from the list and view its detail information, reviews, assignments, and related files.",
+    "category": "Submission Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation link to manage submissions"
+      },
+      {
+        "type": "action",
+        "description": "Open a submission from the list"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the submission detail view is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify reviews, editor assignments, and related files are displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC024",
+    "title": "Manage users and roles from the admin area",
+    "description": "This verifies an admin can open user and role management and complete a create or edit workflow in each area.",
+    "category": "User and Role Administration",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the username field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open user management"
+      },
+      {
+        "type": "action",
+        "description": "Create or edit a user account"
+      },
+      {
+        "type": "action",
+        "description": "Save the user changes"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open role management"
+      },
+      {
+        "type": "action",
+        "description": "Create or edit a role"
+      },
+      {
+        "type": "action",
+        "description": "Save the role changes"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the user management changes are reflected"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the role management changes are reflected"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC025",
+    "title": "Edit or delete an existing news item",
+    "description": "This verifies an admin can update an existing news item and then delete it from the news list.",
+    "category": "News Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the username field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open news management"
+      },
+      {
+        "type": "action",
+        "description": "Open an existing news item for editing"
+      },
+      {
+        "type": "action",
+        "description": "Change the news title or body"
+      },
+      {
+        "type": "action",
+        "description": "Save the news changes"
+      },
+      {
+        "type": "action",
+        "description": "Delete the same news item from the news list"
+      },
+      {
+        "type": "action",
+        "description": "Confirm the deletion"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the updated news item is shown before deletion"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the news item no longer appears in the list"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC026",
+    "title": "View royalty summary and filter royalties",
+    "description": "An admin can search and filter royalties and see the list and summary update to matching records.",
+    "category": "Royalty Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation link to manage royalties"
+      },
+      {
+        "type": "action",
+        "description": "Search royalties by title, ISBN, or author"
+      },
+      {
+        "type": "action",
+        "description": "Filter royalties by book, author, status, month, or year"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify matching royalties are displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the royalty summary reflects the filtered results"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC027",
+    "title": "Admin reviews the news list with search and filters",
+    "description": "This verifies an admin can open the news list, search for content, apply filters, and see the results update on the page.",
+    "category": "News Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the username or email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the news management navigation link"
+      },
+      {
+        "type": "action",
+        "description": "Scroll through the news list"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the search field with a news keyword"
+      },
+      {
+        "type": "action",
+        "description": "Select a news category filter"
+      },
+      {
+        "type": "action",
+        "description": "Select a news status filter"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the news results list is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the list updates to reflect the applied filters"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC028",
+    "title": "Book creation requires category, author, and title",
+    "description": "This verifies book creation blocks submission when required fields are missing and shows validation feedback.",
+    "category": "Book Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the username field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open the book creation page"
+      },
+      {
+        "type": "action",
+        "description": "Submit the book form without selecting a category, author, or title"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify validation errors are displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the book is not created"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC029",
+    "title": "Assign editors to a submission",
+    "description": "An admin can assign a primary editor and co-editors with a note and see the submission move to under review.",
+    "category": "Submission Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation link to manage submissions"
+      },
+      {
+        "type": "action",
+        "description": "Open a submitted submission from the list"
+      },
+      {
+        "type": "action",
+        "description": "Choose a primary editor"
+      },
+      {
+        "type": "action",
+        "description": "Choose one or more co-editors"
+      },
+      {
+        "type": "action",
+        "description": "Add an assignment note"
+      },
+      {
+        "type": "action",
+        "description": "Save the editor assignment"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the assignment is saved"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the submission status changes to under review"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC030",
+    "title": "Edit an existing role",
+    "description": "This verifies that an admin can update a role's description or status and see the changes reflected in the list.",
+    "category": "Role Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to the role management page"
+      },
+      {
+        "type": "action",
+        "description": "Open an existing role for editing"
+      },
+      {
+        "type": "action",
+        "description": "Update the role description or status"
+      },
+      {
+        "type": "action",
+        "description": "Save the role changes"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the updated role information is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC031",
+    "title": "Admin updates an existing news item",
+    "description": "This verifies an admin can open an existing news item, change its details, and save the updated information back to the list.",
+    "category": "News Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the username or email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the news management navigation link"
+      },
+      {
+        "type": "action",
+        "description": "Open an existing news item for editing"
+      },
+      {
+        "type": "action",
+        "description": "Change the news title"
+      },
+      {
+        "type": "action",
+        "description": "Change the news body content"
+      },
+      {
+        "type": "action",
+        "description": "Change the news status"
+      },
+      {
+        "type": "action",
+        "description": "Save the news changes"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a success confirmation is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the updated news data appears in the news list"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC032",
+    "title": "Add a manual review to a submission",
+    "description": "This verifies a reviewer can add a manual review to a submission and see the review recorded in the detail view.",
+    "category": "Submission Review",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the username field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open the submissions page"
+      },
+      {
+        "type": "action",
+        "description": "Open a submission from the results"
+      },
+      {
+        "type": "action",
+        "description": "Add a manual review note or rating"
+      },
+      {
+        "type": "action",
+        "description": "Save the review"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the manual review is displayed on the submission detail page"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the submission review status is updated"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC033",
+    "title": "Admin deletes an existing news item",
+    "description": "This verifies an admin can remove a news item from the list and confirm it no longer appears after deletion.",
+    "category": "News Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the username or email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the news management navigation link"
+      },
+      {
+        "type": "action",
+        "description": "Delete an existing news item"
+      },
+      {
+        "type": "action",
+        "description": "Confirm the deletion"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a success confirmation is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the news item no longer appears in the list"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC034",
+    "title": "Search and filter roles",
+    "description": "This verifies that an admin can search for a role and filter the role list by status.",
+    "category": "Role Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to the role management page"
+      },
+      {
+        "type": "action",
+        "description": "Search for an existing role"
+      },
+      {
+        "type": "action",
+        "description": "Filter the role list by status"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the filtered role list is displayed"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC035",
+    "title": "Delete a draft royalty record",
+    "description": "This verifies a finance admin can delete a draft royalty record from the royalty list.",
+    "category": "Royalty Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the username field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open royalty management"
+      },
+      {
+        "type": "action",
+        "description": "Create a draft royalty record for a published book"
+      },
+      {
+        "type": "action",
+        "description": "Delete the draft royalty record"
+      },
+      {
+        "type": "action",
+        "description": "Confirm the deletion"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the draft royalty record no longer appears in the list"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the royalty list remains accessible"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC036",
+    "title": "Auto-fill the paid date when creating a paid royalty",
+    "description": "An admin can create a paid royalty without entering a paid date and see the paid date filled automatically.",
+    "category": "Royalty Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation link to create royalties"
+      },
+      {
+        "type": "action",
+        "description": "Select a published book"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the royalty period month"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the royalty period year"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the sold quantity"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the sale price per unit"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the royalty per unit"
+      },
+      {
+        "type": "action",
+        "description": "Set the royalty status to paid"
+      },
+      {
+        "type": "action",
+        "description": "Leave the paid date empty"
+      },
+      {
+        "type": "action",
+        "description": "Submit the royalty form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the royalty is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a paid date is populated"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC037",
+    "title": "Update the admin profile successfully",
+    "description": "This verifies that an admin can edit valid profile fields and see the updated profile data afterward.",
+    "category": "Admin Profile",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to the profile page"
+      },
+      {
+        "type": "action",
+        "description": "Update valid profile fields with new information"
+      },
+      {
+        "type": "action",
+        "description": "Save the profile changes"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the updated profile information is displayed"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC038",
+    "title": "Reject invalid user creation data",
+    "description": "An admin sees validation errors when creating a user with duplicate credentials, a missing role, or a short password.",
+    "category": "User Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation link to manage users"
+      },
+      {
+        "type": "action",
+        "description": "Start creating a new user"
+      },
+      {
+        "type": "action",
+        "description": "Fill in a duplicate username or email"
+      },
+      {
+        "type": "action",
+        "description": "Leave the role empty"
+      },
+      {
+        "type": "action",
+        "description": "Fill in a too-short password"
+      },
+      {
+        "type": "action",
+        "description": "Submit the user form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify validation errors are displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the user is not created"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC039",
+    "title": "View the admin profile page",
+    "description": "This verifies that an admin can open the profile page and see their account information.",
+    "category": "Admin Profile",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to the profile page"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify admin profile information is displayed"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC040",
+    "title": "Delete a submission",
+    "description": "An admin can delete an existing submission and see it removed from the list.",
+    "category": "Submission Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation link to manage submissions"
+      },
+      {
+        "type": "action",
+        "description": "Open a submission from the list"
+      },
+      {
+        "type": "action",
+        "description": "Delete the submission"
+      },
+      {
+        "type": "action",
+        "description": "Confirm the deletion"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the submission is removed from the list"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC041",
+    "title": "Open the settings page from the admin area",
+    "description": "This verifies that an admin can open the settings page and see the expected admin layout.",
+    "category": "Settings",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to the settings page"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the settings page is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the admin navigation layout is displayed"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC042",
+    "title": "Book creation enforces year and page boundaries",
+    "description": "This verifies book creation rejects out-of-range year and minimum page values with validation feedback.",
+    "category": "Book Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the username field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open the book creation page"
+      },
+      {
+        "type": "action",
+        "description": "Select a category"
+      },
+      {
+        "type": "action",
+        "description": "Select an author"
+      },
+      {
+        "type": "action",
+        "description": "Fill in a unique book title"
+      },
+      {
+        "type": "action",
+        "description": "Enter a year outside the allowed range"
+      },
+      {
+        "type": "action",
+        "description": "Enter a page count below the minimum"
+      },
+      {
+        "type": "action",
+        "description": "Submit the book form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify validation errors are displayed for the year and page fields"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the book is not created"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC043",
+    "title": "Reject royalty creation for a non-published book",
+    "description": "An admin cannot create a royalty for a non-published book and sees a validation error.",
+    "category": "Royalty Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation link to create royalties"
+      },
+      {
+        "type": "action",
+        "description": "Select a non-published book"
+      },
+      {
+        "type": "action",
+        "description": "Submit the royalty form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a validation error is displayed"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC044",
+    "title": "Admin sees validation when news title is missing",
+    "description": "This verifies the news create form blocks submission and shows a validation error when the title is omitted.",
+    "category": "News Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the username or email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the news create navigation link"
+      },
+      {
+        "type": "action",
+        "description": "Select a news category"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the body content field with Body content without a title"
+      },
+      {
+        "type": "action",
+        "description": "Submit the news form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a title validation error is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the news item is not created"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC045",
+    "title": "Prevent deleting a role that is in use",
+    "description": "This verifies that deleting a role already assigned to users is blocked with a validation message.",
+    "category": "Role Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to the role management page"
+      },
+      {
+        "type": "action",
+        "description": "Select a role that already has users"
+      },
+      {
+        "type": "action",
+        "description": "Attempt to delete the selected role"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a deletion validation message is displayed"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC046",
+    "title": "Admin sees validation when news media is invalid",
+    "description": "This verifies the news create form rejects unsupported media uploads and keeps the user on the create page with validation feedback.",
+    "category": "News Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the username or email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the news create navigation link"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the news title field with News item with invalid media"
+      },
+      {
+        "type": "action",
+        "description": "Select a news category"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the body content field with Body content for invalid media test"
+      },
+      {
+        "type": "action",
+        "description": "Upload an invalid image file"
+      },
+      {
+        "type": "action",
+        "description": "Upload an unsupported video format"
+      },
+      {
+        "type": "action",
+        "description": "Submit the news form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify media validation errors are visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the news item is not created"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC047",
+    "title": "Paid royalty sets the paid date automatically",
+    "description": "This verifies a royalty marked as paid shows the expected paid-date behavior after saving.",
+    "category": "Royalty Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the username field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open royalty management"
+      },
+      {
+        "type": "action",
+        "description": "Create a royalty record for a published book"
+      },
+      {
+        "type": "action",
+        "description": "Set the royalty status to paid"
+      },
+      {
+        "type": "action",
+        "description": "Save the royalty record"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a paid date is displayed on the saved royalty record"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the royalty status is shown as paid"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC048",
+    "title": "Book creation rejects an unsupported preview file",
+    "description": "This verifies book creation shows validation feedback when the preview attachment uses an unsupported format.",
+    "category": "Book Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the username field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to open the book creation page"
+      },
+      {
+        "type": "action",
+        "description": "Select a category"
+      },
+      {
+        "type": "action",
+        "description": "Select an author"
+      },
+      {
+        "type": "action",
+        "description": "Fill in a unique book title"
+      },
+      {
+        "type": "action",
+        "description": "Upload an unsupported preview file format"
+      },
+      {
+        "type": "action",
+        "description": "Submit the book form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a file format validation error is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the book is not created"
+      }
+    ],
+    "priority": "Low"
+  }
+]

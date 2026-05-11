@@ -56,8 +56,9 @@ const fallbackCovers = [
 ]
 
 function bookCoverUrl(book) {
+  if (book.cover_url) return book.cover_url
   if (book.cover) {
-    if (book.cover.startsWith('http') || book.cover.startsWith('/storage/')) {
+    if (book.cover.startsWith('http') || book.cover.startsWith('/')) {
       return assetUrl(book.cover)
     }
     return storageUrl(book.cover)

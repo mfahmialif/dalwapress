@@ -5,9 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Storage;
 
 class Book extends Model
 {
+    protected $appends = [
+        'cover_url',
+    ];
+
     protected $fillable = [
         'category_id',
         'author_id',
@@ -54,5 +59,22 @@ class Book extends Model
     public function royalties(): HasMany
     {
         return $this->hasMany(Royalty::class);
+    }
+
+    public function getCoverUrlAttribute(): ?string
+    {
+        if (!$this->cover) {
+            return null;
+        }
+
+        if (str_starts_with($this->cover, 'http://') || str_starts_with($this->cover, 'https://')) {
+            return $this->cover;
+        }
+
+        if (str_starts_with($this->cover, '/')) {
+            return url($this->cover);
+        }
+
+        return asset(Storage::url($this->cover));
     }
 }

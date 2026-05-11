@@ -1,0 +1,61 @@
+version: "2"
+type: frontend
+tech_stack:
+  - vue
+  - vue-router
+  - vite
+  - tailwindcss
+routes:
+  - path: /
+    file: src/views/public/landing/Index.vue
+    auth_required: false
+    description: Public landing page
+  - path: /books
+    file: src/views/public/books/Index.vue
+    auth_required: false
+    description: List of published books
+  - path: /books/:id
+    file: src/views/public/books/Detail.vue
+    auth_required: false
+    description: Book detail view
+  - path: /news
+    file: src/views/public/news/Index.vue
+    auth_required: false
+    description: News and updates
+  - path: /login
+    file: src/views/public/login/Index.vue
+    auth_required: false
+    description: User login page
+  - path: /administrator/dashboard
+    file: src/views/admin/dashboard/Index.vue
+    auth_required: true
+    description: Admin dashboard
+features:
+  - name: User Login
+    description: Login with email and password credentials
+    files:
+      - src/views/public/login/Index.vue
+    entry_route: /login
+    user_interactions:
+      - Fill email input field
+      - Fill password input field
+      - Click Login button to submit
+      - See error message on invalid credentials
+    api_calls:
+      - method: POST
+        endpoint: /api/auth/login
+    auth_required: false
+  - name: Browse Books
+    description: View list of published books and their details
+    files:
+      - src/views/public/books/Index.vue
+      - src/views/public/books/Detail.vue
+    entry_route: /books
+    user_interactions:
+      - Scroll through books list
+      - Click a book to view detail
+    api_calls:
+      - method: GET
+        endpoint: /api/books
+    auth_required: false
+known_limitations: []

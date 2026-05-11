@@ -104,6 +104,9 @@
   pointer-events: none;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.4);
 }
+.maps-frame iframe {
+  transition: filter 0.25s ease, opacity 0.25s ease;
+}
 .maps-link {
   position: absolute;
   right: 1rem;
@@ -126,4 +129,36 @@
 .maps-link:hover {
   transform: translateY(-2px);
   background: rgb(3 105 161);
+}
+
+.public-root[data-theme='dark'] .maps-frame {
+  border-color: rgba(125, 211, 252, 0.18) !important;
+  background:
+    linear-gradient(145deg, rgba(15, 23, 42, 0.95), rgba(8, 17, 31, 0.88)),
+    radial-gradient(circle at 20% 0%, rgba(14, 165, 233, 0.16), transparent 20rem) !important;
+  box-shadow: 0 26px 88px rgba(0, 0, 0, 0.34) !important;
+}
+
+.public-root[data-theme='dark'] .maps-frame iframe {
+  filter: invert(0.9) hue-rotate(180deg) saturate(0.72) brightness(0.78) contrast(1.08);
+  opacity: 0.86;
+}
+
+.public-root[data-theme='dark'] .maps-frame::after {
+  background:
+    linear-gradient(180deg, rgba(7, 16, 31, 0.12), rgba(7, 16, 31, 0.34)),
+    radial-gradient(circle at 18% 0%, rgba(14, 165, 233, 0.16), transparent 18rem);
+  box-shadow: inset 0 0 0 1px rgba(125, 211, 252, 0.16);
+}
+
+.public-root[data-theme='dark'] .maps-link {
+  border: 1px solid rgba(125, 211, 252, 0.18);
+  background: rgba(15, 23, 42, 0.88);
+  color: rgb(224 242 254);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.34);
+}
+
+.public-root[data-theme='dark'] .maps-link:hover {
+  background: rgba(14, 165, 233, 0.2);
+  color: rgb(186 230 253);
 }

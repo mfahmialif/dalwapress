@@ -1,7 +1,7 @@
 <template>
-  <div class="public-root min-h-screen overflow-hidden bg-[#f6f8f7] font-display text-[#111827]">
+  <div class="public-root min-h-screen overflow-hidden font-display" :data-theme="resolvedTheme">
     <Preloader :show="loading" />
-    <Navbar :items="navItems" :active-section="activeSection" />
+    <Navbar :items="navItems" :active-section="activeSection" :theme="resolvedTheme" @toggle-theme="toggleTheme" />
 
     <router-view v-slot="{ Component, route: viewRoute }">
       <Transition name="public-page" mode="out-in">
@@ -19,9 +19,11 @@ import { useRoute } from 'vue-router'
 import Footer from '../components/layouts/public/Footer.vue'
 import Navbar from '../components/layouts/public/Navbar.vue'
 import Preloader from '../components/layouts/public/Preloader.vue'
+import { usePublicTheme } from '../views/public/usePublicTheme'
 import '../components/layouts/public/styles.css'
 
 const route = useRoute()
+const { resolvedTheme, initTheme, toggleTheme } = usePublicTheme()
 const year = new Date().getFullYear()
 const loading = ref(true)
 const activeSection = ref('home')
@@ -111,6 +113,7 @@ function refreshPublicNavigation() {
 }
 
 onMounted(() => {
+  initTheme()
   refreshPublicNavigation()
 
   window.setTimeout(() => {

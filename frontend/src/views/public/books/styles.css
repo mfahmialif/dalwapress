@@ -218,10 +218,44 @@
   object-fit: cover;
 }
 
+.book-cover-fallback {
+  display: flex;
+  height: 100%;
+  min-height: 22rem;
+  align-items: center;
+  justify-content: center;
+  color: rgb(125 211 252);
+}
+
 .book-detail-title {
   font-size: clamp(2rem, 4vw, 4.2rem);
   line-height: 1;
   font-weight: 950;
+}
+
+.book-detail-author,
+.book-detail-description {
+  color: #475569;
+}
+
+.book-meta {
+  border-radius: 1rem;
+  background: #f0f9ff;
+  padding: 1rem;
+}
+
+.book-meta-label {
+  color: #0369a1;
+  font-size: 0.75rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.book-meta-value {
+  margin-top: 0.25rem;
+  color: #0f172a;
+  font-weight: 900;
 }
 
 .book-detail-actions {
@@ -258,6 +292,132 @@
   font-size: 1rem;
   line-height: 1.9;
   color: #475569;
+}
+
+.book-prose > div {
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 1.5rem;
+  background: rgba(255, 255, 255, 0.78);
+  padding: clamp(1.25rem, 3vw, 1.6rem);
+  box-shadow: 0 18px 54px rgba(15, 23, 42, 0.06);
+}
+
+.book-prose h2 {
+  color: #020617;
+  font-size: 1.5rem;
+  font-weight: 950;
+}
+
+.book-empty-state {
+  display: grid;
+  justify-items: center;
+  gap: 1rem;
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  border-radius: 2rem;
+  background: rgba(255, 255, 255, 0.84);
+  padding: clamp(2rem, 6vw, 4rem);
+  text-align: center;
+  box-shadow: 0 26px 80px rgba(15, 23, 42, 0.08);
+}
+
+.book-empty-state .material-symbols-outlined {
+  color: #0284c7;
+  font-size: 3rem;
+}
+
+.book-empty-state h1 {
+  color: #0f172a;
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  font-weight: 950;
+}
+
+.book-empty-state p {
+  color: #475569;
+  font-weight: 700;
+}
+
+.public-root[data-theme='dark'] .books-page {
+  background:
+    radial-gradient(circle at 12% 8%, rgba(14, 165, 233, 0.2), transparent 28rem),
+    radial-gradient(circle at 88% 18%, rgba(56, 189, 248, 0.08), transparent 24rem),
+    linear-gradient(180deg, #07101f 0%, #0b1220 46%, #08111f 100%);
+  color: #e5eef8;
+}
+
+.public-root[data-theme='dark'] .books-pill {
+  border: 1px solid rgba(125, 211, 252, 0.18);
+  background: rgba(14, 165, 233, 0.12);
+  color: rgb(186 230 253);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.public-root[data-theme='dark'] .book-detail-card,
+.public-root[data-theme='dark'] .book-empty-state {
+  border-color: rgba(125, 211, 252, 0.16);
+  background:
+    linear-gradient(145deg, rgba(15, 23, 42, 0.92), rgba(8, 17, 31, 0.88)),
+    radial-gradient(circle at 8% 0%, rgba(14, 165, 233, 0.14), transparent 18rem);
+  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.36);
+}
+
+.public-root[data-theme='dark'] .book-detail-cover {
+  border: 1px solid rgba(125, 211, 252, 0.14);
+  background: linear-gradient(145deg, rgba(2, 6, 23, 0.96), rgba(7, 89, 133, 0.42));
+  box-shadow: 0 20px 54px rgba(0, 0, 0, 0.36);
+}
+
+.public-root[data-theme='dark'] .book-detail-title,
+.public-root[data-theme='dark'] .book-empty-state h1,
+.public-root[data-theme='dark'] .book-prose h2 {
+  color: #f8fafc;
+}
+
+.public-root[data-theme='dark'] .book-detail-author,
+.public-root[data-theme='dark'] .book-detail-description,
+.public-root[data-theme='dark'] .book-prose,
+.public-root[data-theme='dark'] .book-empty-state p {
+  color: #b7c6d8;
+}
+
+.public-root[data-theme='dark'] .book-meta {
+  border: 1px solid rgba(125, 211, 252, 0.13);
+  background: rgba(14, 165, 233, 0.1);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.public-root[data-theme='dark'] .book-meta-label {
+  color: rgb(125 211 252);
+}
+
+.public-root[data-theme='dark'] .book-meta-value {
+  color: #f8fafc;
+}
+
+.public-root[data-theme='dark'] .book-btn {
+  background: rgb(14 165 233);
+  color: #06111f;
+  box-shadow: 0 14px 34px rgba(14, 165, 233, 0.2);
+}
+
+.public-root[data-theme='dark'] .book-btn.secondary {
+  border: 1px solid rgba(125, 211, 252, 0.18);
+  background: rgba(15, 23, 42, 0.82);
+  color: rgb(186 230 253);
+  box-shadow: none;
+}
+
+.public-root[data-theme='dark'] .book-btn:hover {
+  background: rgb(56 189 248);
+}
+
+.public-root[data-theme='dark'] .book-btn.secondary:hover {
+  background: rgba(14, 165, 233, 0.18);
+}
+
+.public-root[data-theme='dark'] .book-prose > div {
+  border-color: rgba(125, 211, 252, 0.14);
+  background: rgba(15, 23, 42, 0.74);
+  box-shadow: 0 20px 70px rgba(0, 0, 0, 0.28);
 }
 
 @media (max-width: 1050px) {

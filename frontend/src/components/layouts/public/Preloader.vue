@@ -1,6 +1,6 @@
 <template>
   <Transition name="preloader">
-    <div v-if="show" class="fixed inset-0 z-[100] flex items-center justify-center bg-[#f6f8f7]">
+    <div v-if="show" class="public-preloader fixed inset-0 z-[100] flex items-center justify-center">
       <div class="editorial-loader">
         <div class="loader-orbit">
           <div class="loader-core">

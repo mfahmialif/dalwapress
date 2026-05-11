@@ -20,7 +20,7 @@ return [
     'allowed_methods' => ['*'],
 
     'allowed_origins' => [
-        'https://vision.uiidalwa.web.id',
+        'https://vision.uiidalwa.web.id','http://localhost:5173', 'http://localhost:3000'
     ],
 
     'allowed_origins_patterns' => [],
