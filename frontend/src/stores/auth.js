@@ -1,61 +1,78 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import api from '../axios'
-import router from '../router'
 
 export const useAuthStore = defineStore('auth', () => {
-  // ── State ──
-  const user = ref(JSON.parse(localStorage.getItem('auth_user') || 'null'))
-  const token = ref(localStorage.getItem('auth_token') || '')
+  // State
+  const user = ref(null)
+  const hasCheckedSession = ref(false)
 
-  // ── Getters ──
-  const isAuthenticated = computed(() => !!token.value)
+  // Getters
+  const isAuthenticated = computed(() => !!user.value)
 
-  // ── Actions ──
-  async function login(username, password) {
-    const { data } = await api.post('/login', { username, password })
+  function clearAuthState() {
+    user.value = null
+    hasCheckedSession.value = true
+    localStorage.removeItem('auth_token')
+    localStorage.removeItem('auth_user')
+  }
 
-    token.value = data.token
+  // Actions
+  async function login(username, password, remember = false) {
+    const { data } = await api.post('/login', { username, password, remember })
+
     user.value = data.user
+    hasCheckedSession.value = true
 
-    localStorage.setItem('auth_token', data.token)
-    localStorage.setItem('auth_user', JSON.stringify(data.user))
+    localStorage.removeItem('auth_token')
+    localStorage.removeItem('auth_user')
 
     return data
   }
 
-  async function logout() {
+  async function logout(redirectToLogin = true) {
     try {
       await api.post('/logout')
     } catch {
-      // Token sudah expired / invalid, tetap logout di frontend
+      // Session sudah expired / invalid, tetap logout di frontend.
     }
 
-    token.value = ''
-    user.value = null
-    localStorage.removeItem('auth_token')
-    localStorage.removeItem('auth_user')
+    clearAuthState()
 
-    router.push({ name: 'Login' })
+    if (redirectToLogin && typeof window !== 'undefined') {
+      window.dispatchEvent(new Event('auth:redirect-login'))
+    }
   }
 
-  async function fetchUser() {
+  async function fetchUser(force = false) {
+    if (hasCheckedSession.value && !force) {
+      return user.value
+    }
+
     try {
-      const { data } = await api.get('/user')
+      const { data } = await api.get('/user', { skipAuthRedirect: true })
       user.value = data
-      localStorage.setItem('auth_user', JSON.stringify(data))
+      hasCheckedSession.value = true
+      localStorage.removeItem('auth_token')
+      localStorage.removeItem('auth_user')
       return data
     } catch {
-      await logout()
+      clearAuthState()
+      return null
     }
+  }
+
+  if (typeof window !== 'undefined') {
+    window.addEventListener('auth:unauthorized', clearAuthState)
   }
 
   return {
     user,
-    token,
+    hasCheckedSession,
     isAuthenticated,
     login,
     logout,
     fetchUser,
+    clearAuthState,
   }
 })

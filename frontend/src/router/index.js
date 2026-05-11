@@ -12,6 +12,7 @@ import AdminLayout from '../layouts/AdminLayout.vue'
 import AuthorLayout from '../layouts/AuthorLayout.vue'
 import EditorLayout from '../layouts/EditorLayout.vue'
 import AdminDashboard from '../views/admin/dashboard/Index.vue'
+import { useAuthStore } from '../stores/auth'
 
 const appName = 'UII Dalwa Press'
 
@@ -331,34 +332,34 @@ const router = createRouter({
   }
 })
 
-router.beforeEach((to) => {
+router.beforeEach(async (to) => {
   document.title = to.meta.title || appName
 
-  const isAuthenticated = !!localStorage.getItem('auth_token')
+  const authStore = useAuthStore()
+
+  if (to.meta.requiresAuth || to.name === 'Login') {
+    await authStore.fetchUser()
+  }
+
+  const isAuthenticated = authStore.isAuthenticated
 
   if (to.meta.requiresAuth && !isAuthenticated) {
     return { name: 'Login' }
   }
 
   if (to.meta.requiresAuth && isAuthenticated) {
-    try {
-      const authUser = JSON.parse(localStorage.getItem('auth_user') || '{}')
-      const roleName = authUser?.role?.name
-      const allowedRoles = to.meta.roles || ['Admin', 'Operator']
-      if (!roleName || !allowedRoles.includes(roleName)) {
-        localStorage.removeItem('auth_token')
-        localStorage.removeItem('auth_user')
-        return { name: 'Login' }
-      }
-    } catch {
+    const roleName = authStore.user?.role?.name
+    const allowedRoles = to.meta.roles || ['Admin', 'Operator']
+    if (!roleName || !allowedRoles.includes(roleName)) {
+      await authStore.logout(false)
       return { name: 'Login' }
     }
   }
 
   if (to.name === 'Login' && isAuthenticated) {
-    const authUser = JSON.parse(localStorage.getItem('auth_user') || '{}')
-    if (authUser?.role?.name === 'Author') return { name: 'AuthorDashboard' }
-    if (authUser?.role?.name === 'Editor') return { name: 'EditorDashboard' }
+    const roleName = authStore.user?.role?.name
+    if (roleName === 'Author') return { name: 'AuthorDashboard' }
+    if (roleName === 'Editor') return { name: 'EditorDashboard' }
     return { name: 'AdminDashboard' }
   }
 })

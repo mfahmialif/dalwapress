@@ -119,6 +119,7 @@ async function fetchLatestNews() {
 
       return {
         id: normalized.id,
+        href: `/news/${normalized.id}`,
         day: date.day,
         month: date.month,
         category: normalized.categoryName,

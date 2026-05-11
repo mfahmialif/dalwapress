@@ -1,1 +1,0 @@
-import{_ as t}from"./SimpleList-CtFCQQ-z.js";import{J as a,j as e}from"./index-CP0NgQBC.js";const _={__name:"Index",setup(o){return(n,r)=>(e(),a(t,{endpoint:"/author/notifications","empty-text":"Belum ada notifikasi."}))}};export{_ as default};

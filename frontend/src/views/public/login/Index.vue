@@ -177,7 +177,7 @@ async function handleLogin() {
   isLoading.value = true
 
   try {
-    const data = await authStore.login(username.value, password.value)
+    const data = await authStore.login(username.value, password.value, rememberMe.value)
     const roleName = data.user?.role?.name
     if (roleName === 'Author') router.push({ name: 'AuthorDashboard' })
     else if (roleName === 'Editor') router.push({ name: 'EditorDashboard' })

@@ -15,13 +15,14 @@ return [
     |
     */
 
-    'paths' => ['api/*'],
+    'paths' => ['api/*', 'sanctum/csrf-cookie'],
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => [
-        'https://press.uiidalwa.ac.id','http://localhost:5173', 'http://localhost:3000'
-    ],
+    'allowed_origins' => array_values(array_filter(array_map('trim', explode(',', env(
+        'CORS_ALLOWED_ORIGINS',
+        'https://press.uiidalwa.ac.id,http://localhost:5173,http://localhost:3000'
+    ))))),
 
     'allowed_origins_patterns' => [],
 
@@ -31,6 +32,6 @@ return [
 
     'max_age' => 0,
 
-    'supports_credentials' => false,
+    'supports_credentials' => true,
 
 ];

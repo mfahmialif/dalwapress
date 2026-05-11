@@ -1,32 +1,78 @@
 import axios from 'axios'
-import router from './router'
+
+const apiBaseURL = import.meta.env.VITE_API_URL || '/api'
+
+function getCsrfCookieURL() {
+  const baseURL = apiBaseURL.replace(/\/+$/, '')
+
+  if (baseURL.endsWith('/api')) {
+    return `${baseURL.slice(0, -4)}/sanctum/csrf-cookie`
+  }
+
+  return `${baseURL}/sanctum/csrf-cookie`
+}
+
+let csrfCookieRequest = null
+
+export function ensureCsrfCookie() {
+  if (!csrfCookieRequest) {
+    csrfCookieRequest = axios.get(getCsrfCookieURL(), {
+      withCredentials: true,
+      withXSRFToken: true,
+      headers: {
+        Accept: 'application/json',
+      },
+    }).finally(() => {
+      csrfCookieRequest = null
+    })
+  }
+
+  return csrfCookieRequest
+}
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || '/api',
+  baseURL: apiBaseURL,
+  withCredentials: true,
+  withXSRFToken: true,
+  xsrfCookieName: 'XSRF-TOKEN',
+  xsrfHeaderName: 'X-XSRF-TOKEN',
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
   },
 })
 
-// Request interceptor — attach token
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('auth_token')
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
+// Request interceptor - make sure Laravel has issued the CSRF cookie first.
+api.interceptors.request.use(async (config) => {
+  const method = (config.method || 'get').toLowerCase()
+
+  if (['post', 'put', 'patch', 'delete'].includes(method)) {
+    await ensureCsrfCookie()
   }
+
   return config
 })
 
 // Response interceptor — handle 401
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
+    if (error.response?.status === 419 && error.config && !error.config._csrfRetry) {
+      error.config._csrfRetry = true
+      await ensureCsrfCookie()
+      return api(error.config)
+    }
+
     if (error.response?.status === 401) {
       localStorage.removeItem('auth_token')
       localStorage.removeItem('auth_user')
-      router.push({ name: 'Login' })
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('auth:unauthorized', {
+          detail: { redirect: !error.config?.skipAuthRedirect },
+        }))
+      }
     }
+
     return Promise.reject(error)
   }
 )

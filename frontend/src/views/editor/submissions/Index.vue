@@ -34,10 +34,12 @@
   </div>
 </template>
 <script setup>
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import api from '../../../axios'
+import { useAuthStore } from '../../../stores/auth'
 const items = ref([]), loading = ref(false), search = ref(''), status = ref('')
-const currentUser = ref(JSON.parse(localStorage.getItem('auth_user') || '{}'))
+const authStore = useAuthStore()
+const currentUser = computed(() => authStore.user || {})
 const statuses = ['submitted','under_review','revision','accepted','rejected','published']
 let timer = null
 function debouncedFetch(){ clearTimeout(timer); timer = setTimeout(fetchData, 300) }

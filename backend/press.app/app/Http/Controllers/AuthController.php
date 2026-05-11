@@ -4,24 +4,26 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
     /**
-     * Login dan dapatkan token.
+     * Login dan buat session cookie.
      */
     public function login(Request $request)
     {
-        $request->validate([
+        $credentials = $request->validate([
             'username' => 'required|string',
             'password' => 'required|string',
+            'remember' => 'sometimes|boolean',
         ]);
 
-        $user = User::where('username', $request->username)->first();
+        $user = User::where('username', $credentials['username'])->first();
 
-        if (! $user || ! Hash::check($request->password, $user->password)) {
+        if (! $user || ! Hash::check($credentials['password'], $user->password)) {
             throw ValidationException::withMessages([
                 'username' => ['Username atau password salah.'],
             ]);
@@ -34,27 +36,26 @@ class AuthController extends Controller
             ]);
         }
 
-        // Hapus token lama jika ada (opsional, biar bersih)
-        $user->tokens()->delete();
+        Auth::login($user, $request->boolean('remember'));
+        $request->session()->regenerate();
 
         // Update last active
         $user->update(['last_active_at' => now()]);
         $user->load('role:id,name');
 
-        $token = $user->createToken('auth-token')->plainTextToken;
-
         return response()->json([
             'user' => $user,
-            'token' => $token,
         ]);
     }
 
     /**
-     * Logout — hapus token saat ini.
+     * Logout dan hapus session saat ini.
      */
     public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
+        Auth::guard('web')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
         return response()->json([
             'message' => 'Berhasil logout.',

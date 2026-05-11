@@ -27,6 +27,10 @@
               </router-link>
               <h3 v-else class="mt-2 text-xl font-black text-[#101418]">{{ item.title }}</h3>
               <p class="mt-2 leading-7 text-slate-600">{{ item.body }}</p>
+              <router-link :to="item.href || (item.id ? `/news/${item.id}` : '/news')" class="mt-4 inline-flex items-center gap-2 text-sm font-black text-sky-700 transition hover:text-sky-900">
+                Lihat selengkapnya
+                <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+              </router-link>
             </div>
           </article>
         </div>

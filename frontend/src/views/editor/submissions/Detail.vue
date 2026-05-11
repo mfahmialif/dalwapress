@@ -48,10 +48,12 @@
 import { computed, defineComponent, h, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import api from '../../../axios'
+import { useAuthStore } from '../../../stores/auth'
 import { storageUrl } from '../../../utils/asset'
 const Info = defineComponent({ props:{label:String,value:String}, setup(props){ return () => h('div',{class:'rounded-xl border p-4',style:'border-color: var(--border); background: var(--bg-input)'},[h('p',{class:'text-xs font-bold uppercase tracking-wider',style:'color: var(--text-muted)'},props.label),h('p',{class:'mt-1 text-sm font-black',style:'color: var(--text-heading)'},props.value)]) }})
 const route = useRoute(), loading = ref(false), submission = ref(null), review = ref({ status:'revision', note:'' })
-const currentUser = ref(JSON.parse(localStorage.getItem('auth_user') || '{}'))
+const authStore = useAuthStore()
+const currentUser = computed(() => authStore.user || {})
 const myAssignment = computed(() => submission.value?.editor_assignments?.find((a) => a.editor_id === currentUser.value.id))
 async function loadData(){ loading.value = true; submission.value = (await api.get(`/editor/submissions/${route.params.id}`)).data; loading.value = false }
 async function sendReview(){ await api.post(`/editor/submissions/${route.params.id}/reviews`, review.value); review.value = { status:'revision', note:'' }; await loadData() }
