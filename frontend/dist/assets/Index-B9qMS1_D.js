@@ -1,0 +1,1 @@
+import{_ as t}from"./SimpleList-UN8kH3YT.js";import{J as a,j as e}from"./index-D-AaOhg8.js";const _={__name:"Index",setup(o){return(n,r)=>(e(),a(t,{endpoint:"/author/notifications","empty-text":"Belum ada notifikasi."}))}};export{_ as default};

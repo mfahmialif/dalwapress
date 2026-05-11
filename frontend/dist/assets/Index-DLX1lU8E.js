@@ -1,0 +1,1 @@
+import{_ as t}from"./SimpleList-UN8kH3YT.js";import{J as a,j as e}from"./index-D-AaOhg8.js";const s={__name:"Index",setup(o){return(r,_)=>(e(),a(t,{endpoint:"/author/bookmarks","empty-text":"Belum ada buku favorit."}))}};export{s as default};
