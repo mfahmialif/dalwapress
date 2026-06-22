@@ -416,7 +416,10 @@ class AuthController extends Controller
         Config::set('mail.mailers.smtp.port', (int) AppSetting::getValue('smtp_port', 587));
         Config::set('mail.mailers.smtp.username', AppSetting::getValue('smtp_username', null));
         Config::set('mail.mailers.smtp.password', AppSetting::getValue('smtp_password', null));
-        Config::set('mail.mailers.smtp.scheme', AppSetting::getValue('smtp_encryption', 'tls') ?: null);
+        $encryption = strtolower((string) AppSetting::getValue('smtp_encryption', 'tls'));
+        Config::set('mail.mailers.smtp.scheme', $encryption === 'ssl' ? 'smtps' : 'smtp');
+        Config::set('mail.mailers.smtp.auto_tls', $encryption === 'tls');
+        Config::set('mail.mailers.smtp.require_tls', $encryption === 'tls');
         Config::set('mail.from.address', AppSetting::getValue('smtp_from_address', 'no-reply@example.com'));
         Config::set('mail.from.name', AppSetting::getValue('smtp_from_name', AppSetting::getValue('system_name', 'UII Dalwa Press')));
 
