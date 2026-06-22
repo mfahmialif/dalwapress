@@ -30,6 +30,18 @@ export const useAuthStore = defineStore('auth', () => {
     return data
   }
 
+  async function loginWithGoogle(credential) {
+    const { data } = await api.post('/auth/google', { credential })
+
+    user.value = data.user
+    hasCheckedSession.value = true
+
+    localStorage.removeItem('auth_token')
+    localStorage.removeItem('auth_user')
+
+    return data
+  }
+
   async function logout(redirectToLogin = true) {
     try {
       await api.post('/logout')
@@ -71,6 +83,7 @@ export const useAuthStore = defineStore('auth', () => {
     hasCheckedSession,
     isAuthenticated,
     login,
+    loginWithGoogle,
     logout,
     fetchUser,
     clearAuthState,

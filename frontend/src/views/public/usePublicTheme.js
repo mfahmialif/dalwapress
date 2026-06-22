@@ -1,30 +1,30 @@
 import { computed, onBeforeUnmount, ref } from 'vue'
+import {
+  getSystemTheme,
+  readThemePreference,
+  writeThemePreference,
+} from '../../composables/useThemePreference'
 
-const STORAGE_KEY = 'dalwapress-public-theme'
 const theme = ref('system')
 const systemTheme = ref('light')
 let mediaQuery = null
 
 function readStoredTheme() {
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY)
-    return ['light', 'dark'].includes(stored) ? stored : 'system'
-  } catch {
-    return 'system'
-  }
+  return readThemePreference({
+    allowSystem: true,
+    fallback: 'system',
+    legacyKeys: ['dalwapress-public-theme'],
+  })
 }
 
 function writeStoredTheme(value) {
-  try {
-    if (value === 'system') localStorage.removeItem(STORAGE_KEY)
-    else localStorage.setItem(STORAGE_KEY, value)
-  } catch {
-    // Ignore storage errors and keep the in-memory theme.
-  }
+  writeThemePreference(value, {
+    legacyKeys: ['dalwapress-public-theme'],
+  })
 }
 
 function updateSystemTheme() {
-  systemTheme.value = mediaQuery?.matches ? 'dark' : 'light'
+  systemTheme.value = mediaQuery?.matches ? 'dark' : getSystemTheme()
 }
 
 function initTheme() {

@@ -80,6 +80,9 @@ import AdminSidebar from '../components/layouts/admin/AdminSidebar.vue'
 import AdminNavbar from '../components/layouts/admin/AdminNavbar.vue'
 import AdminHorizontalNav from '../components/layouts/admin/AdminHorizontalNav.vue'
 import AdminFooter from '../components/layouts/admin/AdminFooter.vue'
+import api from '../axios'
+import { readThemePreference, resolveThemePreference, writeThemePreference } from '../composables/useThemePreference'
+import { syncPublicSettings } from '../services/publicSettings'
 
 const route = useRoute()
 const pageTitle = computed(() => route.meta.pageTitle || 'Dashboard')
@@ -94,6 +97,7 @@ onMounted(() => {
   if (savedCollapsed) sidebarCollapsed.value = savedCollapsed === 'true'
   const savedLayout = localStorage.getItem('admin-layout-mode')
   if (savedLayout) layoutMode.value = savedLayout
+  loadAppearanceSettings()
 })
 
 function toggleCollapse() {
@@ -115,13 +119,31 @@ watch(() => route.path, () => {
 const isDark = ref(true)
 
 onMounted(() => {
-  const saved = localStorage.getItem('admin-theme')
-  if (saved) isDark.value = saved === 'dark'
+  const saved = readThemePreference({
+    allowSystem: true,
+    fallback: 'system',
+    legacyKeys: ['admin-theme'],
+  })
+  isDark.value = resolveThemePreference(saved) === 'dark'
 })
 
 function toggleTheme() {
   isDark.value = !isDark.value
-  localStorage.setItem('admin-theme', isDark.value ? 'dark' : 'light')
+  writeThemePreference(isDark.value ? 'dark' : 'light', {
+    legacyKeys: ['admin-theme'],
+  })
+}
+
+async function loadAppearanceSettings() {
+  try {
+    const { data } = await api.get('/settings/general')
+    syncPublicSettings(data)
+    if (data.accent_color) {
+      document.querySelector('.admin-root')?.style.setProperty('--color-accent', data.accent_color)
+    }
+  } catch {
+    // Appearance settings are optional; keep the default admin theme if unavailable.
+  }
 }
 
 </script>

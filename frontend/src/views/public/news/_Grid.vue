@@ -17,7 +17,14 @@
           <div class="relative h-56 overflow-hidden rounded-[1.35rem] bg-slate-200 flex-shrink-0">
             <img :src="item.image" :alt="item.title" class="h-full w-full object-cover transition duration-700 group-hover:scale-110" />
             <div class="absolute inset-0 bg-linear-to-t from-[#06111f]/76 via-transparent to-transparent opacity-80"></div>
-            <span class="news-badge absolute left-4 top-4" :class="categoryClass(item.categoryType)">{{ item.categoryName }}</span>
+            <div class="absolute left-4 top-4 flex max-w-[calc(100%-2rem)] flex-wrap gap-1.5">
+              <span v-for="category in visibleCategories(item)" :key="category.id || category.name" class="news-badge news-badge--sm" :class="categoryClass(category.type)">
+                {{ category.name }}
+              </span>
+              <span v-if="hiddenCategoryCount(item)" class="news-badge news-badge--sm bg-slate-50 text-slate-700 ring-slate-100">
+                +{{ hiddenCategoryCount(item) }}
+              </span>
+            </div>
             <span v-if="item.categoryType === 'Video'" class="play-badge">
               <span class="material-symbols-outlined">play_arrow</span>
             </span>
@@ -28,6 +35,7 @@
               {{ formatRelative(item.created_at) }}
             </div>
             <h2 class="mt-3 line-clamp-2 text-xl font-black leading-tight text-[#101418]">{{ item.title }}</h2>
+            <p class="mt-2 text-sm font-bold text-slate-500">{{ item.authorName }}</p>
             <p class="mt-3 line-clamp-3 leading-7 text-slate-600">{{ item.excerpt }}</p>
             <button class="mt-auto pt-4 inline-flex items-center gap-2 text-sm font-black text-sky-700" type="button">
               Baca selengkapnya
@@ -61,4 +69,16 @@ defineProps({
 })
 
 defineEmits(['open'])
+
+function categoryList(item) {
+  return item?.categories?.length ? item.categories : (item?.category ? [item.category] : [])
+}
+
+function visibleCategories(item) {
+  return categoryList(item).slice(0, 2)
+}
+
+function hiddenCategoryCount(item) {
+  return Math.max(categoryList(item).length - 2, 0)
+}
 </script>

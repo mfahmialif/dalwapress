@@ -112,3 +112,84 @@ body {
 /* Text utilities */
 .text-shadow { text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); }
 .text-glow { text-shadow: 0 0 10px rgba(255, 255, 255, 0.3); }
+
+/* Dashboard badges: scoped to app dashboards, public pages keep their own styling. */
+:where(.admin-root, .author-root, .editor-root, .portal-root) .app-badge,
+:where(.admin-root, .author-root, .editor-root, .portal-root) .admin-badge {
+  --badge-color: #94a3b8;
+  --badge-bg: rgba(148, 163, 184, 0.12);
+  --badge-border: rgba(148, 163, 184, 0.28);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 1.75rem;
+  border-radius: 999px;
+  padding: 0.25rem 0.75rem;
+  border: 1px solid var(--badge-border);
+  background: var(--badge-bg);
+  color: var(--badge-color);
+  font-size: 0.75rem;
+  font-weight: 800;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+:where(.admin-root, .author-root, .editor-root, .portal-root) .app-badge--username,
+:where(.admin-root, .author-root, .editor-root, .portal-root) .admin-badge--username {
+  min-height: 2rem;
+  border-radius: 0.625rem;
+  padding-inline: 0.75rem;
+  font-size: 0.875rem;
+}
+
+:where(.admin-root, .author-root, .editor-root, .portal-root) .app-badge--purple,
+:where(.admin-root, .author-root, .editor-root, .portal-root) .admin-badge--purple { --badge-color: #c084fc; --badge-bg: rgba(168, 85, 247, 0.14); --badge-border: rgba(168, 85, 247, 0.3); }
+:where(.admin-root, .author-root, .editor-root, .portal-root) .app-badge--blue,
+:where(.admin-root, .author-root, .editor-root, .portal-root) .admin-badge--blue { --badge-color: #60a5fa; --badge-bg: rgba(59, 130, 246, 0.14); --badge-border: rgba(59, 130, 246, 0.3); }
+:where(.admin-root, .author-root, .editor-root, .portal-root) .app-badge--amber,
+:where(.admin-root, .author-root, .editor-root, .portal-root) .admin-badge--amber { --badge-color: #fbbf24; --badge-bg: rgba(245, 158, 11, 0.14); --badge-border: rgba(245, 158, 11, 0.3); }
+:where(.admin-root, .author-root, .editor-root, .portal-root) .app-badge--orange,
+:where(.admin-root, .author-root, .editor-root, .portal-root) .admin-badge--orange { --badge-color: #fb923c; --badge-bg: rgba(249, 115, 22, 0.14); --badge-border: rgba(249, 115, 22, 0.3); }
+:where(.admin-root, .author-root, .editor-root, .portal-root) .app-badge--sky,
+:where(.admin-root, .author-root, .editor-root, .portal-root) .admin-badge--sky { --badge-color: #38bdf8; --badge-bg: rgba(14, 165, 233, 0.14); --badge-border: rgba(14, 165, 233, 0.3); }
+:where(.admin-root, .author-root, .editor-root, .portal-root) .app-badge--red,
+:where(.admin-root, .author-root, .editor-root, .portal-root) .admin-badge--red { --badge-color: #f87171; --badge-bg: rgba(239, 68, 68, 0.14); --badge-border: rgba(239, 68, 68, 0.3); }
+:where(.admin-root, .author-root, .editor-root, .portal-root) .app-badge--emerald,
+:where(.admin-root, .author-root, .editor-root, .portal-root) .admin-badge--emerald { --badge-color: #34d399; --badge-bg: rgba(16, 185, 129, 0.14); --badge-border: rgba(16, 185, 129, 0.3); }
+:where(.admin-root, .author-root, .editor-root, .portal-root) .app-badge--teal,
+:where(.admin-root, .author-root, .editor-root, .portal-root) .admin-badge--teal { --badge-color: #2dd4bf; --badge-bg: rgba(20, 184, 166, 0.14); --badge-border: rgba(20, 184, 166, 0.3); }
+:where(.admin-root, .author-root, .editor-root, .portal-root) .app-badge--success,
+:where(.admin-root, .author-root, .editor-root, .portal-root) .admin-badge--success { --badge-color: #4ade80; --badge-bg: rgba(34, 197, 94, 0.12); --badge-border: rgba(34, 197, 94, 0.28); }
+:where(.admin-root, .author-root, .editor-root, .portal-root) .app-badge--muted,
+:where(.admin-root, .author-root, .editor-root, .portal-root) .app-badge--neutral,
+:where(.admin-root, .author-root, .editor-root, .portal-root) .admin-badge--muted,
+:where(.admin-root, .author-root, .editor-root, .portal-root) .admin-badge--neutral { --badge-color: #94a3b8; --badge-bg: rgba(148, 163, 184, 0.12); --badge-border: rgba(148, 163, 184, 0.28); }
+
+:where(.admin-root, .author-root, .editor-root, .portal-root)[data-theme="light"] .app-badge--purple,
+:where(.admin-root, .author-root, .editor-root, .portal-root)[data-theme="light"] .admin-badge--purple { --badge-color: #7e22ce; --badge-bg: #f3e8ff; --badge-border: #d8b4fe; }
+:where(.admin-root, .author-root, .editor-root, .portal-root)[data-theme="light"] .app-badge--blue,
+:where(.admin-root, .author-root, .editor-root, .portal-root)[data-theme="light"] .admin-badge--blue { --badge-color: #1d4ed8; --badge-bg: #dbeafe; --badge-border: #93c5fd; }
+:where(.admin-root, .author-root, .editor-root, .portal-root)[data-theme="light"] .app-badge--amber,
+:where(.admin-root, .author-root, .editor-root, .portal-root)[data-theme="light"] .admin-badge--amber { --badge-color: #b45309; --badge-bg: #fef3c7; --badge-border: #fcd34d; }
+:where(.admin-root, .author-root, .editor-root, .portal-root)[data-theme="light"] .app-badge--orange,
+:where(.admin-root, .author-root, .editor-root, .portal-root)[data-theme="light"] .admin-badge--orange { --badge-color: #c2410c; --badge-bg: #ffedd5; --badge-border: #fdba74; }
+:where(.admin-root, .author-root, .editor-root, .portal-root)[data-theme="light"] .app-badge--sky,
+:where(.admin-root, .author-root, .editor-root, .portal-root)[data-theme="light"] .admin-badge--sky { --badge-color: #0369a1; --badge-bg: #e0f2fe; --badge-border: #7dd3fc; }
+:where(.admin-root, .author-root, .editor-root, .portal-root)[data-theme="light"] .app-badge--red,
+:where(.admin-root, .author-root, .editor-root, .portal-root)[data-theme="light"] .admin-badge--red { --badge-color: #b91c1c; --badge-bg: #fee2e2; --badge-border: #fca5a5; }
+:where(.admin-root, .author-root, .editor-root, .portal-root)[data-theme="light"] .app-badge--emerald,
+:where(.admin-root, .author-root, .editor-root, .portal-root)[data-theme="light"] .admin-badge--emerald { --badge-color: #047857; --badge-bg: #d1fae5; --badge-border: #6ee7b7; }
+:where(.admin-root, .author-root, .editor-root, .portal-root)[data-theme="light"] .app-badge--teal,
+:where(.admin-root, .author-root, .editor-root, .portal-root)[data-theme="light"] .admin-badge--teal { --badge-color: #0f766e; --badge-bg: #ccfbf1; --badge-border: #5eead4; }
+:where(.admin-root, .author-root, .editor-root, .portal-root)[data-theme="light"] .app-badge--success,
+:where(.admin-root, .author-root, .editor-root, .portal-root)[data-theme="light"] .admin-badge--success { --badge-color: #15803d; --badge-bg: #dcfce7; --badge-border: #86efac; }
+:where(.admin-root, .author-root, .editor-root, .portal-root)[data-theme="light"] .app-badge--muted,
+:where(.admin-root, .author-root, .editor-root, .portal-root)[data-theme="light"] .app-badge--neutral,
+:where(.admin-root, .author-root, .editor-root, .portal-root)[data-theme="light"] .admin-badge--muted,
+:where(.admin-root, .author-root, .editor-root, .portal-root)[data-theme="light"] .admin-badge--neutral { --badge-color: #475569; --badge-bg: #f1f5f9; --badge-border: #cbd5e1; }
+
+:where(.admin-root, .author-root, .editor-root, .portal-root) .app-step {
+  border: 1px solid var(--badge-border);
+  background: var(--badge-bg);
+  color: var(--badge-color);
+}

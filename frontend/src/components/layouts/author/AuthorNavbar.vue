@@ -8,6 +8,12 @@
       <h2 class="text-lg sm:text-xl font-bold text-heading tracking-tight">{{ pageTitle }}</h2>
     </div>
     <div class="flex items-center gap-2 sm:gap-4">
+      <button @click="searchOpen = true"
+              class="theme-toggle relative p-2 rounded-full transition-all duration-500 cursor-pointer"
+              title="Search">
+        <span class="material-symbols-outlined text-[22px]">search</span>
+      </button>
+
       <router-link to="/author/submissions/create" class="quick-create hidden sm:flex items-center gap-2 rounded-full px-4 py-2 text-sm font-black transition-colors">
         <span class="material-symbols-outlined text-[18px]">add</span>
         Submission
@@ -65,12 +71,14 @@
         </Transition>
       </div>
     </div>
+    <DashboardSearchOverlay :open="searchOpen" portal="author" @close="searchOpen = false" />
   </header>
 </template>
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useAuthStore } from '../../../stores/auth'
+import DashboardSearchOverlay from '../shared/DashboardSearchOverlay.vue'
 
 defineProps({
   pageTitle: { type: String, default: 'Dashboard Author' },
@@ -81,6 +89,7 @@ defineProps({
 defineEmits(['toggle-theme', 'toggle-sidebar', 'toggle-layout'])
 
 const profileOpen = ref(false)
+const searchOpen = ref(false)
 const profileDropdownRef = ref(null)
 const authStore = useAuthStore()
 

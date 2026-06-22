@@ -53,6 +53,7 @@
             <th class="px-4 py-4 text-sm font-semibold w-16" style="color: var(--text-heading)">#</th>
             <th class="px-4 py-4 text-sm font-semibold" style="color: var(--text-heading)">Thumbnail</th>
             <th class="px-4 py-4 text-sm font-semibold" style="color: var(--text-heading)">Judul</th>
+            <th class="px-4 py-4 text-sm font-semibold" style="color: var(--text-heading)">Penulis</th>
             <th class="px-4 py-4 text-sm font-semibold" style="color: var(--text-heading)">Kategori</th>
             <th class="px-4 py-4 text-sm font-semibold" style="color: var(--text-heading)">Waktu</th>
             <th class="px-4 py-4 text-sm font-semibold" style="color: var(--text-heading)">Status</th>
@@ -60,20 +61,26 @@
           </tr></thead>
           <tbody class="table-body">
             <tr v-if="items.length === 0">
-              <td colspan="7" class="px-4 py-12 text-center text-sm" style="color: var(--text-muted)">Tidak ada data news</td>
+              <td colspan="8" class="px-4 py-12 text-center text-sm" style="color: var(--text-muted)">Tidak ada data news</td>
             </tr>
             <tr v-for="(item, idx) in items" :key="item.id" class="table-row-hover">
               <td class="px-4 py-4 text-sm font-mono" style="color: var(--text-muted)">{{ (currentPage - 1) * perPage + idx + 1 }}</td>
               <td class="px-4 py-4">
                 <div class="w-16 h-10 rounded-lg overflow-hidden bg-cover bg-center border"
                      :style="{ backgroundImage: item.image_path ? `url('${storageUrl(item.image_path)}')` : `url('/img/default-news.png')`, borderColor: 'var(--border)' }">
-                  <div v-if="item.category?.type === 'Video'" class="w-full h-full flex items-center justify-center bg-black/40">
+                  <div v-if="categoryList(item).some(category => category.type === 'Video')" class="w-full h-full flex items-center justify-center bg-black/40">
                     <span class="material-symbols-outlined text-white text-[18px]">play_arrow</span>
                   </div>
                 </div>
               </td>
               <td class="px-4 py-4"><span class="text-sm font-bold line-clamp-1" style="color: var(--text-heading)">{{ item.title }}</span></td>
-              <td class="px-4 py-4"><span :class="categoryBadge(item.category?.type)">{{ item.category?.name || '-' }}</span></td>
+              <td class="px-4 py-4 text-sm" style="color: var(--text-muted)">{{ item.author?.name || item.creator?.name || '-' }}</td>
+              <td class="px-4 py-4">
+                <div class="flex flex-wrap gap-1.5">
+                  <span v-for="category in categoryList(item)" :key="category.id || category.name" :class="categoryBadge(category.type)">{{ category.name }}</span>
+                  <span v-if="!categoryList(item).length" :class="categoryBadge(null)">-</span>
+                </div>
+              </td>
               <td class="px-4 py-4 text-sm" style="color: var(--text-muted)">{{ timeAgo(item.created_at) }}</td>
               <td class="px-4 py-4"><span :class="statusBadge(item.status)">{{ item.status }}</span></td>
               <td class="px-4 py-4 text-right">
@@ -252,17 +259,21 @@ function timeAgo(dateStr) {
 }
 
 function categoryBadge(c) {
-  const b = 'inline-flex items-center justify-center px-3 py-1 rounded-full text-xs font-bold'
-  if (c === 'Artikel') return `${b} bg-accent/20 text-accent border border-accent/30`
-  if (c === 'Video') return `${b} bg-red-900/30 text-red-400 border border-red-800/40`
-  if (c === 'Gambar') return `${b} bg-blue-900/30 text-blue-400 border border-blue-800/40`
-  return `${b} bg-slate-800/50 text-slate-400 border border-slate-700/50`
+  const b = 'app-badge'
+  if (c === 'Artikel') return `${b} app-badge--blue`
+  if (c === 'Video') return `${b} app-badge--red`
+  if (c === 'Gambar') return `${b} app-badge--sky`
+  return `${b} app-badge--neutral`
+}
+
+function categoryList(item) {
+  return item.categories?.length ? item.categories : (item.category ? [item.category] : [])
 }
 
 function statusBadge(s) {
-  const b = 'inline-flex items-center justify-center px-3 py-1 rounded-full text-xs font-bold'
-  if (s === 'Published') return `${b} text-green-400 border border-green-500/30 bg-green-900/20 shadow-[0_0_10px_rgba(74,222,128,0.3)]`
-  return `${b} text-blue-400 border border-blue-500/30 bg-blue-900/20 shadow-[0_0_10px_rgba(37,99,235,0.2)]`
+  const b = 'app-badge'
+  if (s === 'Published') return `${b} app-badge--success`
+  return `${b} app-badge--blue`
 }
 
 onMounted(async () => { await fetchCategories(); fetchData(); fetchStats() })

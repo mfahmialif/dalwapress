@@ -83,6 +83,7 @@
             <thead>
               <tr class="table-head">
                 <th class="px-6 py-4 text-sm font-semibold tracking-wide" style="color: var(--text-heading)">Name</th>
+                <th class="px-6 py-4 text-sm font-semibold tracking-wide" style="color: var(--text-heading)">Username</th>
                 <th class="px-6 py-4 text-sm font-semibold tracking-wide" style="color: var(--text-heading)">Email</th>
                 <th class="px-6 py-4 text-sm font-semibold tracking-wide" style="color: var(--text-heading)">Role</th>
                 <th class="px-6 py-4 text-sm font-semibold tracking-wide" style="color: var(--text-heading)">Status</th>
@@ -100,6 +101,11 @@
                     </div>
                     <span class="text-sm font-medium" style="color: var(--text-heading)">{{ user.name }}</span>
                   </div>
+                </td>
+                <td class="px-6 py-5">
+                  <span class="admin-badge admin-badge--neutral admin-badge--username">
+                    {{ user.username || '-' }}
+                  </span>
                 </td>
                 <td class="px-6 py-5 text-sm" style="color: var(--text-muted)">{{ user.email }}</td>
                 <td class="px-6 py-5">
@@ -393,17 +399,20 @@ function formatLastActive(dateStr) {
 }
 
 function roleBadge(role) {
-  const base = 'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold'
-  if (role === 'Admin') return `${base} bg-purple-900/40 text-purple-400 border border-purple-800/50`
-  if (role === 'Operator') return `${base} bg-blue-900/40 text-blue-400 border border-blue-800/50`
-  if (role === 'User') return `${base} bg-orange-900/40 text-orange-400 border border-orange-800/50`
-  return `${base} bg-slate-800/50 text-slate-400 border border-slate-700/50`
+  const base = 'admin-badge'
+  if (role === 'Admin') return `${base} admin-badge--purple`
+  if (role === 'Operator') return `${base} admin-badge--blue`
+  if (role === 'Author') return `${base} admin-badge--amber`
+  if (role === 'Editor') return `${base} admin-badge--sky`
+  if (role === 'Penulis') return `${base} admin-badge--emerald`
+  if (role === 'Kepala Penulis') return `${base} admin-badge--teal`
+  return `${base} admin-badge--neutral`
 }
 
 function statusBadge(status) {
-  const base = 'inline-flex items-center justify-center px-3 py-1 rounded-full text-xs font-bold'
-  if (status === 'Active') return `${base} text-green-400 border border-green-500/30 bg-green-900/20 shadow-[0_0_10px_rgba(74,222,128,0.3)]`
-  return `${base} text-slate-400 border border-slate-500/30 bg-slate-800/50 shadow-[0_0_10px_rgba(148,163,184,0.2)]`
+  const base = 'admin-badge admin-badge--status'
+  if (status === 'Active') return `${base} admin-badge--success`
+  return `${base} admin-badge--muted`
 }
 </script>
 
@@ -418,6 +427,51 @@ function statusBadge(status) {
 .filter-input::placeholder { color: var(--text-muted); }
 .filter-input:hover { box-shadow: 0 0 15px rgba(37, 99, 235, 0.15); }
 .filter-input:focus { border-color: var(--color-accent); box-shadow: 0 0 12px rgba(37, 99, 235, 0.3); }
+
+/* ═══ Badges ═══ */
+.admin-badge {
+  --badge-color: #94a3b8;
+  --badge-bg: rgba(148, 163, 184, 0.12);
+  --badge-border: rgba(148, 163, 184, 0.28);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 1.75rem;
+  border-radius: 999px;
+  padding: 0.25rem 0.7rem;
+  border: 1px solid var(--badge-border);
+  background: var(--badge-bg);
+  color: var(--badge-color);
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+.admin-badge--username {
+  min-height: 2rem;
+  border-radius: 0.625rem;
+  padding-inline: 0.75rem;
+  font-size: 0.875rem;
+}
+.admin-badge--purple { --badge-color: #c084fc; --badge-bg: rgba(168, 85, 247, 0.14); --badge-border: rgba(168, 85, 247, 0.3); }
+.admin-badge--blue { --badge-color: #60a5fa; --badge-bg: rgba(59, 130, 246, 0.14); --badge-border: rgba(59, 130, 246, 0.3); }
+.admin-badge--amber { --badge-color: #fb923c; --badge-bg: rgba(249, 115, 22, 0.14); --badge-border: rgba(249, 115, 22, 0.3); }
+.admin-badge--sky { --badge-color: #38bdf8; --badge-bg: rgba(14, 165, 233, 0.14); --badge-border: rgba(14, 165, 233, 0.3); }
+.admin-badge--emerald { --badge-color: #34d399; --badge-bg: rgba(16, 185, 129, 0.14); --badge-border: rgba(16, 185, 129, 0.3); }
+.admin-badge--teal { --badge-color: #2dd4bf; --badge-bg: rgba(20, 184, 166, 0.14); --badge-border: rgba(20, 184, 166, 0.3); }
+.admin-badge--success { --badge-color: #4ade80; --badge-bg: rgba(34, 197, 94, 0.12); --badge-border: rgba(34, 197, 94, 0.28); }
+.admin-badge--muted,
+.admin-badge--neutral { --badge-color: #94a3b8; --badge-bg: rgba(148, 163, 184, 0.12); --badge-border: rgba(148, 163, 184, 0.28); }
+
+:global(.admin-root[data-theme="light"]) .admin-badge--purple { --badge-color: #7e22ce; --badge-bg: #f3e8ff; --badge-border: #d8b4fe; }
+:global(.admin-root[data-theme="light"]) .admin-badge--blue { --badge-color: #1d4ed8; --badge-bg: #dbeafe; --badge-border: #93c5fd; }
+:global(.admin-root[data-theme="light"]) .admin-badge--amber { --badge-color: #c2410c; --badge-bg: #ffedd5; --badge-border: #fdba74; }
+:global(.admin-root[data-theme="light"]) .admin-badge--sky { --badge-color: #0369a1; --badge-bg: #e0f2fe; --badge-border: #7dd3fc; }
+:global(.admin-root[data-theme="light"]) .admin-badge--emerald { --badge-color: #047857; --badge-bg: #d1fae5; --badge-border: #6ee7b7; }
+:global(.admin-root[data-theme="light"]) .admin-badge--teal { --badge-color: #0f766e; --badge-bg: #ccfbf1; --badge-border: #5eead4; }
+:global(.admin-root[data-theme="light"]) .admin-badge--success { --badge-color: #15803d; --badge-bg: #dcfce7; --badge-border: #86efac; }
+:global(.admin-root[data-theme="light"]) .admin-badge--muted,
+:global(.admin-root[data-theme="light"]) .admin-badge--neutral { --badge-color: #475569; --badge-bg: #f1f5f9; --badge-border: #cbd5e1; }
 
 /* ═══ Action Buttons ═══ */
 .action-btn { color: var(--text-muted); }

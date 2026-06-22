@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class NewsCategory extends Model
@@ -19,8 +20,14 @@ class NewsCategory extends Model
         'is_active' => 'boolean',
     ];
 
-    public function news(): HasMany
+    public function news(): BelongsToMany
     {
-        return $this->hasMany(News::class);
+        return $this->belongsToMany(News::class, 'news_category_news')
+            ->withTimestamps();
+    }
+
+    public function legacyNews(): HasMany
+    {
+        return $this->hasMany(News::class, 'news_category_id');
     }
 }

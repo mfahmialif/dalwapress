@@ -1,12 +1,14 @@
 <template>
   <footer class="footer-bar flex items-center justify-center px-8 py-4 transition-colors duration-500">
-    <p class="text-muted text-xs font-medium">UII Dalwa Press &copy; {{ currentYear }}</p>
+    <p class="text-muted text-xs font-medium">{{ appSettings.systemName }} &copy; {{ currentYear }}</p>
   </footer>
 </template>
 
 <script setup>
 import { computed } from 'vue'
+import { getPublicSettings } from '../../../services/publicSettings'
 
+const appSettings = getPublicSettings()
 const currentYear = computed(() => new Date().getFullYear())
 </script>
 

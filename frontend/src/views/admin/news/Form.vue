@@ -26,15 +26,19 @@
         <input v-model="form.title" class="filter-input rounded-xl py-2.5 px-4 text-sm focus:outline-none focus:ring-1 focus:ring-accent" placeholder="Judul news" />
       </div>
 
-      <!-- ── Row 2: Kategori + Status ── -->
+      <!-- ── Row 2: Kategori + Status + Penulis ── -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div class="flex flex-col gap-1.5">
           <label class="text-sm font-medium" style="color: var(--text-body)">Kategori *</label>
-          <VueMultiselect v-model="formCategoryOption" :options="categoryOptions" :close-on-select="true" :searchable="false" :allow-empty="false" :show-labels="false" label="name" track-by="value" placeholder="Pilih Kategori" />
+          <VueMultiselect v-model="formCategoryOptions" :options="categoryOptions" :multiple="true" :close-on-select="false" :searchable="true" :allow-empty="false" :show-labels="false" label="name" track-by="value" placeholder="Pilih Kategori" />
         </div>
         <div class="flex flex-col gap-1.5">
           <label class="text-sm font-medium" style="color: var(--text-body)">Status</label>
           <VueMultiselect v-model="formStatusOption" :options="statusOptions" :close-on-select="true" :searchable="false" :allow-empty="false" :show-labels="false" label="name" track-by="value" placeholder="Pilih Status" />
+        </div>
+        <div class="flex flex-col gap-1.5">
+          <label class="text-sm font-medium" style="color: var(--text-body)">Penulis Berita</label>
+          <VueMultiselect v-model="formAuthorOption" :options="authorOptions" :close-on-select="true" :searchable="true" :allow-empty="true" :show-labels="false" label="name" track-by="id" placeholder="Pilih Penulis" />
         </div>
         <div v-if="selectedCategoryType === 'Video'" class="flex flex-col gap-1.5">
           <label class="text-sm font-medium" style="color: var(--text-body)">Speaker</label>
@@ -119,8 +123,8 @@ const formLoading = ref(false)
 const formError = ref('')
 
 const form = ref({
-  title: '', news_category_id: null, body: '',
-  speaker: '', duration: '', status: 'Published',
+  title: '', news_category_ids: [], body: '',
+  author_id: null, speaker: '', duration: '', status: 'Published',
 })
 
 const imageFile = ref(null); const imagePreview = ref(null); const imageDragOver = ref(false); const removeImageFlag = ref(false)
@@ -128,16 +132,26 @@ const videoFile = ref(null); const videoPreview = ref(null); const videoDragOver
 
 // ── Options ──
 const categoryOptions = ref([])
+const authorOptions = ref([])
 const statusOptions = [{ name: 'Published', value: 'Published' }, { name: 'Draft', value: 'Draft' }]
 
-const formCategoryOption = computed({
-  get: () => categoryOptions.value.find(o => o.value === form.value.news_category_id) || categoryOptions.value[0],
-  set: (val) => { form.value.news_category_id = val.value }
+const formCategoryOptions = computed({
+  get: () => categoryOptions.value.filter(o => form.value.news_category_ids.includes(o.value)),
+  set: (val) => { form.value.news_category_ids = (val || []).map(item => item.value) }
 })
-const selectedCategoryType = computed(() => formCategoryOption.value?.type || 'Artikel')
+const selectedCategoryTypes = computed(() => formCategoryOptions.value.map(item => item.type))
+const selectedCategoryType = computed(() => {
+  if (selectedCategoryTypes.value.includes('Video')) return 'Video'
+  if (selectedCategoryTypes.value.length && selectedCategoryTypes.value.every(type => type === 'Gambar')) return 'Gambar'
+  return 'Artikel'
+})
 const formStatusOption = computed({
   get: () => statusOptions.find(o => o.value === form.value.status) || statusOptions[0],
   set: (val) => { form.value.status = val.value }
+})
+const formAuthorOption = computed({
+  get: () => authorOptions.value.find(o => o.id === form.value.author_id) || null,
+  set: (val) => { form.value.author_id = val?.id || null }
 })
 
 // ── Quill Editor ──
@@ -198,14 +212,17 @@ onMounted(async () => {
   pageLoading.value = true
   try {
     await loadCategories()
+    await loadAuthors()
   } catch {
     formError.value = 'Gagal memuat kategori.'
   }
   if (isEdit.value) {
     try {
       const { data } = await api.get(`/news/${route.params.id}`)
+      const ids = (data.categories?.length ? data.categories : [data.category].filter(Boolean)).map(item => item.id)
       form.value = {
-        title: data.title || '', news_category_id: data.news_category_id || data.category?.id || categoryOptions.value[0]?.value,
+        title: data.title || '', news_category_ids: ids.length ? ids : categoryOptions.value.slice(0, 1).map(item => item.value),
+        author_id: data.author_id || data.author?.id || null,
         body: data.body || '', speaker: data.speaker || '',
         duration: data.duration || '', status: data.status || 'Published',
       }
@@ -223,9 +240,14 @@ async function loadCategories() {
     value: item.id,
     type: item.type,
   }))
-  if (!form.value.news_category_id && categoryOptions.value.length) {
-    form.value.news_category_id = categoryOptions.value[0].value
+  if (!form.value.news_category_ids.length && categoryOptions.value.length) {
+    form.value.news_category_ids = [categoryOptions.value[0].value]
   }
+}
+
+async function loadAuthors() {
+  const { data } = await api.get('/news-authors')
+  authorOptions.value = data || []
 }
 
 // ── Submit ──
@@ -235,8 +257,12 @@ async function handleSubmit() {
     if (selectedCategoryType.value !== 'Gambar') await uploadPendingEditorMedia()
     const fd = new FormData()
     fd.append('title', form.value.title)
-    fd.append('news_category_id', form.value.news_category_id)
+    if (!form.value.news_category_ids.length) {
+      throw new Error('Pilih minimal satu kategori.')
+    }
+    form.value.news_category_ids.forEach(id => fd.append('news_category_ids[]', id))
     fd.append('status', form.value.status)
+    if (form.value.author_id) fd.append('author_id', form.value.author_id)
     if (form.value.body) fd.append('body', form.value.body)
     if (form.value.speaker) fd.append('speaker', form.value.speaker)
     if (form.value.duration) fd.append('duration', form.value.duration)
@@ -254,7 +280,7 @@ async function handleSubmit() {
     router.push({ name: 'AdminNews' })
   } catch (e) {
     const errors = e.response?.data?.errors
-    formError.value = errors ? Object.values(errors).flat().join(' ') : (e.response?.data?.message || 'Terjadi kesalahan.')
+    formError.value = errors ? Object.values(errors).flat().join(' ') : (e.response?.data?.message || e.message || 'Terjadi kesalahan.')
   } finally { formLoading.value = false }
 }
 </script>

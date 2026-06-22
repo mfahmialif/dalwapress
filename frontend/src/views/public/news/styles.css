@@ -46,6 +46,12 @@
   text-transform: uppercase;
   border: 1px solid transparent;
 }
+.news-badge--sm {
+  padding: 0.26rem 0.52rem;
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  line-height: 1;
+}
 .news-toolbar {
   display: flex;
   align-items: center;

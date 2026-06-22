@@ -1,6 +1,6 @@
 <template>
   <main>
-    <Hero />
+    <Hero :image-url="heroImageUrl" />
     <Books :books="books" />
     <Services :services="services" />
     <Supporter :supporters="supporters" />
@@ -23,6 +23,7 @@ import 'swiper/css/navigation'
 import 'swiper/css/pagination'
 import './styles.css'
 import api from '../../../axios'
+import { getPublicSettings } from '../../../services/publicSettings'
 import { assetUrl, storageUrl } from '../../../utils/asset'
 import About from './_About.vue'
 import Books from './_Books.vue'
@@ -48,6 +49,7 @@ import { normalizeNews } from '../news/utils'
 
 const books = ref([])
 const latestNews = ref(updates)
+const heroImageUrl = getPublicSettings().landingHeroImageUrl
 const fallbackCovers = [
   '/img/thumb1.jpg',
   '/img/thumb2.jpg',
@@ -124,6 +126,7 @@ async function fetchLatestNews() {
         month: date.month,
         category: normalized.categoryName,
         title: normalized.title,
+        author: normalized.authorName,
         body: normalized.excerpt,
       }
     })

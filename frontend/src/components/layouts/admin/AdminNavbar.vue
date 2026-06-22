@@ -10,12 +10,14 @@
     </div>
     <div class="flex items-center gap-2 sm:gap-4">
       <!-- Search -->
-      <div class="relative w-64 hidden md:block">
+      <button class="search-trigger hidden md:grid" type="button" @click="searchOpen = true">
         <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-muted text-[20px]">search</span>
-        <input v-model="searchQuery"
-               class="search-input w-full rounded-full py-2 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-accent text-heading placeholder-muted transition-colors duration-500"
-               placeholder="Search..." type="text" />
-      </div>
+        <span class="search-trigger-text">Search...</span>
+        <span class="search-shortcut">⌘K</span>
+      </button>
+      <button class="theme-toggle relative p-2 rounded-full transition-all duration-500 cursor-pointer md:hidden" type="button" title="Search" @click="searchOpen = true">
+        <span class="material-symbols-outlined text-[22px]">search</span>
+      </button>
 
       <!-- ★ Theme Toggle ★ -->
       <button @click="$emit('toggle-theme')"
@@ -76,12 +78,14 @@
         </Transition>
       </div>
     </div>
+    <DashboardSearchOverlay :open="searchOpen" portal="admin" @close="searchOpen = false" />
   </header>
 </template>
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useAuthStore } from '../../../stores/auth'
+import DashboardSearchOverlay from '../shared/DashboardSearchOverlay.vue'
 
 defineProps({
   pageTitle: { type: String, default: 'Dashboard' },
@@ -91,7 +95,7 @@ defineProps({
 
 defineEmits(['toggle-theme', 'toggle-sidebar', 'toggle-layout'])
 
-const searchQuery = ref('')
+const searchOpen = ref(false)
 const profileOpen = ref(false)
 const profileDropdownRef = ref(null)
 const authStore = useAuthStore()
@@ -116,8 +120,38 @@ onBeforeUnmount(() => document.removeEventListener('click', handleClickOutside))
 /* ═══ Element Theming ═══ */
 .top-header { background: var(--bg-header); backdrop-filter: blur(12px); }
 .top-header.horiz-mode { background: var(--bg-card); border-bottom: 1px solid var(--border); }
-.search-input { background: var(--bg-input); border: 1px solid var(--border); color: var(--text-heading); }
-.search-input::placeholder { color: var(--text-muted); }
+.search-trigger {
+  position: relative;
+  width: 16rem;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg-input);
+  color: var(--text-muted);
+  padding: 0.5rem 0.7rem 0.5rem 2.35rem;
+  text-align: left;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
+}
+.search-trigger:hover {
+  border-color: var(--color-accent);
+  color: var(--text-heading);
+  box-shadow: 0 0 18px rgba(37, 99, 235, 0.16);
+}
+.search-trigger-text {
+  min-width: 0;
+  font-size: 0.875rem;
+  font-weight: 750;
+}
+.search-shortcut {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.1rem 0.45rem;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  font-weight: 900;
+}
 .avatar-ring { background: var(--bg-input); }
 .text-heading { color: var(--text-heading); }
 .text-muted { color: var(--text-muted); }

@@ -158,10 +158,10 @@ function statusLabel(value) {
 }
 
 function statusBadge(value) {
-  const base = 'inline-flex rounded-full px-3 py-1 text-xs font-black'
-  if (value === 'paid') return `${base} bg-green-500/10 text-green-400 border border-green-500/30`
-  if (value === 'pending') return `${base} bg-amber-500/10 text-amber-400 border border-amber-500/30`
-  return `${base} bg-blue-500/10 text-blue-400 border border-blue-500/30`
+  const base = 'app-badge'
+  if (value === 'paid') return `${base} app-badge--success`
+  if (value === 'pending') return `${base} app-badge--amber`
+  return `${base} app-badge--blue`
 }
 
 function formatCurrency(value) {

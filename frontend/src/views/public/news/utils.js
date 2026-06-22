@@ -37,15 +37,19 @@ export function excerpt(item, length = 150) {
 }
 
 export function normalizeNews(raw) {
-  const category = raw?.category || null
+  const categories = raw?.categories?.length ? raw.categories : (raw?.category ? [raw.category] : [])
+  const category = categories[0] || null
   const categoryName = category?.name || 'Artikel'
   const categoryType = category?.type || 'Artikel'
+  const authorName = raw?.author?.name || raw?.creator?.name || 'UII Dalwa Press'
 
   return {
     ...raw,
     category,
+    categories,
     categoryName,
     categoryType,
+    authorName,
     image: getNewsImage(raw),
     video: getNewsVideo(raw),
     bodyHtml: fixHtmlAssetUrls(raw?.body || ''),

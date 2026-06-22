@@ -46,6 +46,16 @@ class DatabaseSeeder extends Seeder
             'status' => 'Active',
         ]);
 
+        $penulisRole = Role::updateOrCreate(['name' => 'Penulis'], [
+            'description' => 'Akses dashboard penulis untuk mengelola artikel berita miliknya sendiri.',
+            'status' => 'Active',
+        ]);
+
+        $kepalaPenulisRole = Role::updateOrCreate(['name' => 'Kepala Penulis'], [
+            'description' => 'Akses dashboard kepala penulis untuk mengelola artikel dan akun penulis.',
+            'status' => 'Active',
+        ]);
+
         if ($legacyUserRole && $legacyUserRole->id !== $authorRole->id) {
             User::where('role_id', $legacyUserRole->id)->update(['role_id' => $authorRole->id]);
             $legacyUserRole->delete();
@@ -105,6 +115,24 @@ class DatabaseSeeder extends Seeder
             'last_active_at' => now()->subMinutes(80),
         ]);
 
+        $penulisUser = User::updateOrCreate(['username' => 'penulis'], [
+            'name' => 'Penulis Berita',
+            'email' => 'penulis@uiidalwapress.com',
+            'password' => bcrypt('password'),
+            'role_id' => $penulisRole->id,
+            'status' => 'Active',
+            'last_active_at' => now()->subMinutes(25),
+        ]);
+
+        User::updateOrCreate(['username' => 'kepala_penulis'], [
+            'name' => 'Kepala Penulis',
+            'email' => 'kepala.penulis@uiidalwapress.com',
+            'password' => bcrypt('password'),
+            'role_id' => $kepalaPenulisRole->id,
+            'status' => 'Active',
+            'last_active_at' => now()->subMinutes(20),
+        ]);
+
         $categories = collect([
             [
                 'name' => 'Artikel Editorial',
@@ -134,47 +162,49 @@ class DatabaseSeeder extends Seeder
             $category['slug'] => NewsCategory::updateOrCreate(['slug' => $category['slug']], $category),
         ]);
 
-        $newsItems = [
-            [
-                'title' => 'UII Dalwa Press Resmi Diluncurkan',
-                'category_slug' => 'kabar-penerbitan',
-                'body' => '<p>UII Dalwa Press hadir sebagai pusat publikasi, berita, dan literasi kampus yang dikelola secara profesional.</p>',
-                'status' => 'Published',
-            ],
-            [
-                'title' => 'Program Literasi Akademik untuk Civitas UII Dalwa',
-                'category_slug' => 'artikel-editorial',
-                'body' => '<p>Program ini mendorong budaya menulis, membaca, dan menerbitkan karya akademik secara berkelanjutan.</p>',
-                'status' => 'Published',
-            ],
-            [
-                'title' => 'Dokumentasi Kegiatan Editorial UII Dalwa Press',
-                'category_slug' => 'galeri-kegiatan',
-                'body' => null,
-                'status' => 'Published',
-            ],
-            [
-                'title' => 'Wawancara Redaksi: Arah Baru Publikasi Kampus',
-                'category_slug' => 'video-redaksi',
-                'body' => '<p>Redaksi membahas arah pengembangan publikasi digital UII Dalwa Press.</p>',
-                'speaker' => 'Tim Redaksi UII Dalwa Press',
-                'duration' => 1800,
-                'status' => 'Draft',
-            ],
-        ];
+        // $newsItems = [
+        //     [
+        //         'title' => 'UII Dalwa Press Resmi Diluncurkan',
+        //         'category_slug' => 'kabar-penerbitan',
+        //         'body' => '<p>UII Dalwa Press hadir sebagai pusat publikasi, berita, dan literasi kampus yang dikelola secara profesional.</p>',
+        //         'status' => 'Published',
+        //     ],
+        //     [
+        //         'title' => 'Program Literasi Akademik untuk Civitas UII Dalwa',
+        //         'category_slug' => 'artikel-editorial',
+        //         'body' => '<p>Program ini mendorong budaya menulis, membaca, dan menerbitkan karya akademik secara berkelanjutan.</p>',
+        //         'status' => 'Published',
+        //     ],
+        //     [
+        //         'title' => 'Dokumentasi Kegiatan Editorial UII Dalwa Press',
+        //         'category_slug' => 'galeri-kegiatan',
+        //         'body' => null,
+        //         'status' => 'Published',
+        //     ],
+        //     [
+        //         'title' => 'Wawancara Redaksi: Arah Baru Publikasi Kampus',
+        //         'category_slug' => 'video-redaksi',
+        //         'body' => '<p>Redaksi membahas arah pengembangan publikasi digital UII Dalwa Press.</p>',
+        //         'speaker' => 'Tim Redaksi UII Dalwa Press',
+        //         'duration' => 1800,
+        //         'status' => 'Draft',
+        //     ],
+        // ];
 
-        foreach ($newsItems as $index => $item) {
-            $categorySlug = $item['category_slug'];
-            unset($item['category_slug']);
+        // foreach ($newsItems as $index => $item) {
+        //     $categorySlug = $item['category_slug'];
+        //     unset($item['category_slug']);
 
-            News::updateOrCreate(['title' => $item['title']], [
-                ...$item,
-                'news_category_id' => $categories[$categorySlug]->id,
-                'created_by' => $adminUser->id,
-                'created_at' => now()->subHours($index * 3),
-                'updated_at' => now()->subHours($index * 3),
-            ]);
-        }
+        //     $news = News::updateOrCreate(['title' => $item['title']], [
+        //         ...$item,
+        //         'news_category_id' => $categories[$categorySlug]->id,
+        //         'created_by' => $adminUser->id,
+        //         'author_id' => $index === 1 ? $penulisUser->id : null,
+        //         'created_at' => now()->subHours($index * 3),
+        //         'updated_at' => now()->subHours($index * 3),
+        //     ]);
+        //     $news->categories()->syncWithoutDetaching([$categories[$categorySlug]->id]);
+        // }
 
         $bookCategories = collect([
             [
@@ -201,164 +231,164 @@ class DatabaseSeeder extends Seeder
             $category['slug'] => BookCategory::updateOrCreate(['slug' => $category['slug']], $category),
         ]);
 
-        $authors = collect([
-            [
-                'name' => 'Dr. Ahmad Fathoni, M.Pd.',
-                'slug' => 'dr-ahmad-fathoni-mpd',
-                'email' => 'ahmad.fathoni@uiidalwa.ac.id',
-                'phone' => '081234567890',
-                'institution' => 'UII Dalwa',
-                'bio' => 'Dosen dan peneliti bidang pendidikan Islam, literasi akademik, dan pengembangan kurikulum pesantren.',
-            ],
-            [
-                'name' => 'Nabila Zahra, M.Hum.',
-                'slug' => 'nabila-zahra-mhum',
-                'email' => 'nabila.zahra@uiidalwa.ac.id',
-                'phone' => '081298765432',
-                'institution' => 'UII Dalwa Press',
-                'bio' => 'Editor akademik dengan fokus kajian bahasa, penerbitan ilmiah, dan pengelolaan naskah kampus.',
-            ],
-            [
-                'name' => 'Tim Redaksi UII Dalwa Press',
-                'slug' => 'tim-redaksi-uii-dalwa-press',
-                'email' => 'redaksi@uiidalwapress.com',
-                'institution' => 'UII Dalwa Press',
-                'bio' => 'Tim editorial yang mengelola katalog, publikasi, dan distribusi karya akademik UII Dalwa.',
-            ],
-            [
-                'user_id' => $authorUser->id,
-                'name' => 'Muhammad Farhan',
-                'slug' => 'muhammad-farhan',
-                'email' => 'farhan@example.com',
-                'phone' => '081300001111',
-                'institution' => 'UII Dalwa',
-                'bio' => 'Author aktif di bidang literasi santri dan transformasi digital pesantren.',
-                'social_media' => [
-                    'website' => 'https://uiidalwa.ac.id',
-                    'instagram' => '@farhan_dalwa',
-                ],
-            ],
-        ])->mapWithKeys(fn ($author) => [
-            $author['slug'] => Author::updateOrCreate(['slug' => $author['slug']], $author),
-        ]);
+        // $authors = collect([
+        //     [
+        //         'name' => 'Dr. Ahmad Fathoni, M.Pd.',
+        //         'slug' => 'dr-ahmad-fathoni-mpd',
+        //         'email' => 'ahmad.fathoni@uiidalwa.ac.id',
+        //         'phone' => '081234567890',
+        //         'institution' => 'UII Dalwa',
+        //         'bio' => 'Dosen dan peneliti bidang pendidikan Islam, literasi akademik, dan pengembangan kurikulum pesantren.',
+        //     ],
+        //     [
+        //         'name' => 'Nabila Zahra, M.Hum.',
+        //         'slug' => 'nabila-zahra-mhum',
+        //         'email' => 'nabila.zahra@uiidalwa.ac.id',
+        //         'phone' => '081298765432',
+        //         'institution' => 'UII Dalwa Press',
+        //         'bio' => 'Editor akademik dengan fokus kajian bahasa, penerbitan ilmiah, dan pengelolaan naskah kampus.',
+        //     ],
+        //     [
+        //         'name' => 'Tim Redaksi UII Dalwa Press',
+        //         'slug' => 'tim-redaksi-uii-dalwa-press',
+        //         'email' => 'redaksi@uiidalwapress.com',
+        //         'institution' => 'UII Dalwa Press',
+        //         'bio' => 'Tim editorial yang mengelola katalog, publikasi, dan distribusi karya akademik UII Dalwa.',
+        //     ],
+        //     [
+        //         'user_id' => $authorUser->id,
+        //         'name' => 'Muhammad Farhan',
+        //         'slug' => 'muhammad-farhan',
+        //         'email' => 'farhan@example.com',
+        //         'phone' => '081300001111',
+        //         'institution' => 'UII Dalwa',
+        //         'bio' => 'Author aktif di bidang literasi santri dan transformasi digital pesantren.',
+        //         'social_media' => [
+        //             'website' => 'https://uiidalwa.ac.id',
+        //             'instagram' => '@farhan_dalwa',
+        //         ],
+        //     ],
+        // ])->mapWithKeys(fn ($author) => [
+        //     $author['slug'] => Author::updateOrCreate(['slug' => $author['slug']], $author),
+        // ]);
 
-        $books = [
-            [
-                'category_slug' => 'buku-akademik',
-                'author_slug' => 'dr-ahmad-fathoni-mpd',
-                'title' => 'Metodologi Penulisan Akademik Pesantren',
-                'slug' => 'metodologi-penulisan-akademik-pesantren',
-                'isbn' => '978-623-90000-1-1',
-                'year' => 2026,
-                'publisher' => 'UII Dalwa Press',
-                'pages' => 214,
-                'language' => 'Indonesia',
-                'cover' => 'books/thumb1.jpg',
-                'description' => 'Panduan praktis menyusun karya ilmiah berbasis tradisi akademik pesantren dan standar publikasi modern.',
-                'table_of_contents' => "Bab 1: Tradisi Keilmuan\nBab 2: Riset dan Kerangka Tulisan\nBab 3: Sitasi dan Publikasi",
-                'tags' => 'akademik,pesantren,penulisan',
-                'views' => 128,
-                'downloads' => 36,
-                'featured' => true,
-                'status' => 'published',
-                'published_at' => now()->subDays(12),
-            ],
-            [
-                'category_slug' => 'studi-islam',
-                'author_slug' => 'nabila-zahra-mhum',
-                'title' => 'Kajian Islam Kontemporer di Lingkungan Kampus',
-                'slug' => 'kajian-islam-kontemporer-di-lingkungan-kampus',
-                'isbn' => '978-623-90000-2-8',
-                'year' => 2025,
-                'publisher' => 'UII Dalwa Press',
-                'pages' => 186,
-                'language' => 'Indonesia',
-                'cover' => 'books/thumb2.jpg',
-                'description' => 'Kumpulan kajian tematik mengenai dinamika pemikiran Islam, kampus, dan masyarakat.',
-                'table_of_contents' => "Bab 1: Kampus dan Dakwah\nBab 2: Etika Digital\nBab 3: Literasi Keislaman",
-                'tags' => 'islam,kampus,dakwah',
-                'views' => 94,
-                'downloads' => 21,
-                'featured' => true,
-                'status' => 'published',
-                'published_at' => now()->subDays(24),
-            ],
-            [
-                'category_slug' => 'riset-prosiding',
-                'author_slug' => 'tim-redaksi-uii-dalwa-press',
-                'title' => 'Prosiding Seminar Literasi Akademik 2026',
-                'slug' => 'prosiding-seminar-literasi-akademik-2026',
-                'isbn' => '978-623-90000-3-5',
-                'year' => 2026,
-                'publisher' => 'UII Dalwa Press',
-                'pages' => 320,
-                'language' => 'Indonesia',
-                'cover' => 'books/galeri-bg.jpg',
-                'description' => 'Kumpulan makalah seminar literasi akademik yang membahas penerbitan, riset, dan transformasi digital.',
-                'table_of_contents' => "Panel 1: Penerbitan Kampus\nPanel 2: Riset Mahasiswa\nPanel 3: Teknologi Publikasi",
-                'tags' => 'prosiding,riset,literasi',
-                'views' => 75,
-                'downloads' => 18,
-                'featured' => false,
-                'status' => 'review',
-                'published_at' => null,
-            ],
-        ];
+        // $books = [
+        //     [
+        //         'category_slug' => 'buku-akademik',
+        //         'author_slug' => 'dr-ahmad-fathoni-mpd',
+        //         'title' => 'Metodologi Penulisan Akademik Pesantren',
+        //         'slug' => 'metodologi-penulisan-akademik-pesantren',
+        //         'isbn' => '978-623-90000-1-1',
+        //         'year' => 2026,
+        //         'publisher' => 'UII Dalwa Press',
+        //         'pages' => 214,
+        //         'language' => 'Indonesia',
+        //         'cover' => 'books/thumb1.jpg',
+        //         'description' => 'Panduan praktis menyusun karya ilmiah berbasis tradisi akademik pesantren dan standar publikasi modern.',
+        //         'table_of_contents' => "Bab 1: Tradisi Keilmuan\nBab 2: Riset dan Kerangka Tulisan\nBab 3: Sitasi dan Publikasi",
+        //         'tags' => 'akademik,pesantren,penulisan',
+        //         'views' => 128,
+        //         'downloads' => 36,
+        //         'featured' => true,
+        //         'status' => 'published',
+        //         'published_at' => now()->subDays(12),
+        //     ],
+        //     [
+        //         'category_slug' => 'studi-islam',
+        //         'author_slug' => 'nabila-zahra-mhum',
+        //         'title' => 'Kajian Islam Kontemporer di Lingkungan Kampus',
+        //         'slug' => 'kajian-islam-kontemporer-di-lingkungan-kampus',
+        //         'isbn' => '978-623-90000-2-8',
+        //         'year' => 2025,
+        //         'publisher' => 'UII Dalwa Press',
+        //         'pages' => 186,
+        //         'language' => 'Indonesia',
+        //         'cover' => 'books/thumb2.jpg',
+        //         'description' => 'Kumpulan kajian tematik mengenai dinamika pemikiran Islam, kampus, dan masyarakat.',
+        //         'table_of_contents' => "Bab 1: Kampus dan Dakwah\nBab 2: Etika Digital\nBab 3: Literasi Keislaman",
+        //         'tags' => 'islam,kampus,dakwah',
+        //         'views' => 94,
+        //         'downloads' => 21,
+        //         'featured' => true,
+        //         'status' => 'published',
+        //         'published_at' => now()->subDays(24),
+        //     ],
+        //     [
+        //         'category_slug' => 'riset-prosiding',
+        //         'author_slug' => 'tim-redaksi-uii-dalwa-press',
+        //         'title' => 'Prosiding Seminar Literasi Akademik 2026',
+        //         'slug' => 'prosiding-seminar-literasi-akademik-2026',
+        //         'isbn' => '978-623-90000-3-5',
+        //         'year' => 2026,
+        //         'publisher' => 'UII Dalwa Press',
+        //         'pages' => 320,
+        //         'language' => 'Indonesia',
+        //         'cover' => 'books/galeri-bg.jpg',
+        //         'description' => 'Kumpulan makalah seminar literasi akademik yang membahas penerbitan, riset, dan transformasi digital.',
+        //         'table_of_contents' => "Panel 1: Penerbitan Kampus\nPanel 2: Riset Mahasiswa\nPanel 3: Teknologi Publikasi",
+        //         'tags' => 'prosiding,riset,literasi',
+        //         'views' => 75,
+        //         'downloads' => 18,
+        //         'featured' => false,
+        //         'status' => 'review',
+        //         'published_at' => null,
+        //     ],
+        // ];
 
-        foreach ($books as $book) {
-            $categorySlug = $book['category_slug'];
-            $authorSlug = $book['author_slug'];
-            unset($book['category_slug'], $book['author_slug']);
+        // foreach ($books as $book) {
+        //     $categorySlug = $book['category_slug'];
+        //     $authorSlug = $book['author_slug'];
+        //     unset($book['category_slug'], $book['author_slug']);
 
-            Book::updateOrCreate(['slug' => $book['slug']], [
-                ...$book,
-                'category_id' => $bookCategories[$categorySlug]->id,
-                'author_id' => $authors[$authorSlug]->id,
-            ]);
-        }
+        //     Book::updateOrCreate(['slug' => $book['slug']], [
+        //         ...$book,
+        //         'category_id' => $bookCategories[$categorySlug]->id,
+        //         'author_id' => $authors[$authorSlug]->id,
+        //     ]);
+        // }
 
-        $submission = Submission::updateOrCreate(['slug' => 'manuskrip-literasi-santri-era-digital'], [
-            'user_id' => $authorUser->id,
-            'category_id' => $bookCategories['literasi-kampus']->id,
-            'title' => 'Manuskrip Literasi Santri Era Digital',
-            'author_name' => 'Muhammad Farhan',
-            'email' => 'farhan@example.com',
-            'phone' => '081300001111',
-            'description' => 'Naskah membahas strategi penguatan budaya baca dan tulis santri di ruang digital.',
-            'note' => 'Mohon direview untuk kemungkinan diterbitkan sebagai buku populer kampus.',
-            'status' => 'revision',
-            'submitted_at' => now()->subDays(3),
-            'reviewed_at' => now()->subDay(),
-        ]);
+        // $submission = Submission::updateOrCreate(['slug' => 'manuskrip-literasi-santri-era-digital'], [
+        //     'user_id' => $authorUser->id,
+        //     'category_id' => $bookCategories['literasi-kampus']->id,
+        //     'title' => 'Manuskrip Literasi Santri Era Digital',
+        //     'author_name' => 'Muhammad Farhan',
+        //     'email' => 'farhan@example.com',
+        //     'phone' => '081300001111',
+        //     'description' => 'Naskah membahas strategi penguatan budaya baca dan tulis santri di ruang digital.',
+        //     'note' => 'Mohon direview untuk kemungkinan diterbitkan sebagai buku populer kampus.',
+        //     'status' => 'revision',
+        //     'submitted_at' => now()->subDays(3),
+        //     'reviewed_at' => now()->subDay(),
+        // ]);
 
-        SubmissionReview::updateOrCreate([
-            'submission_id' => $submission->id,
-            'reviewer_email' => 'nabila.zahra@uiidalwa.ac.id',
-            'status' => 'revision',
-        ], [
-            'editor_id' => $editorUser->id,
-            'reviewer_name' => 'Nabila Zahra, M.Hum.',
-            'note' => 'Tema menarik. Perlu perapian struktur bab dan penambahan referensi pada bagian metodologi.',
-            'created_at' => now()->subDay(),
-        ]);
+        // SubmissionReview::updateOrCreate([
+        //     'submission_id' => $submission->id,
+        //     'reviewer_email' => 'nabila.zahra@uiidalwa.ac.id',
+        //     'status' => 'revision',
+        // ], [
+        //     'editor_id' => $editorUser->id,
+        //     'reviewer_name' => 'Nabila Zahra, M.Hum.',
+        //     'note' => 'Tema menarik. Perlu perapian struktur bab dan penambahan referensi pada bagian metodologi.',
+        //     'created_at' => now()->subDay(),
+        // ]);
 
-        SubmissionEditorAssignment::updateOrCreate([
-            'submission_id' => $submission->id,
-            'editor_id' => $editorUser->id,
-        ], [
-            'assigned_by' => $adminUser->id,
-            'role' => 'primary',
-            'note' => 'Assignment awal dari seeder.',
-        ]);
+        // SubmissionEditorAssignment::updateOrCreate([
+        //     'submission_id' => $submission->id,
+        //     'editor_id' => $editorUser->id,
+        // ], [
+        //     'assigned_by' => $adminUser->id,
+        //     'role' => 'primary',
+        //     'note' => 'Assignment awal dari seeder.',
+        // ]);
 
-        SubmissionEditorAssignment::updateOrCreate([
-            'submission_id' => $submission->id,
-            'editor_id' => $editorUser2->id,
-        ], [
-            'assigned_by' => $adminUser->id,
-            'role' => 'co_editor',
-            'note' => 'Co-editor awal dari seeder.',
-        ]);
+        // SubmissionEditorAssignment::updateOrCreate([
+        //     'submission_id' => $submission->id,
+        //     'editor_id' => $editorUser2->id,
+        // ], [
+        //     'assigned_by' => $adminUser->id,
+        //     'role' => 'co_editor',
+        //     'note' => 'Co-editor awal dari seeder.',
+        // ]);
 
         $this->command?->newLine();
         $this->command?->info('Login seed accounts:');
@@ -368,6 +398,8 @@ class DatabaseSeeder extends Seeder
         $this->command?->line('Editor    : username=editor   password=password');
         $this->command?->line('Editor 2  : username=editor2  password=password');
         $this->command?->line('Editor 3  : username=editor3  password=password');
+        $this->command?->line('Penulis   : username=penulis password=password');
+        $this->command?->line('Kepala Penulis: username=kepala_penulis password=password');
         $this->command?->newLine();
     }
 }

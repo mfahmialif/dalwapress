@@ -39,7 +39,7 @@
           <div class="mt-5 grid gap-3">
             <div v-for="step in timeline" :key="step.key" class="flex items-center gap-3">
               <span class="flex size-8 items-center justify-center rounded-full"
-                    :class="isStepDone(step.key) ? 'bg-green-500/10 text-green-400 border border-green-500/30' : 'bg-slate-500/10 text-slate-500 border border-slate-500/20'">
+                    :class="isStepDone(step.key) ? 'app-step app-badge--success' : 'app-step app-badge--muted'">
                 <span class="material-symbols-outlined text-[18px]">{{ isStepDone(step.key) ? 'check' : 'radio_button_unchecked' }}</span>
               </span>
               <span class="text-sm font-bold" style="color: var(--text-body)">{{ step.label }}</span>
@@ -107,11 +107,11 @@ function statusLabel(value) {
 }
 
 function statusBadge(value) {
-  const base = 'inline-flex rounded-full px-3 py-1 text-xs font-black'
-  if (value === 'accepted' || value === 'published') return `${base} bg-green-500/10 text-green-400 border border-green-500/30`
-  if (value === 'rejected') return `${base} bg-red-500/10 text-red-400 border border-red-500/30`
-  if (value === 'revision') return `${base} bg-blue-500/10 text-blue-400 border border-blue-500/30`
-  return `${base} bg-sky-500/10 text-sky-400 border border-sky-500/30`
+  const base = 'app-badge'
+  if (value === 'accepted' || value === 'published') return `${base} app-badge--success`
+  if (value === 'rejected') return `${base} app-badge--red`
+  if (value === 'revision') return `${base} app-badge--blue`
+  return `${base} app-badge--sky`
 }
 
 onMounted(async () => {

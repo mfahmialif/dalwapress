@@ -169,11 +169,11 @@ function statusLabel(value) {
 }
 
 function statusBadge(value) {
-  const base = 'inline-flex rounded-full px-3 py-1 text-xs font-black'
-  if (value === 'published') return `${base} bg-green-500/10 text-green-400 border border-green-500/30`
-  if (value === 'review') return `${base} bg-sky-500/10 text-sky-400 border border-sky-500/30`
-  if (value === 'archived') return `${base} bg-slate-500/10 text-slate-400 border border-slate-500/30`
-  return `${base} bg-blue-500/10 text-blue-400 border border-blue-500/30`
+  const base = 'app-badge'
+  if (value === 'published') return `${base} app-badge--success`
+  if (value === 'review') return `${base} app-badge--sky`
+  if (value === 'archived') return `${base} app-badge--muted`
+  return `${base} app-badge--blue`
 }
 
 onMounted(() => {

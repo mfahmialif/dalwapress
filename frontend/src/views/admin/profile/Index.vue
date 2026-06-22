@@ -19,12 +19,12 @@
           <h2 class="text-2xl font-bold" style="color: var(--text-heading)">Administrator</h2>
           <p class="text-sm mt-1" style="color: var(--text-muted)">admin@dalwavision.id</p>
           <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2 mt-3">
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-accent/20 text-accent border border-accent/30">
+            <span class="app-badge app-badge--blue gap-1.5">
               <span class="material-symbols-outlined text-[14px]">shield</span>
               Super Admin
             </span>
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold text-green-400 border border-green-500/30 bg-green-900/20">
-              <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span>
+            <span class="app-badge app-badge--success gap-1.5">
+              <span class="w-1.5 h-1.5 rounded-full animate-pulse" style="background: var(--badge-color)"></span>
               Online
             </span>
           </div>

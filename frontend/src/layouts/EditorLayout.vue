@@ -45,6 +45,7 @@ import EditorSidebar from '../components/layouts/editor/EditorSidebar.vue'
 import EditorNavbar from '../components/layouts/editor/EditorNavbar.vue'
 import EditorHorizontalNav from '../components/layouts/editor/EditorHorizontalNav.vue'
 import EditorFooter from '../components/layouts/editor/EditorFooter.vue'
+import { readThemePreference, resolveThemePreference, writeThemePreference } from '../composables/useThemePreference'
 
 const route = useRoute()
 const pageTitle = computed(() => route.meta.pageTitle || 'Dashboard Editor')
@@ -56,7 +57,12 @@ const isDark = ref(true)
 onMounted(() => {
   sidebarCollapsed.value = localStorage.getItem('editor-sidebar-collapsed') === 'true'
   layoutMode.value = localStorage.getItem('editor-layout-mode') || 'vertical'
-  isDark.value = (localStorage.getItem('editor-theme') || 'dark') === 'dark'
+  const savedTheme = readThemePreference({
+    allowSystem: true,
+    fallback: 'system',
+    legacyKeys: ['editor-theme'],
+  })
+  isDark.value = resolveThemePreference(savedTheme) === 'dark'
 })
 
 function toggleCollapse() {
@@ -69,7 +75,9 @@ function toggleLayout() {
 }
 function toggleTheme() {
   isDark.value = !isDark.value
-  localStorage.setItem('editor-theme', isDark.value ? 'dark' : 'light')
+  writeThemePreference(isDark.value ? 'dark' : 'light', {
+    legacyKeys: ['editor-theme'],
+  })
 }
 watch(() => route.path, () => { sidebarOpen.value = false })
 </script>

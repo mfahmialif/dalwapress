@@ -69,6 +69,7 @@ import AuthorSidebar from '../components/layouts/author/AuthorSidebar.vue'
 import AuthorNavbar from '../components/layouts/author/AuthorNavbar.vue'
 import AuthorHorizontalNav from '../components/layouts/author/AuthorHorizontalNav.vue'
 import AuthorFooter from '../components/layouts/author/AuthorFooter.vue'
+import { readThemePreference, resolveThemePreference, writeThemePreference } from '../composables/useThemePreference'
 
 const route = useRoute()
 const pageTitle = computed(() => route.meta.pageTitle || 'Dashboard Author')
@@ -83,8 +84,12 @@ onMounted(() => {
   if (savedCollapsed) sidebarCollapsed.value = savedCollapsed === 'true'
   const savedLayout = localStorage.getItem('author-layout-mode')
   if (savedLayout) layoutMode.value = savedLayout
-  const savedTheme = localStorage.getItem('author-theme')
-  if (savedTheme) isDark.value = savedTheme === 'dark'
+  const savedTheme = readThemePreference({
+    allowSystem: true,
+    fallback: 'system',
+    legacyKeys: ['author-theme'],
+  })
+  isDark.value = resolveThemePreference(savedTheme) === 'dark'
 })
 
 function toggleCollapse() {
@@ -99,7 +104,9 @@ function toggleLayout() {
 
 function toggleTheme() {
   isDark.value = !isDark.value
-  localStorage.setItem('author-theme', isDark.value ? 'dark' : 'light')
+  writeThemePreference(isDark.value ? 'dark' : 'light', {
+    legacyKeys: ['author-theme'],
+  })
 }
 
 watch(() => route.path, () => {

@@ -2,7 +2,7 @@
   <aside :class="['sidebar flex h-screen flex-col p-4 shrink-0 transition-all duration-300', collapsed ? 'sidebar-collapsed' : '']">
     <div class="flex items-center px-3 pb-4 shrink-0" :class="collapsed ? 'justify-center' : 'justify-between'">
       <div class="overflow-hidden transition-all duration-300" :style="collapsed ? 'width: 0; opacity: 0' : 'width: auto; opacity: 1'">
-        <h1 class="text-heading text-lg font-bold leading-normal whitespace-nowrap">UII Dalwa Press</h1>
+        <h1 class="text-heading text-lg font-bold leading-normal whitespace-nowrap">{{ appSettings.systemName }}</h1>
         <p class="text-muted text-sm font-medium leading-normal whitespace-nowrap">Admin CMS</p>
       </div>
       <span v-if="collapsed" class="material-symbols-outlined text-accent text-[28px]">menu_book</span>
@@ -52,6 +52,7 @@ import { useRouter, useRoute } from 'vue-router'
 import simplebar from 'simplebar-vue'
 import 'simplebar-vue/dist/simplebar.min.css'
 import { useAuthStore } from '../../../stores/auth'
+import { getPublicSettings } from '../../../services/publicSettings'
 
 defineProps({ collapsed: { type: Boolean, default: false } })
 defineEmits(['close-sidebar', 'toggle-collapse'])
@@ -59,6 +60,7 @@ defineEmits(['close-sidebar', 'toggle-collapse'])
 const router = useRouter()
 const route = useRoute()
 const authStore = useAuthStore()
+const appSettings = getPublicSettings()
 
 const navSections = [
   {
@@ -68,14 +70,20 @@ const navSections = [
     ],
   },
   {
-    label: 'Konten',
+    label: 'Buku',
     items: [
       { icon: 'menu_book', label: 'Books', route: '/administrator/books' },
       { icon: 'category', label: 'Kategori Buku', route: '/administrator/book-categories' },
       { icon: 'edit_square', label: 'Authors', route: '/administrator/authors' },
       { icon: 'assignment', label: 'Submissions', route: '/administrator/submissions' },
       { icon: 'payments', label: 'Royalti', route: '/administrator/royalties' },
+    ],
+  },
+  {
+    label: 'News',
+    items: [
       { icon: 'newspaper', label: 'News', route: '/administrator/news' },
+      { icon: 'category', label: 'Kategori News', route: '/administrator/news-categories' },
     ],
   },
   {
@@ -96,8 +104,10 @@ const navSections = [
 
 function isActiveRoute(itemRoute) {
   return route.path === itemRoute
-    || (itemRoute === '/administrator/news' && route.path.startsWith('/administrator/news'))
+    || (itemRoute === '/administrator/news' && route.path.startsWith('/administrator/news/'))
+    || (itemRoute === '/administrator/news-categories' && route.path.startsWith('/administrator/news-categories'))
     || (itemRoute === '/administrator/books' && route.path.startsWith('/administrator/books'))
+    || (itemRoute === '/administrator/book-categories' && route.path.startsWith('/administrator/book-categories'))
     || (itemRoute === '/administrator/submissions' && route.path.startsWith('/administrator/submissions'))
     || (itemRoute === '/administrator/royalties' && route.path.startsWith('/administrator/royalties'))
 }

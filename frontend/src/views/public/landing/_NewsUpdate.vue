@@ -26,6 +26,7 @@
                 <h3 class="mt-2 text-xl font-black text-[#101418] transition-colors group-hover:text-sky-700">{{ item.title }}</h3>
               </router-link>
               <h3 v-else class="mt-2 text-xl font-black text-[#101418]">{{ item.title }}</h3>
+              <p v-if="item.author" class="mt-2 text-sm font-bold text-slate-500">{{ item.author }}</p>
               <p class="mt-2 leading-7 text-slate-600">{{ item.body }}</p>
               <router-link :to="item.href || (item.id ? `/news/${item.id}` : '/news')" class="mt-4 inline-flex items-center gap-2 text-sm font-black text-sky-700 transition hover:text-sky-900">
                 Lihat selengkapnya

@@ -12,8 +12,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['username', 'name', 'email', 'password', 'role_id', 'status', 'last_active_at'])]
-#[Hidden(['password', 'remember_token'])]
+#[Fillable(['username', 'name', 'email', 'email_verified_at', 'password', 'role_id', 'status', 'last_active_at', 'google_id', 'avatar_url', 'email_verification_code', 'email_verification_expires_at'])]
+#[Hidden(['password', 'remember_token', 'email_verification_code'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
@@ -28,6 +28,7 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'email_verification_expires_at' => 'datetime',
             'last_active_at' => 'datetime',
             'password' => 'hashed',
         ];
@@ -46,5 +47,15 @@ class User extends Authenticatable
     public function editorAssignments(): HasMany
     {
         return $this->hasMany(SubmissionEditorAssignment::class, 'editor_id');
+    }
+
+    public function authoredNews(): HasMany
+    {
+        return $this->hasMany(News::class, 'author_id');
+    }
+
+    public function createdNews(): HasMany
+    {
+        return $this->hasMany(News::class, 'created_by');
     }
 }

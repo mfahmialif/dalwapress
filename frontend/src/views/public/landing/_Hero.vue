@@ -27,7 +27,7 @@
 
       <div class="hero-card reveal-up delay-2">
         <div class="relative overflow-hidden rounded-[2rem] bg-[#0b1020] shadow-2xl shadow-slate-900/25">
-          <img src="/img/hero-bg.jpg" alt="UII Dalwa Press editorial" class="h-[500px] w-full object-cover opacity-80" />
+          <img :src="imageUrl || '/img/hero-bg.jpg'" alt="UII Dalwa Press editorial" fetchpriority="high" class="h-[500px] w-full object-cover opacity-80" />
           <div class="absolute inset-0 bg-linear-to-t from-[#0b1020] via-[#0b1020]/30 to-transparent"></div>
           <div class="absolute bottom-0 left-0 right-0 p-7 text-white">
             <p class="text-sm font-black uppercase tracking-[0.22em] text-sky-300">Academic Publisher</p>
@@ -45,3 +45,12 @@
     </div>
   </section>
 </template>
+
+<script setup>
+defineProps({
+  imageUrl: {
+    type: String,
+    default: '/img/hero-bg.jpg',
+  },
+})
+</script>

@@ -7,12 +7,17 @@ import DetailPage from '../views/public/news/Detail.vue'
 import ContactPage from '../views/public/contact/Index.vue'
 import SubmissionPage from '../views/public/submission/Index.vue'
 import Login from '../views/public/login/Index.vue'
+import Register from '../views/public/register/Index.vue'
+import VerifyEmail from '../views/public/verify-email/Index.vue'
 import PublicLayout from '../layouts/PublicLayout.vue'
 import AdminLayout from '../layouts/AdminLayout.vue'
 import AuthorLayout from '../layouts/AuthorLayout.vue'
 import EditorLayout from '../layouts/EditorLayout.vue'
+import PenulisLayout from '../layouts/PenulisLayout.vue'
+import KepalaPenulisLayout from '../layouts/KepalaPenulisLayout.vue'
 import AdminDashboard from '../views/admin/dashboard/Index.vue'
 import { useAuthStore } from '../stores/auth'
+import { ensurePublicSettings } from '../services/publicSettings'
 
 const appName = 'UII Dalwa Press'
 
@@ -20,6 +25,7 @@ const routes = [
   {
     path: '/',
     component: PublicLayout,
+    meta: { publicNavbar: true },
     children: [
       {
         path: '',
@@ -78,6 +84,18 @@ const routes = [
     meta: { title: `${appName} - Login` }
   },
   {
+    path: '/register',
+    name: 'Register',
+    component: Register,
+    meta: { title: `${appName} - Daftar` }
+  },
+  {
+    path: '/verify-email',
+    name: 'VerifyEmail',
+    component: VerifyEmail,
+    meta: { title: `${appName} - Verifikasi Email` }
+  },
+  {
     path: '/administrator',
     component: AdminLayout,
     meta: { requiresAuth: true },
@@ -109,6 +127,12 @@ const routes = [
         name: 'AdminNewsEdit',
         component: () => import('../views/admin/news/Form.vue'),
         meta: { title: `${appName} - Edit News`, pageTitle: 'Edit News', requiresAuth: true }
+      },
+      {
+        path: 'news-categories',
+        name: 'AdminNewsCategories',
+        component: () => import('../views/admin/newsCategories/Index.vue'),
+        meta: { title: `${appName} - Kategori News`, pageTitle: 'Kategori News', requiresAuth: true }
       },
       {
         path: 'book-categories',
@@ -320,6 +344,88 @@ const routes = [
         meta: { title: `${appName} - Profile Editor`, pageTitle: 'Profile Editor', requiresAuth: true, roles: ['Editor'] }
       }
     ]
+  },
+  {
+    path: '/penulis',
+    component: PenulisLayout,
+    meta: { requiresAuth: true, roles: ['Penulis'] },
+    children: [
+      { path: '', redirect: '/penulis/dashboard' },
+      {
+        path: 'dashboard',
+        name: 'PenulisDashboard',
+        component: () => import('../views/penulis/dashboard/Index.vue'),
+        meta: { title: `${appName} - Dashboard Penulis`, pageTitle: 'Dashboard Penulis', requiresAuth: true, roles: ['Penulis'] }
+      },
+      {
+        path: 'news',
+        name: 'PenulisNews',
+        component: () => import('../views/penulis/news/Index.vue'),
+        meta: { title: `${appName} - Artikel Saya`, pageTitle: 'Artikel Saya', requiresAuth: true, roles: ['Penulis'] }
+      },
+      {
+        path: 'news/create',
+        name: 'PenulisNewsCreate',
+        component: () => import('../views/penulis/news/Form.vue'),
+        meta: { title: `${appName} - Tambah Artikel`, pageTitle: 'Tambah Artikel', requiresAuth: true, roles: ['Penulis'] }
+      },
+      {
+        path: 'news/:id/edit',
+        name: 'PenulisNewsEdit',
+        component: () => import('../views/penulis/news/Form.vue'),
+        meta: { title: `${appName} - Edit Artikel`, pageTitle: 'Edit Artikel', requiresAuth: true, roles: ['Penulis'] }
+      },
+      {
+        path: 'profile',
+        name: 'PenulisProfile',
+        component: () => import('../views/penulis/profile/Index.vue'),
+        meta: { title: `${appName} - Profile Penulis`, pageTitle: 'Profile Penulis', requiresAuth: true, roles: ['Penulis'] }
+      }
+    ]
+  },
+  {
+    path: '/kepala-penulis',
+    component: KepalaPenulisLayout,
+    meta: { requiresAuth: true, roles: ['Kepala Penulis'] },
+    children: [
+      { path: '', redirect: '/kepala-penulis/dashboard' },
+      {
+        path: 'dashboard',
+        name: 'KepalaPenulisDashboard',
+        component: () => import('../views/kepalaPenulis/dashboard/Index.vue'),
+        meta: { title: `${appName} - Dashboard Kepala Penulis`, pageTitle: 'Dashboard Kepala Penulis', requiresAuth: true, roles: ['Kepala Penulis'] }
+      },
+      {
+        path: 'news',
+        name: 'KepalaPenulisNews',
+        component: () => import('../views/kepalaPenulis/news/Index.vue'),
+        meta: { title: `${appName} - Artikel Penulis`, pageTitle: 'Artikel Penulis', requiresAuth: true, roles: ['Kepala Penulis'] }
+      },
+      {
+        path: 'news/create',
+        name: 'KepalaPenulisNewsCreate',
+        component: () => import('../views/kepalaPenulis/news/Form.vue'),
+        meta: { title: `${appName} - Tambah Artikel Penulis`, pageTitle: 'Tambah Artikel Penulis', requiresAuth: true, roles: ['Kepala Penulis'] }
+      },
+      {
+        path: 'news/:id/edit',
+        name: 'KepalaPenulisNewsEdit',
+        component: () => import('../views/kepalaPenulis/news/Form.vue'),
+        meta: { title: `${appName} - Edit Artikel Penulis`, pageTitle: 'Edit Artikel Penulis', requiresAuth: true, roles: ['Kepala Penulis'] }
+      },
+      {
+        path: 'writers',
+        name: 'KepalaPenulisWriters',
+        component: () => import('../views/kepalaPenulis/writers/Index.vue'),
+        meta: { title: `${appName} - Akun Penulis`, pageTitle: 'Akun Penulis', requiresAuth: true, roles: ['Kepala Penulis'] }
+      },
+      {
+        path: 'profile',
+        name: 'KepalaPenulisProfile',
+        component: () => import('../views/kepalaPenulis/profile/Index.vue'),
+        meta: { title: `${appName} - Profile Kepala Penulis`, pageTitle: 'Profile Kepala Penulis', requiresAuth: true, roles: ['Kepala Penulis'] }
+      }
+    ]
   }
 ]
 
@@ -336,9 +442,21 @@ router.beforeEach(async (to) => {
   document.title = to.meta.title || appName
 
   const authStore = useAuthStore()
+  const appearanceTarget = to.name === 'Landing'
+    ? 'landing'
+    : to.name === 'Login'
+      ? 'login'
+      : to.meta.publicNavbar
+        ? 'navbar'
+        : null
+  const appearanceReady = appearanceTarget
+    ? ensurePublicSettings(appearanceTarget)
+    : Promise.resolve()
 
   if (to.meta.requiresAuth || to.name === 'Login') {
-    await authStore.fetchUser()
+    await Promise.all([authStore.fetchUser(), appearanceReady])
+  } else {
+    await appearanceReady
   }
 
   const isAuthenticated = authStore.isAuthenticated
@@ -360,6 +478,8 @@ router.beforeEach(async (to) => {
     const roleName = authStore.user?.role?.name
     if (roleName === 'Author') return { name: 'AuthorDashboard' }
     if (roleName === 'Editor') return { name: 'EditorDashboard' }
+    if (roleName === 'Penulis') return { name: 'PenulisDashboard' }
+    if (roleName === 'Kepala Penulis') return { name: 'KepalaPenulisDashboard' }
     return { name: 'AdminDashboard' }
   }
 })

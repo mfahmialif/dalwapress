@@ -27,7 +27,9 @@
               <div class="article-hero-grid">
                 <div>
                   <div class="flex flex-wrap items-center gap-3">
-                    <span class="news-badge" :class="categoryClass(newsItem.categoryType)">{{ newsItem.categoryName }}</span>
+                    <span v-for="category in categoryList(newsItem)" :key="category.id || category.name" class="news-badge" :class="categoryClass(category.type)">
+                      {{ category.name }}
+                    </span>
                     <span class="article-reading-pill">
                       <span class="material-symbols-outlined text-[17px]">schedule</span>
                       {{ formatRelative(newsItem.created_at) }}
@@ -46,6 +48,10 @@
                       <span class="material-symbols-outlined text-[18px]">calendar_month</span>
                       {{ formatDate(newsItem.created_at, { weekday: 'long' }) }}
                     </span>
+                    <span class="inline-flex items-center gap-2">
+                      <span class="material-symbols-outlined text-[18px]">edit</span>
+                      {{ newsItem.authorName }}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -58,7 +64,7 @@
               <img v-else :src="newsItem.image" :alt="newsItem.title" class="h-full w-full object-cover" />
             </div>
             <figcaption class="article-media-caption">
-              <span>{{ newsItem.categoryName }}</span>
+              <span>{{ categoryNames(newsItem) }}</span>
               <span>{{ formatDate(newsItem.created_at) }}</span>
             </figcaption>
           </figure>
@@ -67,7 +73,7 @@
             <article class="article-body article-body--story" data-aos="fade-up">
               <div class="article-body-meta">
                 <span>Artikel</span>
-                <span>{{ newsItem.categoryName }}</span>
+                <span>{{ categoryNames(newsItem) }}</span>
               </div>
               <div v-if="newsItem.bodyHtml" v-html="newsItem.bodyHtml"></div>
               <p v-else>Konten news belum tersedia.</p>
@@ -78,8 +84,16 @@
                 <p class="text-xs font-black uppercase tracking-[0.18em] text-sky-700">Info Artikel</p>
                 <dl class="article-info-list">
                   <div>
+                    <dt>Penulis</dt>
+                    <dd>{{ newsItem.authorName }}</dd>
+                  </div>
+                  <div>
                     <dt>Kategori</dt>
-                    <dd>{{ newsItem.categoryName }}</dd>
+                    <dd>
+                      <span v-for="category in categoryList(newsItem)" :key="category.id || category.name" class="news-badge mr-1.5 mt-1" :class="categoryClass(category.type)">
+                        {{ category.name }}
+                      </span>
+                    </dd>
                   </div>
                   <div>
                     <dt>Diterbitkan</dt>
@@ -126,7 +140,11 @@
                   <img :src="item.image" :alt="item.title" class="h-full w-full object-cover transition duration-700 group-hover:scale-110" />
                 </div>
                 <div class="p-5">
-                  <span class="news-badge" :class="categoryClass(item.categoryType)">{{ item.categoryName }}</span>
+                  <div class="flex flex-wrap gap-1.5">
+                    <span v-for="category in categoryList(item)" :key="category.id || category.name" class="news-badge" :class="categoryClass(category.type)">
+                      {{ category.name }}
+                    </span>
+                  </div>
                   <h3 class="mt-3 line-clamp-2 text-lg font-black text-[#101418]">{{ item.title }}</h3>
                 </div>
               </article>
@@ -222,6 +240,14 @@ async function copyLink() {
 
 function openDetail(item) {
   router.push({ name: 'DetailNews', params: { id: item.id } })
+}
+
+function categoryList(item) {
+  return item?.categories?.length ? item.categories : (item?.category ? [item.category] : [])
+}
+
+function categoryNames(item) {
+  return categoryList(item).map((category) => category.name).join(', ') || item?.categoryName || 'Artikel'
 }
 
 onMounted(() => {

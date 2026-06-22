@@ -44,17 +44,17 @@
 
         <div class="footer-contact">
           <p class="footer-heading">Kontak</p>
-          <a href="mailto:press@uiidalwa.ac.id" class="footer-contact-row">
+          <a :href="mailtoHref" class="footer-contact-row">
             <span class="material-symbols-outlined">mail</span>
-            press@uiidalwa.ac.id
+            {{ footerSettings.footerContactEmail }}
           </a>
-          <a href="https://wa.me/6281200000000" target="_blank" rel="noopener" class="footer-contact-row">
+          <a :href="whatsappHref" target="_blank" rel="noopener" class="footer-contact-row">
             <span class="material-symbols-outlined">chat</span>
-            +62 812 0000 0000
+            {{ footerSettings.footerContactPhone }}
           </a>
-          <a href="https://maps.app.goo.gl/pNNU4dnCtuu7y4Qk6" target="_blank" rel="noopener" class="footer-contact-row">
+          <a :href="footerSettings.footerContactMapsUrl" target="_blank" rel="noopener" class="footer-contact-row">
             <span class="material-symbols-outlined">location_on</span>
-            Pasuruan, Jawa Timur
+            {{ footerSettings.footerContactLocation }}
           </a>
         </div>
       </div>
@@ -62,8 +62,8 @@
       <div class="footer-bottom">
         <p>© {{ year }} UII Dalwa Press. All rights reserved.</p>
         <div class="flex flex-wrap items-center gap-4">
-          <router-link to="/login" class="footer-bottom-link">Admin Login</router-link>
-          <a href="https://maps.app.goo.gl/pNNU4dnCtuu7y4Qk6" target="_blank" rel="noopener" class="footer-bottom-link">Maps</a>
+          <router-link to="/login" class="footer-bottom-link">Login</router-link>
+          <a :href="footerSettings.footerContactMapsUrl" target="_blank" rel="noopener" class="footer-bottom-link">Maps</a>
         </div>
       </div>
     </div>
@@ -71,11 +71,26 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
+import { getPublicSettings } from '../../../services/publicSettings'
+
 defineProps({
   year: {
     type: Number,
     required: true,
   },
+})
+
+const footerSettings = getPublicSettings()
+const mailtoHref = computed(() => `mailto:${footerSettings.footerContactEmail}`)
+const whatsappHref = computed(() => {
+  let digits = footerSettings.footerContactPhone.replace(/\D/g, '')
+
+  if (digits.startsWith('0')) {
+    digits = `62${digits.slice(1)}`
+  }
+
+  return `https://wa.me/${digits}`
 })
 
 const navigation = [

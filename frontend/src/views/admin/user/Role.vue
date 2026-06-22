@@ -290,9 +290,9 @@ const formStatusOption = computed({
 })
 
 function statusBadge(status) {
-  const base = 'inline-flex items-center justify-center px-3 py-1 rounded-full text-xs font-bold'
-  if (status === 'Active') return `${base} text-green-400 border border-green-500/30 bg-green-900/20 shadow-[0_0_10px_rgba(74,222,128,0.3)]`
-  return `${base} text-slate-400 border border-slate-500/30 bg-slate-800/50 shadow-[0_0_10px_rgba(148,163,184,0.2)]`
+  const base = 'admin-badge admin-badge--status'
+  if (status === 'Active') return `${base} admin-badge--success`
+  return `${base} admin-badge--muted`
 }
 </script>
 
@@ -307,6 +307,46 @@ function statusBadge(status) {
 .filter-input::placeholder { color: var(--text-muted); }
 .filter-input:hover { box-shadow: 0 0 15px rgba(37, 99, 235, 0.15); }
 .filter-input:focus { border-color: var(--color-accent); box-shadow: 0 0 12px rgba(37, 99, 235, 0.3); }
+
+/* ═══ Badges ═══ */
+.admin-badge {
+  --badge-color: #94a3b8;
+  --badge-bg: rgba(148, 163, 184, 0.12);
+  --badge-border: rgba(148, 163, 184, 0.28);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 1.75rem;
+  border-radius: 999px;
+  padding: 0.25rem 0.75rem;
+  border: 1px solid var(--badge-border);
+  background: var(--badge-bg);
+  color: var(--badge-color);
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+.admin-badge--success {
+  --badge-color: #4ade80;
+  --badge-bg: rgba(34, 197, 94, 0.12);
+  --badge-border: rgba(34, 197, 94, 0.28);
+}
+.admin-badge--muted {
+  --badge-color: #94a3b8;
+  --badge-bg: rgba(148, 163, 184, 0.12);
+  --badge-border: rgba(148, 163, 184, 0.28);
+}
+:global(.admin-root[data-theme="light"]) .admin-badge--success {
+  --badge-color: #15803d;
+  --badge-bg: #dcfce7;
+  --badge-border: #86efac;
+}
+:global(.admin-root[data-theme="light"]) .admin-badge--muted {
+  --badge-color: #475569;
+  --badge-bg: #f1f5f9;
+  --badge-border: #cbd5e1;
+}
 
 /* ═══ Action Buttons ═══ */
 .action-btn { color: var(--text-muted); }

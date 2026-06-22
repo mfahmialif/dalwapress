@@ -2,10 +2,20 @@
 <html lang="id">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="UII Dalwa Press — portal publikasi, berita, dan literasi kampus." />
     <meta name="theme-color" content="#0f172a" />
+    <script>
+      try {
+        const faviconUrl = localStorage.getItem('dalwapress-public-favicon')
+        if (faviconUrl) {
+          const favicon = document.createElement('link')
+          favicon.rel = 'icon'
+          favicon.href = faviconUrl
+          document.head.appendChild(favicon)
+        }
+      } catch {}
+    </script>
     <title>UII Dalwa Press</title>
     <!-- All fonts loaded locally via @fontsource and local woff2 files. No external CDN needed. -->
   </head>
