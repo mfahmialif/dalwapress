@@ -94,12 +94,15 @@ class BookController extends Controller
 
     public function destroy(Book $book)
     {
-        foreach (['cover', 'preview_file', 'full_file'] as $field) {
-            if ($book->{$field}) Storage::disk('public')->delete($book->{$field});
-        }
+        // Revert linked submission status from 'published' to 'accepted'
+        $submission = $book->submission_id
+            ? \App\Models\Submission::find($book->submission_id)
+            : \App\Models\Submission::where('title', $book->title)
+                ->where('status', 'published')
+                ->first();
 
-        foreach ($book->galleries as $gallery) {
-            if ($gallery->image) Storage::disk('public')->delete($gallery->image);
+        if ($submission && $submission->status === 'published') {
+            $submission->update(['status' => 'accepted']);
         }
 
         $book->delete();
@@ -127,10 +130,10 @@ class BookController extends Controller
             'isbn' => 'nullable|string|max:255',
             'year' => 'nullable|integer|min:1000|max:9999',
             'publisher' => 'nullable|string|max:255',
-            'pages' => 'nullable|integer|min:1',
+            'pages' => 'nullable|string|max:255',
+            'size' => 'nullable|string|max:255',
             'language' => 'nullable|string|max:255',
             'cover' => 'nullable|image|max:5120',
-            'preview_file' => 'nullable|mimes:pdf|max:51200',
             'full_file' => 'nullable|mimes:pdf|max:102400',
             'description' => 'nullable|string',
             'table_of_contents' => 'nullable|string',
@@ -187,7 +190,7 @@ class BookController extends Controller
         $slug = $base;
         $counter = 2;
 
-        while (Book::where('slug', $slug)->when($ignoreId, fn ($q) => $q->where('id', '!=', $ignoreId))->exists()) {
+        while (Book::withTrashed()->where('slug', $slug)->when($ignoreId, fn ($q) => $q->where('id', '!=', $ignoreId))->exists()) {
             $slug = "{$base}-{$counter}";
             $counter++;
         }

@@ -220,9 +220,11 @@ import { ref, computed, onMounted, watch } from 'vue'
 import VueMultiselect from 'vue-multiselect'
 import 'vue-multiselect/dist/vue-multiselect.css'
 import { useUserStore } from '../../../stores/user'
+import { useToastStore } from '../../../stores/toast'
 import api from '../../../axios'
 
 const userStore = useUserStore()
+const toast = useToastStore()
 const searchQuery = ref('')
 
 const statusOptions = [
@@ -360,11 +362,15 @@ async function saveUser() {
 
 async function confirmDelete(user) {
   if (!confirm(`Hapus user "${user.name}"?`)) return
+  const toastId = toast.loading('Sedang menghapus user...')
   try {
     await userStore.deleteUser(user.id)
+    toast.dismiss(toastId)
+    toast.success('User berhasil dihapus.')
     loadUsers()
   } catch (e) {
-    alert(e.response?.data?.message || 'Gagal menghapus user.')
+    toast.dismiss(toastId)
+    toast.error(e.response?.data?.message || 'Gagal menghapus user.')
   }
 }
 

@@ -5,12 +5,21 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\HasAuditColumns;
+use App\Traits\CascadeSoftDeletes;
 
 class News extends Model
 {
+    use SoftDeletes, HasAuditColumns, CascadeSoftDeletes;
+
+    protected array $cascadeSoftDeletes = ['comments', 'pivotCategories'];
+
     protected $fillable = [
         'title', 'news_category_id', 'body', 'image_path', 'video_path',
         'speaker', 'duration', 'status', 'author_id', 'created_by',
+        'updated_by', 'deleted_by',
     ];
 
     public function category(): BelongsTo
@@ -37,5 +46,10 @@ class News extends Model
     public function comments()
     {
         return $this->hasMany(NewsComment::class);
+    }
+
+    public function pivotCategories(): HasMany
+    {
+        return $this->hasMany(NewsCategoryNews::class, 'news_id');
     }
 }

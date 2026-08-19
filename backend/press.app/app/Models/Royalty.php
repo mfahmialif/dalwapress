@@ -4,9 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\HasAuditColumns;
 
 class Royalty extends Model
 {
+    use SoftDeletes, HasAuditColumns;
+
     protected $fillable = [
         'book_id',
         'author_id',
@@ -22,6 +26,7 @@ class Royalty extends Model
         'notes',
         'created_by',
         'updated_by',
+        'deleted_by',
     ];
 
     protected $casts = [
@@ -40,15 +45,5 @@ class Royalty extends Model
     public function author(): BelongsTo
     {
         return $this->belongsTo(Author::class);
-    }
-
-    public function creator(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'created_by');
-    }
-
-    public function updater(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'updated_by');
     }
 }

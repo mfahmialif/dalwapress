@@ -3,9 +3,13 @@
     <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
       <div>
         <h2 class="text-xl font-black" style="color: var(--text-heading)">Submission Naskah</h2>
-        <p class="text-sm" style="color: var(--text-muted)">Kelola naskah masuk, review, dan keputusan editorial.</p>
+        <p class="text-sm" style="color: var(--text-muted)">Kelola naskah masuk, review, assignment editor & layouter.</p>
       </div>
       <div class="flex flex-col gap-3 sm:flex-row">
+        <router-link :to="{ name: 'AdminSubmissionCreate' }" class="btn-primary">
+          <span class="material-symbols-outlined text-[18px]">add</span>
+          Tambah Submission
+        </router-link>
         <input v-model="search" @input="debouncedFetch" class="input sm:w-80" placeholder="Cari judul, author, email..." />
         <select v-model="status" @change="fetchData" class="input sm:w-52">
           <option value="">Semua Status</option>
@@ -26,14 +30,15 @@
               <th class="px-4 py-4 text-sm font-bold" style="color: var(--text-heading)">Author</th>
               <th class="px-4 py-4 text-sm font-bold" style="color: var(--text-heading)">Kategori</th>
               <th class="px-4 py-4 text-sm font-bold" style="color: var(--text-heading)">Status</th>
-              <th class="px-4 py-4 text-sm font-bold" style="color: var(--text-heading)">Editor</th>
+              <th class="px-4 py-4 text-sm font-bold" style="color: var(--text-heading)">Editor Assign</th>
+              <th class="px-4 py-4 text-sm font-bold" style="color: var(--text-heading)">Layouter Assign</th>
               <th class="px-4 py-4 text-sm font-bold" style="color: var(--text-heading)">Review</th>
               <th class="px-4 py-4 text-right text-sm font-bold" style="color: var(--text-heading)">Action</th>
             </tr>
           </thead>
           <tbody>
             <tr v-if="items.length === 0">
-              <td colspan="7" class="px-4 py-12 text-center text-sm" style="color: var(--text-muted)">Belum ada submission</td>
+              <td colspan="8" class="px-4 py-12 text-center text-sm" style="color: var(--text-muted)">Belum ada submission</td>
             </tr>
             <tr v-for="item in items" :key="item.id" class="table-row">
               <td class="px-4 py-4">
@@ -49,6 +54,9 @@
               <td class="px-4 py-4 text-sm" style="color: var(--text-body)">
                 {{ primaryEditor(item)?.editor?.name || '-' }}
                 <p v-if="coEditors(item).length" class="text-xs" style="color: var(--text-muted)">+{{ coEditors(item).length }} co-editor</p>
+              </td>
+              <td class="px-4 py-4 text-sm" style="color: var(--text-body)">
+                {{ layoutersList(item) }}
               </td>
               <td class="px-4 py-4 text-sm" style="color: var(--text-muted)">{{ item.reviews?.length || 0 }} catatan</td>
               <td class="px-4 py-4 text-right">
@@ -115,6 +123,11 @@ function coEditors(item) {
   return item.editor_assignments?.filter((assignment) => assignment.role === 'co_editor') || []
 }
 
+function layoutersList(item) {
+  if (!item.layouter_assignments?.length) return '-'
+  return item.layouter_assignments.map((a) => a.layouter?.name).filter(Boolean).join(', ') || '-'
+}
+
 function formatDate(date) {
   if (!date) return '-'
   return new Date(date).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })
@@ -125,6 +138,7 @@ onMounted(fetchData)
 
 <style scoped>
 .input { border-radius: 0.85rem; background: var(--bg-input); border: 1px solid var(--border); color: var(--text-heading); padding: 0.7rem 0.9rem; outline: none; }
+.btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 0.45rem; border-radius: 0.85rem; padding: 0.65rem 1rem; font-weight: 900; background: var(--color-accent); color: var(--text-btn); font-size: 0.875rem; }
 .table-row { border-top: 1px solid var(--border); transition: background 0.2s ease; }
 .table-row:hover { background: var(--bg-input); }
 </style>

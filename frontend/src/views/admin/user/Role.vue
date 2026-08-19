@@ -165,8 +165,10 @@ import { ref, computed, onMounted, watch } from 'vue'
 import VueMultiselect from 'vue-multiselect'
 import 'vue-multiselect/dist/vue-multiselect.css'
 import { useRoleStore } from '../../../stores/role'
+import { useToastStore } from '../../../stores/toast'
 
 const roleStore = useRoleStore()
+const toast = useToastStore()
 const searchQuery = ref('')
 
 const statusOptions = [
@@ -271,11 +273,15 @@ async function saveRole() {
 
 async function confirmDelete(role) {
   if (!confirm(`Hapus role "${role.name}"?`)) return
+  const toastId = toast.loading('Sedang menghapus role...')
   try {
     await roleStore.deleteRole(role.id)
+    toast.dismiss(toastId)
+    toast.success('Role berhasil dihapus.')
     loadRoles()
   } catch (e) {
-    alert(e.response?.data?.message || 'Gagal menghapus role.')
+    toast.dismiss(toastId)
+    toast.error(e.response?.data?.message || 'Gagal menghapus role.')
   }
 }
 

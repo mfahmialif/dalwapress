@@ -39,8 +39,6 @@ class RoyaltyController extends Controller
 
         $data['author_id'] = $book->author_id;
         $data = $this->calculateAmounts($data);
-        $data['created_by'] = $request->user()->id;
-        $data['updated_by'] = $request->user()->id;
         $data = $this->normalizePaidAt($data);
 
         $royalty = Royalty::create($data);
@@ -65,7 +63,6 @@ class RoyaltyController extends Controller
 
         $data['author_id'] = $book->author_id;
         $data = $this->calculateAmounts($data);
-        $data['updated_by'] = $request->user()->id;
         $data = $this->normalizePaidAt($data, $royalty);
 
         $royalty->update($data);

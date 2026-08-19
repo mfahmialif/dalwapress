@@ -90,6 +90,28 @@ body {
   color: #000;
 }
 
+/* ── Pointer Cursors ── */
+button,
+[role="button"],
+input[type="submit"],
+input[type="button"],
+input[type="reset"],
+.btn,
+.btn-primary,
+.btn-soft,
+.btn-accent,
+.file-btn,
+select,
+label[for] {
+  cursor: pointer;
+}
+
+button:disabled,
+input:disabled,
+select:disabled {
+  cursor: not-allowed;
+}
+
 /* Hide scrollbar util */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -193,3 +215,36 @@ body {
   background: var(--badge-bg);
   color: var(--badge-color);
 }
+
+/* Layouter and cover portals use their own themed roots but share dashboard badges. */
+:where(.layouter-root, .cover-root) .app-badge,
+:where(.layouter-root, .cover-root) .admin-badge {
+  --badge-color: #94a3b8;
+  --badge-bg: rgba(148, 163, 184, 0.12);
+  --badge-border: rgba(148, 163, 184, 0.28);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 1.75rem;
+  border-radius: 999px;
+  padding: 0.25rem 0.75rem;
+  border: 1px solid var(--badge-border);
+  background: var(--badge-bg);
+  color: var(--badge-color);
+  font-size: 0.75rem;
+  font-weight: 800;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+:where(.layouter-root, .cover-root) .app-badge--blue { --badge-color: #60a5fa; --badge-bg: rgba(59, 130, 246, 0.14); --badge-border: rgba(59, 130, 246, 0.3); }
+:where(.layouter-root, .cover-root) .app-badge--sky { --badge-color: #38bdf8; --badge-bg: rgba(14, 165, 233, 0.14); --badge-border: rgba(14, 165, 233, 0.3); }
+:where(.layouter-root, .cover-root) .app-badge--red { --badge-color: #f87171; --badge-bg: rgba(239, 68, 68, 0.14); --badge-border: rgba(239, 68, 68, 0.3); }
+:where(.layouter-root, .cover-root) .app-badge--success { --badge-color: #4ade80; --badge-bg: rgba(34, 197, 94, 0.12); --badge-border: rgba(34, 197, 94, 0.28); }
+:where(.layouter-root, .cover-root) .app-badge--muted { --badge-color: #94a3b8; --badge-bg: rgba(148, 163, 184, 0.12); --badge-border: rgba(148, 163, 184, 0.28); }
+
+:where(.layouter-root, .cover-root)[data-theme="light"] .app-badge--blue { --badge-color: #1d4ed8; --badge-bg: #dbeafe; --badge-border: #93c5fd; }
+:where(.layouter-root, .cover-root)[data-theme="light"] .app-badge--sky { --badge-color: #0369a1; --badge-bg: #e0f2fe; --badge-border: #7dd3fc; }
+:where(.layouter-root, .cover-root)[data-theme="light"] .app-badge--red { --badge-color: #b91c1c; --badge-bg: #fee2e2; --badge-border: #fca5a5; }
+:where(.layouter-root, .cover-root)[data-theme="light"] .app-badge--success { --badge-color: #15803d; --badge-bg: #dcfce7; --badge-border: #86efac; }
+:where(.layouter-root, .cover-root)[data-theme="light"] .app-badge--muted { --badge-color: #475569; --badge-bg: #f1f5f9; --badge-border: #cbd5e1; }

@@ -13,19 +13,52 @@
         </select>
       </div>
     </div>
+
+    <div v-if="errorMessage" class="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm font-bold text-red-400">
+      {{ errorMessage }}
+    </div>
+
     <div class="rounded-2xl p-2" style="background: var(--bg-card); border: 1px solid var(--border)">
-      <div v-if="loading" class="flex justify-center py-16"><span class="material-symbols-outlined animate-spin text-4xl text-accent">progress_activity</span></div>
+      <div v-if="loading" class="flex justify-center py-16">
+        <span class="material-symbols-outlined animate-spin text-4xl text-accent">progress_activity</span>
+      </div>
       <div v-else class="overflow-x-auto">
         <table class="w-full text-left">
-          <thead><tr style="background: var(--bg-input)"><th class="th">Naskah</th><th class="th">Author</th><th class="th">Status</th><th class="th">Assignment</th><th class="th text-right">Action</th></tr></thead>
+          <thead>
+            <tr style="background: var(--bg-input)">
+              <th class="th">Naskah</th>
+              <th class="th">Author</th>
+              <th class="th">Kategori</th>
+              <th class="th">Status</th>
+              <th class="th">Assignment</th>
+              <th class="th">Evaluasi</th>
+              <th class="th text-right">Action</th>
+            </tr>
+          </thead>
           <tbody>
-            <tr v-if="items.length === 0"><td colspan="5" class="px-4 py-12 text-center text-sm" style="color: var(--text-muted)">Belum ada assignment</td></tr>
+            <tr v-if="items.length === 0">
+              <td colspan="7" class="px-4 py-12 text-center text-sm" style="color: var(--text-muted)">Belum ada assignment</td>
+            </tr>
             <tr v-for="item in items" :key="item.id" class="table-row">
-              <td class="px-4 py-4"><p class="font-black" style="color: var(--text-heading)">{{ item.title }}</p><p class="text-xs" style="color: var(--text-muted)">{{ item.category?.name || '-' }}</p></td>
-              <td class="px-4 py-4 text-sm" style="color: var(--text-body)">{{ item.author_name }}<p class="text-xs" style="color: var(--text-muted)">{{ item.email || '-' }}</p></td>
+              <td class="px-4 py-4">
+                <p class="font-black" style="color: var(--text-heading)">{{ item.title }}</p>
+                <p class="text-xs" style="color: var(--text-muted)">Masuk: {{ formatDate(item.submitted_at || item.created_at) }}</p>
+              </td>
+              <td class="px-4 py-4 text-sm" style="color: var(--text-body)">
+                {{ item.author_name }}
+                <p class="text-xs" style="color: var(--text-muted)">{{ item.email || '-' }}</p>
+              </td>
+              <td class="px-4 py-4 text-sm" style="color: var(--text-body)">{{ item.category?.name || '-' }}</td>
               <td class="px-4 py-4"><span :class="statusBadge(item.status)">{{ statusLabel(item.status) }}</span></td>
-              <td class="px-4 py-4 text-sm" style="color: var(--text-muted)">{{ myAssignment(item)?.role === 'primary' ? 'Primary Editor' : 'Co-editor' }}</td>
-              <td class="px-4 py-4 text-right"><router-link :to="`/editor/submissions/${item.id}`" class="rounded-lg px-3 py-2 text-sm font-bold text-accent hover:bg-white/5">Review</router-link></td>
+              <td class="px-4 py-4 text-sm" style="color: var(--text-body)">
+                {{ myAssignment(item)?.role === 'primary' ? 'Primary Editor' : 'Co-editor' }}
+              </td>
+              <td class="px-4 py-4 text-sm" style="color: var(--text-muted)">
+                {{ item.editor_evaluations?.length || item.reviews?.length || 0 }} catatan
+              </td>
+              <td class="px-4 py-4 text-right">
+                <router-link :to="{ name: 'EditorSubmissionDetail', params: { id: item.id } }" class="action-link">Review</router-link>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -33,22 +66,73 @@
     </div>
   </div>
 </template>
+
 <script setup>
 import { computed, onMounted, ref } from 'vue'
 import api from '../../../axios'
 import { useAuthStore } from '../../../stores/auth'
-const items = ref([]), loading = ref(false), search = ref(''), status = ref('')
+
+const items = ref([])
+const loading = ref(false)
+const errorMessage = ref('')
+const search = ref('')
+const status = ref('')
+const statuses = ['submitted', 'under_review', 'revision', 'accepted', 'rejected', 'published']
 const authStore = useAuthStore()
 const currentUser = computed(() => authStore.user || {})
-const statuses = ['submitted','under_review','revision','accepted','rejected','published']
 let timer = null
-function debouncedFetch(){ clearTimeout(timer); timer = setTimeout(fetchData, 300) }
-async function fetchData(){ loading.value = true; const params = { per_page: 100 }; if(search.value) params.search = search.value; if(status.value) params.status = status.value; items.value = ((await api.get('/editor/submissions',{params})).data.data || []); loading.value = false }
-function myAssignment(item){ return item.editor_assignments?.find((a) => a.editor_id === currentUser.value.id) }
-function statusLabel(value){ return { submitted:'Submitted', under_review:'Under Review', revision:'Revision', accepted:'Accepted', rejected:'Rejected', published:'Published' }[value] || value }
-function statusBadge(value){ const base='app-badge'; if(value==='accepted'||value==='published')return `${base} app-badge--success`; if(value==='rejected')return `${base} app-badge--red`; if(value==='revision')return `${base} app-badge--blue`; return `${base} app-badge--sky` }
+
+function debouncedFetch() {
+  clearTimeout(timer)
+  timer = setTimeout(fetchData, 300)
+}
+
+async function fetchData() {
+  loading.value = true
+  errorMessage.value = ''
+  const params = { per_page: 100 }
+  if (search.value) params.search = search.value
+  if (status.value) params.status = status.value
+
+  try {
+    const { data } = await api.get('/editor/submissions', { params })
+    items.value = data.data || []
+  } catch (error) {
+    errorMessage.value = error.response?.data?.message || 'Gagal memuat daftar submission.'
+  } finally {
+    loading.value = false
+  }
+}
+
+function myAssignment(item) {
+  return item.editor_assignments?.find((assignment) => assignment.editor_id === currentUser.value.id)
+}
+
+function statusLabel(value) {
+  return { submitted: 'Submitted', under_review: 'Under Review', revision: 'Revision', accepted: 'Accepted', rejected: 'Rejected', published: 'Published' }[value] || value
+}
+
+function statusBadge(value) {
+  const base = 'app-badge'
+  if (value === 'accepted' || value === 'published') return `${base} app-badge--success`
+  if (value === 'rejected') return `${base} app-badge--red`
+  if (value === 'revision') return `${base} app-badge--blue`
+  return `${base} app-badge--sky`
+}
+
+function formatDate(value) {
+  if (!value) return '-'
+  return new Date(value).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })
+}
+
 onMounted(fetchData)
 </script>
+
 <style scoped>
-.input{border-radius:.85rem;background:var(--bg-input);border:1px solid var(--border);color:var(--text-heading);padding:.7rem .9rem;outline:none}.th{padding:1rem;font-size:.875rem;font-weight:700;color:var(--text-heading)}.table-row{border-top:1px solid var(--border);transition:background .2s}.table-row:hover{background:var(--bg-input)}
+.input { border-radius: .85rem; background: var(--bg-input); border: 1px solid var(--border); color: var(--text-heading); padding: .7rem .9rem; outline: none; }
+.th { padding: 1rem; font-size: .875rem; font-weight: 700; color: var(--text-heading); }
+.table-row { border-top: 1px solid var(--border); transition: background .2s; }
+.table-row:hover { background: var(--bg-input); }
+.action-link { display: inline-flex; border-radius: .65rem; padding: .5rem .75rem; color: var(--color-accent); font-size: .875rem; font-weight: 800; }
+.action-link:hover { background: var(--hover-nav-bg); }
 </style>

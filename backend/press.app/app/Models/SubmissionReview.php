@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\HasAuditColumns;
 
 class SubmissionReview extends Model
 {
-    public $timestamps = false;
+    use SoftDeletes, HasAuditColumns;
 
     protected $fillable = [
         'submission_id',
@@ -16,7 +18,9 @@ class SubmissionReview extends Model
         'reviewer_email',
         'note',
         'status',
-        'created_at',
+        'created_by',
+        'updated_by',
+        'deleted_by',
     ];
 
     protected $casts = [

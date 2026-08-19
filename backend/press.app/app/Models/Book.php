@@ -7,8 +7,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
 
+use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\HasAuditColumns;
+use App\Traits\CascadeSoftDeletes;
+
 class Book extends Model
 {
+    use SoftDeletes, HasAuditColumns, CascadeSoftDeletes;
+
+    protected array $cascadeSoftDeletes = ['galleries'];
+
     protected $appends = [
         'cover_url',
     ];
@@ -16,12 +24,14 @@ class Book extends Model
     protected $fillable = [
         'category_id',
         'author_id',
+        'submission_id',
         'title',
         'slug',
         'isbn',
         'year',
         'publisher',
         'pages',
+        'size',
         'language',
         'cover',
         'preview_file',
@@ -34,6 +44,9 @@ class Book extends Model
         'featured',
         'status',
         'published_at',
+        'created_by',
+        'updated_by',
+        'deleted_by',
     ];
 
     protected $casts = [
@@ -59,6 +72,11 @@ class Book extends Model
     public function royalties(): HasMany
     {
         return $this->hasMany(Royalty::class);
+    }
+
+    public function submission(): BelongsTo
+    {
+        return $this->belongsTo(Submission::class);
     }
 
     public function getCoverUrlAttribute(): ?string

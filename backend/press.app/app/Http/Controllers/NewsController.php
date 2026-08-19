@@ -91,7 +91,6 @@ class NewsController extends Controller
         $categoryIds = $this->categoryIds($request);
         $data = $request->only(['title', 'author_id', 'body', 'speaker', 'duration', 'status']);
         $data['news_category_id'] = $categoryIds[0];
-        $data['created_by'] = $request->user()?->id;
 
         if ($request->hasFile('image')) {
             $data['image_path'] = $request->file('image')->store('news', 'public');
@@ -150,8 +149,6 @@ class NewsController extends Controller
 
     public function destroy(News $news)
     {
-        if ($news->image_path) Storage::disk('public')->delete($news->image_path);
-        if ($news->video_path) Storage::disk('public')->delete($news->video_path);
         $news->delete();
         return response()->json(['message' => 'Konten berhasil dihapus.']);
     }

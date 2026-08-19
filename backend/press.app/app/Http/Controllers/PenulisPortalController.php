@@ -54,7 +54,6 @@ class PenulisPortalController extends Controller
         $categoryIds = $this->categoryIds($request);
         $data['news_category_id'] = $categoryIds[0];
         $data['author_id'] = $request->user()->id;
-        $data['created_by'] = $request->user()->id;
         $this->storeFiles($request, $data);
 
         $news = News::create($data);
@@ -86,8 +85,6 @@ class PenulisPortalController extends Controller
         $this->authorizePenulis($request);
         $this->authorizeOwned($request, $news);
 
-        if ($news->image_path) Storage::disk('public')->delete($news->image_path);
-        if ($news->video_path) Storage::disk('public')->delete($news->video_path);
         $news->delete();
 
         return response()->json(['message' => 'Artikel berhasil dihapus.']);

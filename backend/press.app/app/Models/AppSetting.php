@@ -4,10 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\HasAuditColumns;
 
-#[Fillable(['key', 'value', 'type'])]
+#[Fillable(['key', 'value', 'type', 'created_by', 'updated_by', 'deleted_by'])]
 class AppSetting extends Model
 {
+    use SoftDeletes, HasAuditColumns;
     public static function getValue(string $key, mixed $default = null): mixed
     {
         $setting = static::where('key', $key)->first();

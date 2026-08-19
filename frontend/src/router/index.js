@@ -13,6 +13,8 @@ import PublicLayout from '../layouts/PublicLayout.vue'
 import AdminLayout from '../layouts/AdminLayout.vue'
 import AuthorLayout from '../layouts/AuthorLayout.vue'
 import EditorLayout from '../layouts/EditorLayout.vue'
+import LayouterLayout from '../layouts/LayouterLayout.vue'
+import CoverLayout from '../layouts/CoverLayout.vue'
 import PenulisLayout from '../layouts/PenulisLayout.vue'
 import KepalaPenulisLayout from '../layouts/KepalaPenulisLayout.vue'
 import AdminDashboard from '../views/admin/dashboard/Index.vue'
@@ -159,6 +161,12 @@ const routes = [
         meta: { title: `${appName} - Tambah Buku`, pageTitle: 'Tambah Buku', requiresAuth: true }
       },
       {
+        path: 'books/:id',
+        name: 'AdminBookDetail',
+        component: () => import('../views/admin/books/Detail.vue'),
+        meta: { title: `${appName} - Detail Buku`, pageTitle: 'Detail Buku', requiresAuth: true }
+      },
+      {
         path: 'books/:id/edit',
         name: 'AdminBookEdit',
         component: () => import('../views/admin/books/Form.vue'),
@@ -171,10 +179,28 @@ const routes = [
         meta: { title: `${appName} - Submissions`, pageTitle: 'Submissions', requiresAuth: true }
       },
       {
+        path: 'submissions/create',
+        name: 'AdminSubmissionCreate',
+        component: () => import('../views/admin/submissions/Form.vue'),
+        meta: { title: `${appName} - Tambah Submission`, pageTitle: 'Tambah Submission', requiresAuth: true }
+      },
+      {
         path: 'submissions/:id',
         name: 'AdminSubmissionDetail',
         component: () => import('../views/admin/submissions/Detail.vue'),
         meta: { title: `${appName} - Detail Submission`, pageTitle: 'Detail Submission', requiresAuth: true }
+      },
+      {
+        path: 'submissions/:id/review-cycles',
+        name: 'AdminReviewCycles',
+        component: () => import('../views/admin/submissions/ReviewCycles.vue'),
+        meta: { title: `${appName} - Review Cycles`, pageTitle: 'Review Cycles Timeline', requiresAuth: true }
+      },
+      {
+        path: 'submissions/:id/edit',
+        name: 'AdminSubmissionEdit',
+        component: () => import('../views/admin/submissions/Form.vue'),
+        meta: { title: `${appName} - Edit Submission`, pageTitle: 'Edit Submission', requiresAuth: true }
       },
       {
         path: 'royalties',
@@ -217,6 +243,12 @@ const routes = [
         name: 'AdminManajemenRole',
         component: () => import('../views/admin/user/Role.vue'),
         meta: { title: `${appName} - Manajemen Role`, pageTitle: 'Manajemen Role', requiresAuth: true }
+      },
+      {
+        path: 'restore-data',
+        name: 'AdminRestoreData',
+        component: () => import('../views/admin/control/RestoreData.vue'),
+        meta: { title: `${appName} - Restore Data`, pageTitle: 'Pusat Pemulihan Data', requiresAuth: true }
       },
       {
         path: 'profile',
@@ -332,6 +364,12 @@ const routes = [
         meta: { title: `${appName} - Assigned Submissions`, pageTitle: 'Assigned Submissions', requiresAuth: true, roles: ['Editor'] }
       },
       {
+        path: 'submissions/:id/timeline',
+        name: 'EditorSubmissionTimeline',
+        component: () => import('../views/editor/submissions/Timeline.vue'),
+        meta: { title: 'Dalwa Press - Review Timeline', pageTitle: 'Review Timeline', requiresAuth: true, roles: ['Editor'] }
+      },
+      {
         path: 'submissions/:id',
         name: 'EditorSubmissionDetail',
         component: () => import('../views/editor/submissions/Detail.vue'),
@@ -342,6 +380,70 @@ const routes = [
         name: 'EditorProfile',
         component: () => import('../views/editor/profile/Index.vue'),
         meta: { title: `${appName} - Profile Editor`, pageTitle: 'Profile Editor', requiresAuth: true, roles: ['Editor'] }
+      }
+    ]
+  },
+  {
+    path: '/layouter',
+    component: LayouterLayout,
+    meta: { requiresAuth: true, roles: ['Layouter'] },
+    children: [
+      { path: '', redirect: '/layouter/dashboard' },
+      {
+        path: 'dashboard',
+        name: 'LayouterDashboard',
+        component: () => import('../views/layouter/dashboard/Index.vue'),
+        meta: { title: `${appName} - Layouter Dashboard`, pageTitle: 'Dashboard Layouter', requiresAuth: true, roles: ['Layouter'] }
+      },
+      {
+        path: 'submissions',
+        name: 'LayouterSubmissions',
+        component: () => import('../views/layouter/submissions/Index.vue'),
+        meta: { title: `${appName} - Assigned Submissions`, pageTitle: 'Assigned Submissions', requiresAuth: true, roles: ['Layouter'] }
+      },
+      {
+        path: 'submissions/:id',
+        name: 'LayouterSubmissionDetail',
+        component: () => import('../views/layouter/submissions/Detail.vue'),
+        meta: { title: `${appName} - Upload Layout Submission`, pageTitle: 'Upload Layout Submission', requiresAuth: true, roles: ['Layouter'] }
+      },
+      {
+        path: 'profile',
+        name: 'LayouterProfile',
+        component: () => import('../views/layouter/profile/Index.vue'),
+        meta: { title: `${appName} - Profile Layouter`, pageTitle: 'Profile Layouter', requiresAuth: true, roles: ['Layouter'] }
+      }
+    ]
+  },
+  {
+    path: '/cover',
+    component: CoverLayout,
+    meta: { requiresAuth: true, roles: ['Desain Cover'] },
+    children: [
+      { path: '', redirect: '/cover/dashboard' },
+      {
+        path: 'dashboard',
+        name: 'CoverDashboard',
+        component: () => import('../views/cover/dashboard/Index.vue'),
+        meta: { title: `${appName} - Cover Dashboard`, pageTitle: 'Dashboard Desain Cover', requiresAuth: true, roles: ['Desain Cover'] }
+      },
+      {
+        path: 'submissions',
+        name: 'CoverSubmissions',
+        component: () => import('../views/cover/submissions/Index.vue'),
+        meta: { title: `${appName} - Assigned Submissions`, pageTitle: 'Assigned Cover Submissions', requiresAuth: true, roles: ['Desain Cover'] }
+      },
+      {
+        path: 'submissions/:id',
+        name: 'CoverSubmissionDetail',
+        component: () => import('../views/cover/submissions/Detail.vue'),
+        meta: { title: `${appName} - Upload Cover Submission`, pageTitle: 'Upload Cover Submission', requiresAuth: true, roles: ['Desain Cover'] }
+      },
+      {
+        path: 'profile',
+        name: 'CoverProfile',
+        component: () => import('../views/cover/profile/Index.vue'),
+        meta: { title: `${appName} - Profile Desain Cover`, pageTitle: 'Profile Desain Cover', requiresAuth: true, roles: ['Desain Cover'] }
       }
     ]
   },
@@ -478,6 +580,8 @@ router.beforeEach(async (to) => {
     const roleName = authStore.user?.role?.name
     if (roleName === 'Author') return { name: 'AuthorDashboard' }
     if (roleName === 'Editor') return { name: 'EditorDashboard' }
+    if (roleName === 'Layouter') return { name: 'LayouterDashboard' }
+    if (roleName === 'Desain Cover') return { name: 'CoverDashboard' }
     if (roleName === 'Penulis') return { name: 'PenulisDashboard' }
     if (roleName === 'Kepala Penulis') return { name: 'KepalaPenulisDashboard' }
     return { name: 'AdminDashboard' }

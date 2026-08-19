@@ -7,6 +7,9 @@
 
     <form class="rounded-2xl p-5" style="background: var(--bg-card); border: 1px solid var(--border)" @submit.prevent="submit">
       <div class="grid gap-4 lg:grid-cols-2">
+        <label class="field"><span>Nama Pengirim / Author *</span><input v-model="form.author_name" class="input" required /></label>
+        <label class="field"><span>Email *</span><input v-model="form.email" type="email" class="input" required /></label>
+        <label class="field"><span>Nomor HP / Telepon *</span><input v-model="form.phone" type="text" class="input" required /></label>
         <label class="field"><span>Judul buku *</span><input v-model="form.title" class="input" required /></label>
         <label class="field">
           <span>Kategori *</span>
@@ -59,7 +62,7 @@ const manuscriptFile = ref(null)
 const coverFile = ref(null)
 const saving = ref(false)
 const message = ref('')
-const form = ref({ category_id: '', title: '', description: '', note: '' })
+const form = ref({ author_name: '', email: '', phone: '', category_id: '', title: '', description: '', note: '' })
 
 async function loadData() {
   const { data } = await api.get('/book-categories', { params: { all: 1 } })
@@ -68,10 +71,22 @@ async function loadData() {
   if (isEdit.value) {
     const res = await api.get(`/author/submissions/${route.params.id}`)
     form.value = {
+      author_name: res.data.author_name || '',
+      email: res.data.email || '',
+      phone: res.data.phone || '',
       category_id: res.data.category_id,
       title: res.data.title,
       description: res.data.description || '',
       note: res.data.note || '',
+    }
+  } else {
+    try {
+      const { data: user } = await api.get('/user')
+      form.value.author_name = user.author?.name || user.name || ''
+      form.value.email = user.email || ''
+      form.value.phone = user.author?.phone || ''
+    } catch (e) {
+      console.error('Failed to fetch user info', e)
     }
   }
 }

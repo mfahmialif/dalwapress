@@ -6,6 +6,7 @@ use App\Models\Author;
 use App\Models\Book;
 use App\Models\Royalty;
 use App\Models\Submission;
+use App\Models\SubmissionManuscriptVersion;
 use App\Models\SubmissionRevision;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -62,6 +63,9 @@ class AuthorPortalController extends Controller
         $data = $request->validate([
             'category_id' => 'required|exists:book_categories,id',
             'title' => 'required|string|max:255',
+            'author_name' => 'nullable|string|max:255',
+            'email' => 'nullable|email|max:255',
+            'phone' => 'nullable|string|max:50',
             'description' => 'nullable|string',
             'note' => 'nullable|string',
             'manuscript_file' => 'required|mimes:pdf,doc,docx|max:51200',
@@ -70,9 +74,9 @@ class AuthorPortalController extends Controller
 
         $user = $request->user()->load('author');
         $data['user_id'] = $user->id;
-        $data['author_name'] = $user->author?->name ?: $user->name;
-        $data['email'] = $user->email;
-        $data['phone'] = $user->author?->phone;
+        $data['author_name'] = $request->filled('author_name') ? $request->author_name : ($user->author?->name ?: $user->name);
+        $data['email'] = $request->filled('email') ? $request->email : $user->email;
+        $data['phone'] = $request->filled('phone') ? $request->phone : $user->author?->phone;
         $data['slug'] = $this->uniqueSubmissionSlug($data['title']);
         $data['status'] = 'submitted';
         $data['submitted_at'] = now();
@@ -82,7 +86,18 @@ class AuthorPortalController extends Controller
             $data['cover_file'] = $request->file('cover_file')->store('submissions/covers', 'public');
         }
 
-        return response()->json(Submission::create($data)->load(['category', 'reviews', 'revisions']), 201);
+        $submission = Submission::create($data);
+
+        SubmissionManuscriptVersion::create([
+            'submission_id' => $submission->id,
+            'user_id' => $user->id,
+            'version_number' => 1,
+            'round' => 1,
+            'file_path' => $submission->manuscript_file,
+            'note' => 'Submission naskah awal',
+        ]);
+
+        return response()->json($submission->load(['category', 'manuscriptVersions.user', 'editorEvaluations.editor', 'editorialDecisions.decider', 'revisions']), 201);
     }
 
     public function showSubmission(Request $request, Submission $submission)
@@ -90,7 +105,7 @@ class AuthorPortalController extends Controller
         $this->authorizeAuthor($request);
         $this->authorizeOwnedSubmission($request, $submission);
 
-        return response()->json($submission->load(['category', 'reviews', 'revisions']));
+        return response()->json($submission->load(['category', 'manuscriptVersions.user', 'editorEvaluations.editor', 'editorialDecisions.decider', 'revisions']));
     }
 
     public function updateSubmission(Request $request, Submission $submission)
@@ -125,7 +140,7 @@ class AuthorPortalController extends Controller
 
         $submission->update($data);
 
-        return response()->json($submission->load(['category', 'reviews', 'revisions']));
+        return response()->json($submission->load(['category', 'manuscriptVersions.user', 'editorEvaluations.editor', 'editorialDecisions.decider', 'revisions']));
     }
 
     public function deleteSubmission(Request $request, Submission $submission)
@@ -135,10 +150,6 @@ class AuthorPortalController extends Controller
 
         if ($submission->status !== 'submitted') {
             return response()->json(['message' => 'Hanya draft/submission awal yang dapat dihapus.'], 422);
-        }
-
-        foreach (['manuscript_file', 'cover_file'] as $field) {
-            if ($submission->{$field}) Storage::disk('public')->delete($submission->{$field});
         }
 
         $submission->delete();
@@ -160,18 +171,46 @@ class AuthorPortalController extends Controller
             'note' => 'nullable|string',
         ]);
 
+        $filePath = $request->file('revision_file')->store('submissions/revisions', 'public');
+        $user = $request->user();
+
+        // Versioning & Round calculation
+        $maxVersion = (int) $submission->manuscriptVersions()->max('version_number');
+        $nextVersion = $maxVersion > 0 ? $maxVersion + 1 : 2;
+        $nextRound = ((int) $submission->current_round) + 1;
+
+        $manuscriptVer = SubmissionManuscriptVersion::create([
+            'submission_id' => $submission->id,
+            'user_id' => $user->id,
+            'version_number' => $nextVersion,
+            'round' => $nextRound,
+            'file_path' => $filePath,
+            'note' => $data['note'] ?? "Revisi manuscript v{$nextVersion}",
+        ]);
+
         $revision = SubmissionRevision::create([
             'submission_id' => $submission->id,
-            'user_id' => $request->user()->id,
-            'revision_file' => $request->file('revision_file')->store('submissions/revisions', 'public'),
+            'user_id' => $user->id,
+            'revision_file' => $filePath,
             'note' => $data['note'] ?? null,
         ]);
 
-        $submission->update(['status' => 'under_review']);
+        $submission->update([
+            'status' => 'under_review',
+            'current_round' => $nextRound,
+            'manuscript_file' => $filePath,
+        ]);
 
         return response()->json([
-            'submission' => $submission->fresh()->load(['category', 'reviews', 'revisions']),
+            'submission' => $submission->fresh()->load([
+                'category',
+                'manuscriptVersions.user',
+                'editorEvaluations.editor',
+                'editorialDecisions.decider',
+                'revisions',
+            ]),
             'revision' => $revision,
+            'manuscript_version' => $manuscriptVer,
         ], 201);
     }
 
@@ -349,7 +388,7 @@ class AuthorPortalController extends Controller
         $slug = $base;
         $counter = 2;
 
-        while (Submission::where('slug', $slug)->when($ignoreId, fn ($q) => $q->where('id', '!=', $ignoreId))->exists()) {
+        while (Submission::withTrashed()->where('slug', $slug)->when($ignoreId, fn ($q) => $q->where('id', '!=', $ignoreId))->exists()) {
             $slug = "{$base}-{$counter}";
             $counter++;
         }
@@ -363,7 +402,7 @@ class AuthorPortalController extends Controller
         $slug = $base;
         $counter = 2;
 
-        while (Author::where('slug', $slug)->when($ignoreId, fn ($q) => $q->where('id', '!=', $ignoreId))->exists()) {
+        while (Author::withTrashed()->where('slug', $slug)->when($ignoreId, fn ($q) => $q->where('id', '!=', $ignoreId))->exists()) {
             $slug = "{$base}-{$counter}";
             $counter++;
         }

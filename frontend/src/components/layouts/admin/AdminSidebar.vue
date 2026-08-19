@@ -91,6 +91,7 @@ const navSections = [
     items: [
       { icon: 'group', label: 'Manajemen User', route: '/administrator/manajemen-user' },
       { icon: 'admin_panel_settings', label: 'Manajemen Role', route: '/administrator/manajemen-role' },
+      { icon: 'restore_from_trash', label: 'Restore Data', route: '/administrator/restore-data' },
     ],
   },
   {
@@ -110,6 +111,7 @@ function isActiveRoute(itemRoute) {
     || (itemRoute === '/administrator/book-categories' && route.path.startsWith('/administrator/book-categories'))
     || (itemRoute === '/administrator/submissions' && route.path.startsWith('/administrator/submissions'))
     || (itemRoute === '/administrator/royalties' && route.path.startsWith('/administrator/royalties'))
+    || (itemRoute === '/administrator/restore-data' && route.path.startsWith('/administrator/restore-data'))
 }
 
 function handleLogout() {

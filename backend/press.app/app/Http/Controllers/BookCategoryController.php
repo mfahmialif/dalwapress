@@ -76,7 +76,7 @@ class BookCategoryController extends Controller
         $slug = $base;
         $counter = 2;
 
-        while (BookCategory::where('slug', $slug)->when($ignoreId, fn ($q) => $q->where('id', '!=', $ignoreId))->exists()) {
+        while (BookCategory::withTrashed()->where('slug', $slug)->when($ignoreId, fn ($q) => $q->where('id', '!=', $ignoreId))->exists()) {
             $slug = "{$base}-{$counter}";
             $counter++;
         }

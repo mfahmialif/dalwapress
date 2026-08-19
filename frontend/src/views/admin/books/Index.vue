@@ -52,8 +52,10 @@
                     </div>
                   </div>
                   <div>
-                    <p class="line-clamp-1 text-sm font-black" style="color: var(--text-heading)">{{ book.title }}</p>
-                    <p class="text-xs" style="color: var(--text-muted)">ISBN: {{ book.isbn || '-' }}</p>
+                    <router-link :to="{ name: 'AdminBookDetail', params: { id: book.id } }" class="line-clamp-1 text-sm font-black hover:text-accent transition cursor-pointer" style="color: var(--text-heading)">{{ book.title }}</router-link>
+                    <p class="text-xs" style="color: var(--text-muted)">
+                      ISBN: {{ book.isbn || '-' }} <span v-if="book.pages">· {{ book.pages }}</span> <span v-if="book.size">· {{ book.size }}</span>
+                    </p>
                     <p class="text-xs" style="color: var(--text-muted)">{{ book.views }} views · {{ book.downloads }} downloads</p>
                   </div>
                 </div>
@@ -63,10 +65,13 @@
               <td class="px-4 py-4 text-sm" style="color: var(--text-muted)">{{ book.year || '-' }}</td>
               <td class="px-4 py-4"><span :class="statusBadge(book.status)">{{ statusLabel(book.status) }}</span></td>
               <td class="px-4 py-4 text-right">
-                <router-link :to="{ name: 'AdminBookEdit', params: { id: book.id } }" class="inline-flex rounded-lg p-2 text-accent hover:bg-white/5">
+                <router-link :to="{ name: 'AdminBookDetail', params: { id: book.id } }" class="inline-flex rounded-lg p-2 text-sky-400 hover:bg-white/5" title="Detail Buku">
+                  <span class="material-symbols-outlined text-[20px]">visibility</span>
+                </router-link>
+                <router-link :to="{ name: 'AdminBookEdit', params: { id: book.id } }" class="inline-flex rounded-lg p-2 text-accent hover:bg-white/5" title="Edit Buku">
                   <span class="material-symbols-outlined text-[20px]">edit</span>
                 </router-link>
-                <button @click="removeBook(book)" class="inline-flex rounded-lg p-2 text-red-400 hover:bg-white/5">
+                <button @click="removeBook(book)" class="inline-flex rounded-lg p-2 text-red-400 hover:bg-white/5" title="Hapus Buku">
                   <span class="material-symbols-outlined text-[20px]">delete</span>
                 </button>
               </td>
@@ -152,11 +157,23 @@ function goPage(next) {
   fetchData()
 }
 
+import { useToastStore } from '../../../stores/toast'
+
+const toast = useToastStore()
+
 async function removeBook(book) {
   if (!confirm(`Hapus buku "${book.title}"?`)) return
-  await api.delete(`/books/${book.id}`)
-  await fetchData()
-  await fetchStats()
+  const toastId = toast.loading('Sedang menghapus buku...')
+  try {
+    await api.delete(`/books/${book.id}`)
+    toast.dismiss(toastId)
+    toast.success('Buku berhasil dihapus.')
+    await fetchData()
+    await fetchStats()
+  } catch (err) {
+    toast.dismiss(toastId)
+    toast.error(err.response?.data?.message || 'Gagal menghapus buku.')
+  }
 }
 
 function statusLabel(value) {

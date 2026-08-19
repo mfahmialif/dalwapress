@@ -55,6 +55,9 @@ import { onMounted, ref } from 'vue'
 import api from '../../../axios'
 import { storageUrl } from '../../../utils/asset'
 
+import { useToastStore } from '../../../stores/toast'
+
+const toast = useToastStore()
 const items = ref([])
 const loading = ref(false)
 const search = ref('')
@@ -93,25 +96,42 @@ function resetForm() {
 }
 
 async function submit() {
+  const toastId = toast.loading('Sedang menyimpan author...')
   const fd = new FormData()
   Object.entries(form.value).forEach(([key, value]) => {
     if (value) fd.append(key, value)
   })
   if (photoFile.value) fd.append('photo', photoFile.value)
-  if (editing.value) {
-    fd.append('_method', 'PUT')
-    await api.post(`/authors/${editing.value.id}`, fd, { headers: { 'Content-Type': 'multipart/form-data' } })
-  } else {
-    await api.post('/authors', fd, { headers: { 'Content-Type': 'multipart/form-data' } })
+  try {
+    if (editing.value) {
+      fd.append('_method', 'PUT')
+      await api.post(`/authors/${editing.value.id}`, fd, { headers: { 'Content-Type': 'multipart/form-data' } })
+      toast.success('Author berhasil diperbarui.')
+    } else {
+      await api.post('/authors', fd, { headers: { 'Content-Type': 'multipart/form-data' } })
+      toast.success('Author berhasil ditambahkan.')
+    }
+    toast.dismiss(toastId)
+    resetForm()
+    fetchData()
+  } catch (err) {
+    toast.dismiss(toastId)
+    toast.error(err.response?.data?.message || 'Gagal menyimpan author.')
   }
-  resetForm()
-  fetchData()
 }
 
 async function remove(item) {
   if (!confirm(`Hapus author "${item.name}"?`)) return
-  await api.delete(`/authors/${item.id}`)
-  fetchData()
+  const toastId = toast.loading('Sedang menghapus author...')
+  try {
+    await api.delete(`/authors/${item.id}`)
+    toast.dismiss(toastId)
+    toast.success('Author berhasil dihapus.')
+    fetchData()
+  } catch (err) {
+    toast.dismiss(toastId)
+    toast.error(err.response?.data?.message || 'Gagal menghapus author.')
+  }
 }
 
 onMounted(fetchData)

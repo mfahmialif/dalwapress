@@ -149,7 +149,7 @@ class SettingController extends Controller
             'google_default_role_id' => AppSetting::getValue('google_default_role_id'),
             'roles' => Role::query()
                 ->where('status', 'Active')
-                ->whereIn('name', ['Admin', 'Operator', 'Author', 'Editor', 'Penulis', 'Kepala Penulis'])
+                ->whereIn('name', ['Admin', 'Operator', 'Author', 'Editor', 'Layouter', 'Penulis', 'Kepala Penulis'])
                 ->orderBy('name')
                 ->get(['id', 'name']),
         ]);
@@ -236,7 +236,7 @@ class SettingController extends Controller
     {
         return Role::query()
             ->where('status', 'Active')
-            ->whereIn('name', ['Admin', 'Operator', 'Author', 'Editor', 'Penulis', 'Kepala Penulis'])
+            ->whereIn('name', ['Admin', 'Operator', 'Author', 'Editor', 'Layouter', 'Penulis', 'Kepala Penulis'])
             ->orderBy('name')
             ->get(['id', 'name']);
     }

@@ -5,9 +5,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\HasAuditColumns;
+use App\Traits\CascadeSoftDeletes;
 
 class Submission extends Model
 {
+    use SoftDeletes, HasAuditColumns, CascadeSoftDeletes;
+
+    protected array $cascadeSoftDeletes = [
+        'reviews', 'revisions', 'editorAssignments',
+        'layouterAssignments', 'coverAssignments',
+        'manuscriptVersions', 'editorEvaluations', 'editorialDecisions',
+    ];
+
     protected $fillable = [
         'user_id',
         'category_id',
@@ -21,13 +32,18 @@ class Submission extends Model
         'description',
         'note',
         'status',
+        'current_round',
         'submitted_at',
         'reviewed_at',
+        'created_by',
+        'updated_by',
+        'deleted_by',
     ];
 
     protected $casts = [
         'submitted_at' => 'datetime',
         'reviewed_at' => 'datetime',
+        'current_round' => 'integer',
     ];
 
     public function category(): BelongsTo
@@ -50,9 +66,34 @@ class Submission extends Model
         return $this->hasMany(SubmissionRevision::class);
     }
 
+    public function manuscriptVersions(): HasMany
+    {
+        return $this->hasMany(SubmissionManuscriptVersion::class)->orderBy('version_number', 'asc');
+    }
+
+    public function editorEvaluations(): HasMany
+    {
+        return $this->hasMany(SubmissionEditorEvaluation::class)->orderBy('created_at', 'asc');
+    }
+
+    public function editorialDecisions(): HasMany
+    {
+        return $this->hasMany(SubmissionEditorialDecision::class)->orderBy('round', 'asc');
+    }
+
     public function editorAssignments(): HasMany
     {
         return $this->hasMany(SubmissionEditorAssignment::class);
+    }
+
+    public function layouterAssignments(): HasMany
+    {
+        return $this->hasMany(SubmissionLayouterAssignment::class);
+    }
+
+    public function coverAssignments(): HasMany
+    {
+        return $this->hasMany(SubmissionCoverAssignment::class);
     }
 
     public function primaryEditorAssignment()

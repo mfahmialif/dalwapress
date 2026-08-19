@@ -89,7 +89,7 @@ class NewsCategoryController extends Controller
         $slug = $base;
         $counter = 2;
 
-        while (NewsCategory::where('slug', $slug)->when($ignoreId, fn ($q) => $q->where('id', '!=', $ignoreId))->exists()) {
+        while (NewsCategory::withTrashed()->where('slug', $slug)->when($ignoreId, fn ($q) => $q->where('id', '!=', $ignoreId))->exists()) {
             $slug = "{$base}-{$counter}";
             $counter++;
         }

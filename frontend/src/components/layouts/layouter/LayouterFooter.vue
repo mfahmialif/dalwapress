@@ -1,0 +1,1 @@
+<template><footer class="flex items-center justify-center px-8 py-4" style="background: var(--bg-sidebar); border-top: 1px solid var(--border)"><p class="text-xs font-medium" style="color: var(--text-muted)">UII Dalwa Press Layouter Portal &copy; {{ new Date().getFullYear() }}</p></footer></template>

@@ -50,7 +50,7 @@
         </label>
       </div>
 
-      <div class="grid gap-4 lg:grid-cols-4">
+      <div class="grid gap-4 lg:grid-cols-5">
         <label class="field">
           <span>Tahun</span>
           <input v-model="form.year" class="input" type="number" min="1000" max="9999" placeholder="2026" />
@@ -61,7 +61,11 @@
         </label>
         <label class="field">
           <span>Halaman</span>
-          <input v-model="form.pages" class="input" type="number" min="1" placeholder="240" />
+          <input v-model="form.pages" class="input" type="text" placeholder="xii + 250 hlm" />
+        </label>
+        <label class="field">
+          <span>Ukuran (Dimensi)</span>
+          <input v-model="form.size" class="input" placeholder="14.8 x 21 cm (A5)" />
         </label>
         <label class="field">
           <span>Bahasa</span>
@@ -69,17 +73,13 @@
         </label>
       </div>
 
-      <div class="grid gap-4 lg:grid-cols-3">
+      <div class="grid gap-4 lg:grid-cols-2">
         <label class="field">
-          <span>Cover</span>
+          <span>Cover (Sampul Buku)</span>
           <input class="input file-input" type="file" accept="image/*" @change="coverFile = $event.target.files[0]" />
         </label>
         <label class="field">
-          <span>Preview PDF</span>
-          <input class="input file-input" type="file" accept="application/pdf" @change="previewFile = $event.target.files[0]" />
-        </label>
-        <label class="field">
-          <span>Full PDF</span>
+          <span>Full PDF (Naskah Lengkap)</span>
           <input class="input file-input" type="file" accept="application/pdf" @change="fullFile = $event.target.files[0]" />
         </label>
       </div>
@@ -132,7 +132,6 @@ const error = ref('')
 const categories = ref([])
 const authors = ref([])
 const coverFile = ref(null)
-const previewFile = ref(null)
 const fullFile = ref(null)
 const form = ref({
   category_id: '',
@@ -142,6 +141,7 @@ const form = ref({
   year: '',
   publisher: 'UII Dalwa Press',
   pages: '',
+  size: '',
   language: 'Indonesia',
   description: '',
   table_of_contents: '',
@@ -169,6 +169,7 @@ async function loadBook() {
     year: data.year || '',
     publisher: data.publisher || '',
     pages: data.pages || '',
+    size: data.size || '',
     language: data.language || '',
     description: data.description || '',
     table_of_contents: data.table_of_contents || '',
@@ -187,7 +188,6 @@ async function submit() {
       if (value !== null && value !== '') fd.append(key, key === 'featured' ? (value ? '1' : '0') : value)
     })
     if (coverFile.value) fd.append('cover', coverFile.value)
-    if (previewFile.value) fd.append('preview_file', previewFile.value)
     if (fullFile.value) fd.append('full_file', fullFile.value)
 
     if (isEdit.value) {

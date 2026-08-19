@@ -5,8 +5,10 @@ use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\AuthorPortalController;
 use App\Http\Controllers\BookCategoryController;
 use App\Http\Controllers\BookController;
+use App\Http\Controllers\CoverPortalController;
 use App\Http\Controllers\EditorPortalController;
 use App\Http\Controllers\KepalaPenulisPortalController;
+use App\Http\Controllers\LayouterPortalController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\NewsCategoryController;
 use App\Http\Controllers\NewsCommentController;
@@ -67,8 +69,27 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/dashboard', [EditorPortalController::class, 'dashboard']);
         Route::get('/submissions', [EditorPortalController::class, 'submissions']);
         Route::get('/submissions/{submission}', [EditorPortalController::class, 'show']);
+        Route::get('/submissions/{submission}/review-cycles', [EditorPortalController::class, 'reviewCycles']);
         Route::post('/submissions/{submission}/reviews', [EditorPortalController::class, 'review']);
+        Route::post('/submissions/{submission}/evaluations', [EditorPortalController::class, 'storeEvaluation']);
+        Route::post('/submissions/{submission}/final-decision', [EditorPortalController::class, 'storeFinalDecision']);
         Route::get('/profile', [EditorPortalController::class, 'profile']);
+    });
+
+    Route::prefix('layouter')->group(function () {
+        Route::get('/dashboard', [LayouterPortalController::class, 'dashboard']);
+        Route::get('/submissions', [LayouterPortalController::class, 'submissions']);
+        Route::get('/submissions/{submission}', [LayouterPortalController::class, 'show']);
+        Route::post('/submissions/{submission}/upload-layout', [LayouterPortalController::class, 'uploadLayout']);
+        Route::get('/profile', [LayouterPortalController::class, 'profile']);
+    });
+
+    Route::prefix('cover')->group(function () {
+        Route::get('/dashboard', [CoverPortalController::class, 'dashboard']);
+        Route::get('/submissions', [CoverPortalController::class, 'submissions']);
+        Route::get('/submissions/{submission}', [CoverPortalController::class, 'show']);
+        Route::post('/submissions/{submission}/upload-cover', [CoverPortalController::class, 'uploadCover']);
+        Route::get('/profile', [CoverPortalController::class, 'profile']);
     });
 
     Route::prefix('penulis')->group(function () {
@@ -98,6 +119,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::apiResource('roles', RoleController::class);
     Route::apiResource('users', UserController::class);
+    Route::get('/restore-data', [\App\Http\Controllers\RestoreController::class, 'index']);
+    Route::post('/restore-data/{type}/{id}/restore', [\App\Http\Controllers\RestoreController::class, 'restore']);
+    Route::delete('/restore-data/{type}/{id}/force-delete', [\App\Http\Controllers\RestoreController::class, 'forceDelete']);
     Route::get('/settings/general', [SettingController::class, 'general']);
     Route::post('/settings/general', [SettingController::class, 'updateGeneral']);
     Route::get('/settings/email', [SettingController::class, 'email']);
@@ -110,10 +134,22 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('books', BookController::class)->except(['index', 'show']);
     Route::get('/royalties/summary', [RoyaltyController::class, 'summary']);
     Route::apiResource('royalties', RoyaltyController::class);
-    Route::apiResource('submissions', SubmissionController::class)->except(['store']);
+    Route::apiResource('submissions', SubmissionController::class);
+    Route::post('/submissions/{submission}/evaluations', [EditorPortalController::class, 'storeEvaluation']);
+    Route::post('/submissions/{submission}/final-decision', [EditorPortalController::class, 'storeFinalDecision']);
     Route::post('/submissions/{submission}/reviews', [SubmissionController::class, 'review']);
     Route::get('/editors', [SubmissionController::class, 'editors']);
     Route::post('/submissions/{submission}/assign-editors', [SubmissionController::class, 'assignEditors']);
+    Route::get('/layouters', [SubmissionController::class, 'layouters']);
+    Route::post('/submissions/{submission}/assign-layouters', [SubmissionController::class, 'assignLayouters']);
+    Route::post('/submissions/{submission}/upload-layout', [LayouterPortalController::class, 'uploadLayout']);
+    Route::get('/cover-designers', [SubmissionController::class, 'coverDesigners']);
+    Route::post('/submissions/{submission}/assign-cover-designers', [SubmissionController::class, 'assignCoverDesigners']);
+    Route::post('/submissions/{submission}/upload-cover', [CoverPortalController::class, 'uploadCover']);
+    Route::post('/submissions/{submission}/upload-revision', [SubmissionController::class, 'uploadRevision']);
+    Route::get('/submissions/{submission}/review-cycles', [SubmissionController::class, 'reviewCycles']);
+    Route::post('/submissions/{submission}/publish', [SubmissionController::class, 'publish']);
+    Route::delete('/submissions/{submission}/revisions/{revision}', [SubmissionController::class, 'deleteRevision']);
 
     Route::post('/news', [NewsController::class, 'store']);
     Route::put('/news/{news}', [NewsController::class, 'update']);

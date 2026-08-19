@@ -11,13 +11,15 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\HasAuditColumns;
 
-#[Fillable(['username', 'name', 'email', 'email_verified_at', 'password', 'role_id', 'status', 'last_active_at', 'google_id', 'avatar_url', 'email_verification_code', 'email_verification_expires_at'])]
+#[Fillable(['username', 'name', 'email', 'email_verified_at', 'password', 'role_id', 'status', 'last_active_at', 'google_id', 'avatar_url', 'email_verification_code', 'email_verification_expires_at', 'created_by', 'updated_by', 'deleted_by'])]
 #[Hidden(['password', 'remember_token', 'email_verification_code'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, SoftDeletes, HasAuditColumns;
 
     /**
      * Get the attributes that should be cast.

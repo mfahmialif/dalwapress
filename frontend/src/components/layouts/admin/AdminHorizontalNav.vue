@@ -47,6 +47,7 @@ const navGroups = [
     items: [
       { icon: 'group', label: 'User', route: '/administrator/manajemen-user' },
       { icon: 'admin_panel_settings', label: 'Role', route: '/administrator/manajemen-role' },
+      { icon: 'restore_from_trash', label: 'Restore', route: '/administrator/restore-data' },
     ],
   },
   {
@@ -66,6 +67,7 @@ function isActiveRoute(r) {
     || (r === '/administrator/book-categories' && route.path.startsWith('/administrator/book-categories'))
     || (r === '/administrator/submissions' && route.path.startsWith('/administrator/submissions'))
     || (r === '/administrator/royalties' && route.path.startsWith('/administrator/royalties'))
+    || (r === '/administrator/restore-data' && route.path.startsWith('/administrator/restore-data'))
 }
 </script>
 

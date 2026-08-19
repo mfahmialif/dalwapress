@@ -1,5 +1,5 @@
 <template>
-  <header :class="['top-header flex items-center justify-between px-4 sm:px-6 lg:px-8 py-4 shrink-0 z-10 transition-colors duration-500', layoutMode === 'horizontal' ? 'horiz-mode' : '']">
+  <header :class="['top-header flex items-center justify-between px-4 sm:px-6 lg:px-8 py-4 shrink-0 relative z-5 transition-colors duration-500', layoutMode === 'horizontal' ? 'horiz-mode' : '']">
     <div class="flex items-center gap-3">
       <!-- Hamburger (mobile only) -->
       <button @click="$emit('toggle-sidebar')"

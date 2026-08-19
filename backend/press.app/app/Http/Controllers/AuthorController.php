@@ -91,7 +91,6 @@ class AuthorController extends Controller
             return response()->json(['message' => 'Author masih memiliki buku.'], 422);
         }
 
-        if ($author->photo) Storage::disk('public')->delete($author->photo);
         $author->delete();
 
         return response()->json(['message' => 'Author berhasil dihapus.']);
@@ -103,7 +102,7 @@ class AuthorController extends Controller
         $slug = $base;
         $counter = 2;
 
-        while (Author::where('slug', $slug)->when($ignoreId, fn ($q) => $q->where('id', '!=', $ignoreId))->exists()) {
+        while (Author::withTrashed()->where('slug', $slug)->when($ignoreId, fn ($q) => $q->where('id', '!=', $ignoreId))->exists()) {
             $slug = "{$base}-{$counter}";
             $counter++;
         }

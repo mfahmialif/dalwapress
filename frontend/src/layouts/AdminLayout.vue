@@ -52,7 +52,7 @@
       </Transition>
 
       <!-- Scrollable content area with SimpleBar -->
-      <div class="flex-1 min-h-0">
+      <div class="flex-1 min-h-0 relative z-10">
         <simplebar class="h-full content-scroll" :auto-hide="true">
           <!-- ★ Page Content (router-view) ★ -->
           <div class="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full">
@@ -68,6 +68,7 @@
         </simplebar>
       </div>
     </main>
+    <ToastContainer />
   </div>
 </template>
 
@@ -80,6 +81,7 @@ import AdminSidebar from '../components/layouts/admin/AdminSidebar.vue'
 import AdminNavbar from '../components/layouts/admin/AdminNavbar.vue'
 import AdminHorizontalNav from '../components/layouts/admin/AdminHorizontalNav.vue'
 import AdminFooter from '../components/layouts/admin/AdminFooter.vue'
+import ToastContainer from '../components/common/ToastContainer.vue'
 import api from '../axios'
 import { readThemePreference, resolveThemePreference, writeThemePreference } from '../composables/useThemePreference'
 import { syncPublicSettings } from '../services/publicSettings'
@@ -134,18 +136,15 @@ function toggleTheme() {
   })
 }
 
+// ── Dynamic Branding Sync ──
 async function loadAppearanceSettings() {
   try {
-    const { data } = await api.get('/settings/general')
+    const { data } = await api.get('/settings/public')
     syncPublicSettings(data)
-    if (data.accent_color) {
-      document.querySelector('.admin-root')?.style.setProperty('--color-accent', data.accent_color)
-    }
   } catch {
-    // Appearance settings are optional; keep the default admin theme if unavailable.
+    // Keep defaults
   }
 }
-
 </script>
 
 <style scoped>
@@ -203,7 +202,7 @@ async function loadAppearanceSettings() {
   --uptime-bg: #e2e8f0;
   --uptime-globe: #cbd5e1;
   --uptime-gradient: linear-gradient(to top, #ffffff, transparent);
-  --progress-track: #dce3ec;
+  --progress-track: #e2e8f0;
   --hover-nav-bg: rgba(37, 99, 235, 0.12);
   --shadow-card: 0 4px 24px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.04);
   --toggle-bg: #e2e8f0;
@@ -213,175 +212,114 @@ async function loadAppearanceSettings() {
   --status-aktif-bg: rgba(22, 163, 74, 0.1);
   --status-aktif-border: rgba(22, 163, 74, 0.3);
   --cat-video-text: #dc2626;
-  --cat-video-bg: rgba(220, 38, 38, 0.08);
-  --cat-video-border: rgba(220, 38, 38, 0.2);
+  --cat-video-bg: rgba(220, 38, 38, 0.1);
+  --cat-video-border: rgba(220, 38, 38, 0.3);
   --cat-gambar-text: #2563eb;
-  --cat-gambar-bg: rgba(37, 99, 235, 0.08);
-  --cat-gambar-border: rgba(37, 99, 235, 0.2);
+  --cat-gambar-bg: rgba(37, 99, 235, 0.1);
+  --cat-gambar-border: rgba(37, 99, 235, 0.3);
 }
 
-/* ═══ Overlay fade ═══ */
-.fade-enter-active, .fade-leave-active { transition: opacity 0.3s ease; }
-.fade-enter-from, .fade-leave-to { opacity: 0; }
+/* Base font & theme rules */
+.admin-root {
+  color: var(--text-body);
+  background-color: var(--bg-main);
+}
 
-/* ═══ Page transition ═══ */
+/* Mobile sidebar slide */
+.sidebar-slide-enter-active,
+.sidebar-slide-leave-active {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.sidebar-slide-enter-from,
+.sidebar-slide-leave-to {
+  transform: translateX(-100%);
+}
+
+/* Fade transition */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* Horizontal nav transition */
+.horiz-slide-enter-active {
+  transition: opacity 0.3s ease 0.1s, transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) 0.1s;
+}
+.horiz-slide-leave-active {
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+.horiz-slide-enter-from {
+  opacity: 0;
+  transform: translateY(-100%);
+}
+.horiz-slide-leave-to {
+  opacity: 0;
+  transform: translateY(-100%);
+}
+
+/* Page Transition */
 .page-enter-active {
-  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: opacity 0.25s ease, transform 0.25s ease;
 }
 .page-leave-active {
-  transition: opacity 0.15s cubic-bezier(0.4, 0, 1, 1);
+  transition: opacity 0.15s ease, transform 0.15s ease;
 }
 .page-enter-from {
   opacity: 0;
-  transform: translateY(12px);
+  transform: translateY(8px);
 }
 .page-leave-to {
   opacity: 0;
+  transform: translateY(-8px);
 }
 
-/* ═══ Layout mode transitions ═══ */
-.sidebar-slide-enter-active { transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-.sidebar-slide-leave-active { transition: opacity 0.2s ease, transform 0.2s ease; }
-.sidebar-slide-enter-from { opacity: 0; transform: translateX(-100%); }
-.sidebar-slide-leave-to { opacity: 0; transform: translateX(-100%); }
-
-.horiz-slide-enter-active { transition: opacity 0.3s ease 0.1s, transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) 0.1s; }
-.horiz-slide-leave-active { transition: opacity 0.15s ease, transform 0.15s ease; }
-.horiz-slide-enter-from { opacity: 0; transform: translateY(-100%); }
-.horiz-slide-leave-to { opacity: 0; transform: translateY(-100%); }
-
-/* ═══ Sidebar mobile ═══ */
-.sidebar-mobile { height: 100vh; }
-
-/* ═══ Collapse toggle pill ═══ */
-.collapse-pill {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  color: var(--text-muted);
-  opacity: 0;
-  transform: scale(0.8);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+/* Global scrollbar style for content-scroll */
+:deep(.content-scroll .simplebar-content-wrapper) {
+  border-radius: 0;
 }
-.group\/sidebar:hover .collapse-pill {
-  opacity: 1;
-  transform: scale(1);
-}
-.collapse-pill:hover {
-  background: var(--color-accent);
-  color: var(--text-btn);
-  border-color: var(--color-accent);
-  box-shadow: 0 0 12px rgba(37, 99, 235, 0.4);
-  transform: scale(1.15) !important;
-}
-
-/* ═══ Content Area SimpleBar Overrides ═══ */
-.content-scroll :deep(.simplebar-scrollbar::before) {
-  background: var(--border-light);
-  border-radius: 999px;
-  opacity: 0;
-  transition: opacity 0.4s ease;
-}
-.content-scroll :deep(.simplebar-scrollbar.simplebar-visible::before) {
-  opacity: 0.6;
-}
-.content-scroll:hover :deep(.simplebar-scrollbar::before) {
-  opacity: 0.4;
-}
-.content-scroll :deep(.simplebar-scrollbar:hover::before) {
-  background: var(--text-muted);
-  opacity: 1;
-}
-.content-scroll :deep(.simplebar-track.simplebar-vertical) {
+:deep(.simplebar-track.simplebar-vertical) {
   width: 8px;
-  right: 0;
+  right: 2px;
 }
-.content-scroll :deep(.simplebar-track.simplebar-horizontal) {
-  display: none;
+:deep(.simplebar-track.simplebar-vertical .simplebar-scrollbar) {
+  border-radius: 4px;
 }
-
-/* ═══ Element Theming ═══ */
-.admin-root { background: var(--bg-main); color: var(--text-body); }
-.text-muted { color: var(--text-muted); }
-
-/* ═══ Expose CSS vars for child page components ═══ */
-.admin-root :deep(.stat-card) { background: var(--bg-card); box-shadow: var(--shadow-card); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
-.admin-root :deep(.stat-card:hover) {
-  transform: translateY(-6px);
-  border-color: rgba(37, 99, 235, 0.7);
-  box-shadow:
-    0 0 25px rgba(37, 99, 235, 0.15),
-    0 20px 40px -15px rgba(0, 0, 0, 0.3),
-    inset 0 1px 0 rgba(37, 99, 235, 0.1);
+.admin-root[data-theme="dark"] :deep(.simplebar-track.simplebar-vertical .simplebar-scrollbar::before) {
+  background: rgba(255, 255, 255, 0.25);
 }
-.admin-root :deep(.table-wrapper) { background: var(--bg-table-body); border: 1px solid var(--border); }
-.admin-root :deep(.table-head) { background: var(--bg-table-head); border-bottom: 1px solid var(--border-light); }
-.admin-root :deep(.table-body > tr) { border-bottom: 1px solid var(--border); }
-.admin-root :deep(.table-body > tr:last-child) { border-bottom: none; }
-.admin-root :deep(.network-card) { background: var(--bg-card); border: 1px solid var(--border); }
-.admin-root :deep(.uptime-display) { background: var(--uptime-bg); border: 1px solid var(--border); }
-.admin-root :deep(.uptime-globe) { color: var(--uptime-globe); }
-.admin-root :deep(.uptime-gradient) { background: var(--uptime-gradient); }
-.admin-root :deep(.progress-track) { background: var(--progress-track); border: 1px solid var(--border); }
-
-/* ═══ Premium Table Row Hover ═══ */
-.admin-root :deep(.table-row-hover) {
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  border-left: 3px solid transparent;
-}
-.admin-root :deep(.table-row-hover:hover) {
-  background: var(--hover-nav-bg);
-  border-left-color: var(--color-accent);
-}
-.admin-root :deep(.table-row-hover:hover td) {
-  color: var(--text-heading);
+.admin-root[data-theme="light"] :deep(.simplebar-track.simplebar-vertical .simplebar-scrollbar::before) {
+  background: rgba(0, 0, 0, 0.25);
 }
 
-/* ═══ Vue Multiselect — Admin Theme ═══ */
+/* Multiselect overrides */
 .admin-root :deep(.multiselect) {
-  min-height: 36px;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  font-family: inherit;
+  min-height: 40px;
+  border-radius: 0.75rem;
 }
 .admin-root :deep(.multiselect__tags) {
-  background: var(--bg-input);
-  border: 1px solid var(--border);
-  border-radius: 0.5rem;
-  min-height: 36px;
-  padding: 6px 40px 0 10px;
-  font-size: 0.875rem;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  min-height: 40px;
+  border-radius: 0.75rem;
+  background: var(--bg-card);
+  border-color: var(--border);
+  padding: 6px 40px 0 12px;
 }
-.admin-root :deep(.multiselect--active .multiselect__tags) {
-  border-color: var(--color-accent);
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
-}
-.admin-root :deep(.multiselect__single) {
-  background: transparent;
-  color: var(--text-heading);
-  font-size: 0.875rem;
-  font-weight: 500;
-  margin-bottom: 0;
-  padding: 0;
-  line-height: 1.6;
-}
+.admin-root :deep(.multiselect__single),
 .admin-root :deep(.multiselect__input) {
   background: transparent;
   color: var(--text-heading);
   font-size: 0.875rem;
   margin-bottom: 0;
-  padding: 0;
-  line-height: 1.6;
-  border: none;
-}
-.admin-root :deep(.multiselect__input::placeholder) {
-  color: var(--text-muted);
+  padding: 2px 0;
 }
 .admin-root :deep(.multiselect__placeholder) {
   color: var(--text-muted);
   font-size: 0.875rem;
   margin-bottom: 0;
-  padding: 0;
+  padding-top: 2px;
 }
 .admin-root :deep(.multiselect__select) {
   height: 36px;
@@ -415,19 +353,22 @@ async function loadAppearanceSettings() {
   color: var(--color-accent);
 }
 .admin-root :deep(.multiselect__option--selected) {
-  background: rgba(37, 99, 235, 0.18);
+  background: rgba(37, 99, 235, 0.2);
   color: var(--color-accent);
   font-weight: 700;
 }
-.admin-root :deep(.multiselect__option--selected.multiselect__option--highlight) {
-  background: rgba(37, 99, 235, 0.25);
+.admin-root :deep(.multiselect__tag) {
+  background: rgba(37, 99, 235, 0.16);
+  color: var(--color-accent);
+  border-radius: 9999px;
+  padding: 3px 26px 3px 10px;
+  font-weight: 600;
+  font-size: 0.8125rem;
+}
+.admin-root :deep(.multiselect__tag-icon::after) {
   color: var(--color-accent);
 }
-.admin-root :deep(.multiselect__option--disabled) {
-  background: transparent;
-  color: var(--text-muted);
-}
-.admin-root :deep(.multiselect__spinner) {
-  background: var(--bg-input);
+.admin-root :deep(.multiselect__tag-icon:hover) {
+  background: rgba(37, 99, 235, 0.3);
 }
 </style>

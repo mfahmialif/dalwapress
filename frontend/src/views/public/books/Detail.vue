@@ -21,20 +21,17 @@
             <h1 class="book-detail-title mt-5">{{ book.title }}</h1>
             <p class="book-detail-author mt-4 text-lg font-bold">{{ bookAuthor }}</p>
             <p class="book-detail-description mt-3 max-w-2xl leading-8">{{ book.description || 'Deskripsi buku belum tersedia.' }}</p>
-            <div class="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <div class="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
               <Meta label="ISBN" :value="book.isbn || '-'" />
               <Meta label="Tahun" :value="String(book.year || '-')" />
-              <Meta label="Halaman" :value="book.pages ? `${book.pages} hlm` : '-'" />
+              <Meta label="Halaman" :value="book.pages || '-'" />
+              <Meta label="Ukuran" :value="book.size || '-'" />
               <Meta label="Bahasa" :value="book.language || '-'" />
             </div>
             <div class="book-detail-actions">
-              <a v-if="book.preview_file" :href="fileUrl(book.preview_file)" target="_blank" class="book-btn secondary">
-                <span class="material-symbols-outlined">visibility</span>
-                Preview
-              </a>
               <a v-if="book.full_file" :href="`/api/books/${book.id}/download`" class="book-btn">
                 <span class="material-symbols-outlined">download</span>
-                Download
+                Download PDF
               </a>
               <router-link to="/submissions" class="book-btn secondary">
                 <span class="material-symbols-outlined">upload_file</span>

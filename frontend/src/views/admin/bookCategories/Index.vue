@@ -47,7 +47,9 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import api from '../../../axios'
+import { useToastStore } from '../../../stores/toast'
 
+const toast = useToastStore()
 const items = ref([])
 const loading = ref(false)
 const search = ref('')
@@ -78,16 +80,36 @@ function resetForm() {
 }
 
 async function submit() {
-  if (editing.value) await api.put(`/book-categories/${editing.value.id}`, form.value)
-  else await api.post('/book-categories', form.value)
-  resetForm()
-  fetchData()
+  const toastId = toast.loading('Sedang menyimpan kategori...')
+  try {
+    if (editing.value) {
+      await api.put(`/book-categories/${editing.value.id}`, form.value)
+      toast.success('Kategori berhasil diperbarui.')
+    } else {
+      await api.post('/book-categories', form.value)
+      toast.success('Kategori berhasil ditambahkan.')
+    }
+    toast.dismiss(toastId)
+    resetForm()
+    fetchData()
+  } catch (err) {
+    toast.dismiss(toastId)
+    toast.error(err.response?.data?.message || 'Gagal menyimpan kategori.')
+  }
 }
 
 async function remove(item) {
   if (!confirm(`Hapus kategori "${item.name}"?`)) return
-  await api.delete(`/book-categories/${item.id}`)
-  fetchData()
+  const toastId = toast.loading('Sedang menghapus kategori...')
+  try {
+    await api.delete(`/book-categories/${item.id}`)
+    toast.dismiss(toastId)
+    toast.success('Kategori berhasil dihapus.')
+    fetchData()
+  } catch (err) {
+    toast.dismiss(toastId)
+    toast.error(err.response?.data?.message || 'Gagal menghapus kategori.')
+  }
 }
 
 onMounted(fetchData)

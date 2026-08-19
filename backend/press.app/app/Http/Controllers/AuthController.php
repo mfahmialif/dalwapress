@@ -17,7 +17,7 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
-    private const DASHBOARD_ROLES = ['Admin', 'Operator', 'Author', 'Editor', 'Penulis', 'Kepala Penulis'];
+    private const DASHBOARD_ROLES = ['Admin', 'Operator', 'Author', 'Editor', 'Layouter', 'Desain Cover', 'Penulis', 'Kepala Penulis'];
 
     /**
      * Login dan buat session cookie.
@@ -45,7 +45,7 @@ class AuthController extends Controller
         }
 
         $user->load('role:id,name');
-        if (! $user->role || ! in_array($user->role->name, ['Admin', 'Operator', 'Author', 'Editor', 'Penulis', 'Kepala Penulis'])) {
+        if (! $user->role || ! in_array($user->role->name, self::DASHBOARD_ROLES, true)) {
             throw ValidationException::withMessages([
                 'username' => ['Akun Anda tidak memiliki akses ke dashboard.'],
             ]);
@@ -353,7 +353,7 @@ class AuthController extends Controller
         $username = $base;
         $counter = 1;
 
-        while (User::where('username', $username)->exists()) {
+        while (User::withTrashed()->where('username', $username)->exists()) {
             $username = "{$base}_{$counter}";
             $counter++;
         }
