@@ -1,11 +1,11 @@
 <template>
-  <main class="news-detail-page pt-28">
-    <section v-if="loading" class="mx-auto max-w-5xl px-5 py-24 text-center lg:px-8">
+  <main class="news-detail-page pb-24">
+    <section v-if="loading" class="mx-auto max-w-5xl px-5 pt-36 pb-24 text-center lg:px-8">
       <div class="mx-auto size-16 animate-spin rounded-full border-4 border-sky-100 border-t-sky-600"></div>
       <p class="mt-5 font-bold text-slate-500">Memuat news...</p>
     </section>
 
-      <section v-else-if="error" class="mx-auto max-w-3xl px-5 py-24 text-center lg:px-8">
+      <section v-else-if="error" class="mx-auto max-w-3xl px-5 pt-36 pb-24 text-center lg:px-8">
         <span class="material-symbols-outlined text-[64px] text-red-500">error</span>
         <h1 class="mt-4 text-3xl font-black text-[#101418]">News tidak ditemukan</h1>
         <p class="mt-3 text-slate-600">{{ error }}</p>
@@ -16,14 +16,42 @@
       </section>
 
       <template v-else-if="newsItem">
+        <!-- Top Navigation Bar -->
+        <header class="news-top-bar">
+          <div class="news-nav-shell">
+            <div class="news-nav-bar">
+              <!-- Left: Breadcrumbs -->
+              <nav aria-label="Breadcrumb" class="news-breadcrumbs hidden md:flex items-center gap-2 text-xs font-bold text-slate-500 dark:text-slate-400 min-w-0">
+                <router-link to="/" class="hover:text-sky-600 transition-colors flex items-center gap-1 shrink-0">
+                  <span class="material-symbols-outlined text-[15px]">home</span>
+                  Beranda
+                </router-link>
+                <span class="text-slate-300 dark:text-slate-700">/</span>
+                <router-link to="/news" class="hover:text-sky-600 transition-colors shrink-0">News</router-link>
+                <span class="text-slate-300 dark:text-slate-700">/</span>
+                <span class="font-black text-slate-800 dark:text-slate-200 max-w-[280px] truncate">{{ categoryNames(newsItem) }}</span>
+              </nav>
+
+              <!-- Right: Back Button -->
+              <div class="news-nav-right flex items-center">
+                <button
+                  @click="goBack"
+                  class="news-back-pill"
+                  type="button"
+                  title="Kembali ke News"
+                  aria-label="Kembali ke News"
+                >
+                  <span class="material-symbols-outlined text-[20px] transition-transform duration-200">arrow_back</span>
+                  <span class="news-back-text font-bold text-xs">Kembali ke News</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </header>
+
         <article class="article-detail">
           <header class="article-detail-hero" data-aos="fade-up">
             <div class="mx-auto max-w-6xl px-5 lg:px-8">
-              <router-link to="/news" class="article-back-link">
-                <span class="material-symbols-outlined text-[18px]">arrow_back</span>
-                Kembali ke News
-              </router-link>
-
               <div class="article-hero-grid">
                 <div>
                   <div class="flex flex-wrap items-center gap-3">
@@ -235,6 +263,14 @@ async function copyLink() {
     }, 1800)
   } catch {
     copied.value = false
+  }
+}
+
+function goBack() {
+  if (window.history.length > 1 && window.history.state?.back) {
+    router.back()
+  } else {
+    router.push('/news')
   }
 }
 

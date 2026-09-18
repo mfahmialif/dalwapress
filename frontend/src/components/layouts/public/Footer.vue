@@ -1,26 +1,24 @@
 <template>
   <footer class="public-footer">
-    <div class="footer-glow"></div>
-
     <div class="relative mx-auto max-w-7xl px-5 py-14 lg:px-8">
       <div class="footer-main">
         <div class="footer-brand">
           <router-link to="/" class="footer-logo">
             <span class="footer-logo-icon">
-              <span class="material-symbols-outlined text-[26px]">auto_stories</span>
+              <span class="material-symbols-outlined text-[24px]">auto_stories</span>
             </span>
             <span>
-              <span class="block text-xl font-black text-white">UII Dalwa Press</span>
-              <span class="block text-xs font-black uppercase tracking-[0.2em] text-sky-300">Academic Publisher</span>
+              <span class="block text-xl font-bold text-white tracking-tight">UII Dalwa Press</span>
+              <span class="block text-[11px] font-bold uppercase tracking-[0.16em] text-slate-400">Academic Publisher</span>
             </span>
           </router-link>
-          <p class="mt-6 max-w-xl text-base leading-8 text-slate-300">
+          <p class="mt-4 max-w-md text-sm leading-relaxed text-slate-400">
             Ruang penerbitan akademik untuk buku, artikel, e-book, dan karya literasi kampus yang dikelola dengan proses editorial yang rapi.
           </p>
-          <div class="mt-7 flex flex-wrap gap-3">
+          <div class="mt-6 flex flex-wrap gap-3">
             <router-link to="/books" class="footer-cta">
               Lihat Katalog
-              <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+              <span class="material-symbols-outlined text-[17px]">arrow_forward</span>
             </router-link>
             <router-link to="/submissions" class="footer-ghost">
               Kirim Naskah

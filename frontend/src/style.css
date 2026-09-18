@@ -5,6 +5,8 @@
 
 @import "tailwindcss";
 
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
 /* Local Fonts via Fontsource */
 @import "@fontsource-variable/space-grotesk";
 @import "@fontsource-variable/playfair-display";

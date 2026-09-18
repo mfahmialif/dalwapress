@@ -1,0 +1,466 @@
+CATATAN PERUBAHAN TERAKHIR
+===========================
+
+Commit: fefd181f5c593916744a7a631e95d52fcf6a15a9
+Tanggal: 19 Agustus 2026
+Pesan commit: remake alur submission dll
+Statistik: 106 file berubah, sekitar 7.750 baris ditambahkan dan 565 baris dihapus.
+
+Tujuan utama commit ini adalah merombak alur submission naskah supaya prosesnya bisa dilacak per round/cycle, memisahkan evaluasi editor dari keputusan editorial final, menambahkan proses produksi (layout dan desain sampul), serta menghubungkan submission yang selesai diproses ke data buku.
+
+CATATAN ISTILAH ROLE
+--------------------
+
+Di implementasi ini tidak ada string role "Templater". Role yang secara fungsi mengerjakan templating/penataan letak disebut "Layouter".
+
+Role produksi baru yang ditambahkan:
+
+- Layouter: mengerjakan layout/penataan letak naskah dan mengunggah file hasil layout.
+- Desain Cover: mengerjakan desain sampul/cover dan mengunggah file hasil desain sampul.
+
+Jadi, kalau dalam pembicaraan bisnis disebut "Templater", mapping-nya di kode saat ini adalah role "Layouter". Nama role harus ditulis persis karena guard, migration, route, dan pencarian file memakai string tersebut.
+
+
+1. ROLE, LOGIN, DAN PORTAL BARU
+-------------------------------
+
+AuthController sekarang mengizinkan role dashboard berikut:
+
+- Admin
+- Operator
+- Author
+- Editor
+- Layouter
+- Desain Cover
+- Penulis
+- Kepala Penulis
+
+Redirect setelah login ditambahkan untuk:
+
+- Layouter -> /layouter/dashboard
+- Desain Cover -> /cover/dashboard
+
+Portal baru di frontend:
+
+- /layouter: Dashboard, Assigned Submissions, Detail Submission, Profile.
+- /cover: Dashboard, Assigned Submissions, Detail Submission, Profile.
+
+Backend endpoint portal baru:
+
+- GET /api/layouter/dashboard
+- GET /api/layouter/submissions
+- GET /api/layouter/submissions/{submission}
+- POST /api/layouter/submissions/{submission}/upload-layout
+- GET /api/layouter/profile
+
+- GET /api/cover/dashboard
+- GET /api/cover/submissions
+- GET /api/cover/submissions/{submission}
+- POST /api/cover/submissions/{submission}/upload-cover
+- GET /api/cover/profile
+
+Kedua portal hanya dapat melihat submission yang memang ditugaskan kepada user yang sedang login. User dengan role Layouter/Desain Cover tidak bisa membuka submission milik orang lain hanya dengan mengganti ID URL.
+
+Migration membuat contoh role dan user produksi:
+
+- username layouter, password password, role Layouter.
+- username desain_cover, password password, role Desain Cover.
+
+Akun ini dibuat oleh migration role/assignment. DatabaseSeeder utama masih mencetak akun lama Admin, Operator, Author, Editor, Editor 2, Editor 3, Penulis, dan Kepala Penulis; akun Layouter dan Desain Cover berasal dari migration terkait.
+
+
+2. ALUR SUBMISSION BARU DARI AWAL SAMPAI TERBIT
+------------------------------------------------
+
+Status submission yang digunakan tetap:
+
+submitted -> under_review -> revision / accepted / rejected -> published
+
+Status revision dapat kembali ke under_review setelah author mengirim revisi. Status layout dan desain cover belum dibuat sebagai enum status terpisah; hasilnya dicatat sebagai file produksi di riwayat revision.
+
+Tahap A - Author mengirim naskah
+
+1. Author login dan masuk ke /author/submissions/create. Route publik /submissions sekarang diarahkan ke halaman create milik Author.
+2. Author mengisi kategori, judul, data pengirim, deskripsi/catatan, manuscript, dan optional cover.
+3. Manuscript wajib diisi pada submission baru. Format yang diterima PDF, DOC, atau DOCX dengan batas maksimal 50 MB.
+4. Cover awal bersifat optional dan menerima file gambar maksimal 5 MB.
+5. Backend otomatis mengisi user_id dari user yang login, author_name/email/phone dari profil jika tidak dikirim, membuat slug unik, mengisi status submitted, dan submitted_at.
+6. File awal disimpan ke storage/submissions/manuscripts dan storage/submissions/covers.
+7. Submission baru membuat record SubmissionManuscriptVersion dengan version_number 1 dan round 1. Ini menjadi jejak manuscript awal.
+
+Endpoint utama:
+
+POST /api/author/submissions
+GET /api/author/submissions
+GET /api/author/submissions/{submission}
+POST /api/author/submissions/{submission} untuk edit data submission.
+
+Author hanya dapat melihat submission miliknya sendiri. Submission hanya boleh dihapus saat status masih submitted. Submission yang sudah accepted atau published tidak boleh diedit oleh Author.
+
+Tahap B - Admin/Operator melihat dan menugaskan tim
+
+Admin/Operator melihat daftar melalui /administrator/submissions dan membuka detail submission. Di detail sekarang ada kartu assignment untuk tiga jenis tim:
+
+1. Editor: wajib memilih satu Primary Editor dan boleh memilih beberapa Co-editor.
+2. Layouter: boleh memilih satu atau beberapa layouter.
+3. Desain Cover: boleh memilih satu atau beberapa desainer cover.
+
+Assignment lama untuk jenis tim yang sama dihapus lalu dibuat ulang dari pilihan terbaru. Setiap assignment menyimpan siapa yang menugaskan dan note/instruksi.
+
+Endpoint assignment:
+
+- GET /api/editors
+- POST /api/submissions/{submission}/assign-editors
+  Payload utama: primary_editor_id, co_editor_ids[], note.
+- GET /api/layouters
+- POST /api/submissions/{submission}/assign-layouters
+  Payload utama: layouter_ids[], note.
+- GET /api/cover-designers
+- POST /api/submissions/{submission}/assign-cover-designers
+  Payload utama: cover_designer_ids[], note.
+
+Saat assignment atau evaluasi pertama diberikan pada submission yang statusnya submitted, status otomatis menjadi under_review. Secara UI alur produksi dimaksudkan berjalan setelah accepted, tetapi backend saat ini belum memaksa assignment Layouter/Desain Cover harus menunggu accepted; Admin/Operator masih bisa menugaskan lebih awal.
+
+Tahap C - Editor mengerjakan review
+
+Editor hanya melihat submission yang memiliki record assignment dengan editor_id miliknya. Dashboard dan daftar editor sudah difilter berdasarkan assignment tersebut.
+
+Untuk setiap round, editor mengisi evaluasi individual dengan salah satu rekomendasi:
+
+- accept
+- revision
+- reject
+
+Evaluasi selalu berisi notes. Co-editor dapat mengisi evaluasinya sendiri. Primary Editor juga dapat mengisi evaluasi sebagai editor biasa.
+
+Endpoint evaluasi:
+
+POST /api/editor/submissions/{submission}/evaluations
+
+Data disimpan di submission_editor_evaluations dengan kombinasi unik submission_id + round + editor_id, sehingga satu editor dapat memperbarui evaluasinya pada round yang sama tanpa membuat duplikat.
+
+Tahap D - Primary Editor menetapkan keputusan final
+
+Setelah evaluasi terkumpul, hanya Primary Editor yang dapat mengisi keputusan final. Admin/Operator juga diperbolehkan melakukan tindakan ini.
+
+Endpoint:
+
+POST /api/editor/submissions/{submission}/final-decision
+
+Pilihan keputusan final:
+
+- revision_required -> status submission menjadi revision.
+- accepted -> status submission menjadi accepted.
+- rejected -> status submission menjadi rejected.
+
+Keputusan final menyimpan notes, decided_by, decided_at, submission_id, dan round. Kombinasi submission_id + round bersifat unik, sehingga keputusan pada round yang sama dapat diperbarui.
+
+Jika keputusan revision_required dipilih, backend menaikkan current_round ke round berikutnya dan mengisi reviewed_at.
+
+Admin/Operator memiliki halaman Review Cycles dan dapat mengisi evaluasi untuk editor tertentu melalui editor_id, mengunggah revisi, serta mengubah keputusan final dari sisi admin.
+
+Tahap E - Author mengirim revisi
+
+Jika keputusan final adalah revision_required:
+
+1. Status submission menjadi revision.
+2. Author mendapat tombol Upload Manuscript Revisi di detail submission.
+3. Author hanya dapat upload revisi saat status benar-benar revision.
+4. File baru disimpan ke storage/submissions/revisions.
+5. Backend membuat SubmissionManuscriptVersion baru dengan nomor versi berikutnya.
+6. Backend juga membuat SubmissionRevision untuk menyimpan file dan catatan revisi.
+7. manuscript_file utama diarahkan ke file terbaru.
+8. Status dikembalikan menjadi under_review untuk diproses editor pada round berikutnya.
+
+Endpoint:
+
+POST /api/author/submissions/{submission}/revision
+
+Author dapat melihat daftar versi manuscript, riwayat revisi, catatan editor, dan keputusan editorial di halaman detail. Siklus review dapat berulang: evaluasi -> keputusan revision_required -> upload revisi -> evaluasi round berikutnya.
+
+Tahap F - Produksi layout dan sampul
+
+Setelah submission diterima (accepted), Admin/Operator dapat meneruskan naskah ke tahap produksi melalui assignment Layouter dan Desain Cover.
+
+Layouter:
+
+- Membuka submission yang ditugaskan di /layouter/submissions.
+- Melihat manuscript, status, assignment, instruksi, timeline, dan riwayat file.
+- Mengunggah file hasil layout melalui POST /api/layouter/submissions/{submission}/upload-layout.
+- Format file: PDF, DOC, atau DOCX; maksimal 50 MB.
+- Hasil layout dicatat sebagai SubmissionRevision, dengan user yang mengunggah dan note.
+
+Desain Cover:
+
+- Membuka submission yang ditugaskan di /cover/submissions.
+- Dapat melihat cover awal yang dikirim Author.
+- Bisa memilih Gunakan Cover Awal apabila cover Author sudah dianggap cukup.
+- Atau mengunggah file desain baru melalui POST /api/cover/submissions/{submission}/upload-cover.
+- Format file desain yang diterima: PDF, DOC, DOCX, JPG, JPEG, PNG, PSD, AI, ZIP, atau RAR; maksimal 50 MB.
+- Hasil cover juga dicatat sebagai SubmissionRevision.
+
+Upload hasil layout/cover saat ini tidak mengubah status menjadi status produksi baru. File produksi dikenali dari role user dan/atau note yang mengandung kata layout, cover, atau sampul. Karena itu, jika Admin mengunggah atas nama user lain, sebaiknya kirim layouter_id atau cover_designer_id dan note yang jelas.
+
+Tahap G - Publish menjadi buku
+
+Di detail submission Admin ada tombol Terbitkan Menjadi Buku. UI menampilkan tombol jika submission sudah accepted atau sudah memiliki hasil layout.
+
+Saat publish:
+
+1. Admin/Operator mengisi metadata buku: judul, kategori, author, ISBN, publisher, tahun, halaman, ukuran, bahasa, dan deskripsi.
+2. Backend mengambil file layout terbaru sebagai full_file. Jika belum ada hasil layout yang terdeteksi, backend memakai revision terbaru lalu manuscript awal sebagai fallback.
+3. Backend mengambil desain cover terbaru. Jika belum ada desain baru, backend memakai cover awal Author.
+4. Backend membuat Author bila belum ada, lalu membuat record Book dengan submission_id sebagai relasi ke submission.
+5. Book dibuat dengan status published dan published_at.
+6. Status submission berubah menjadi published.
+
+Jika buku yang terhubung dihapus, status submission yang terkait dikembalikan dari published ke accepted. Penghapusan tersebut tetap menggunakan soft delete.
+
+
+3. PERUBAHAN ALUR REVIEW DAN DATA ROUND/CYCLE
+------------------------------------------------
+
+Alur review baru tidak lagi bergantung hanya pada satu record review yang langsung mengubah status. Sekarang ada tiga lapisan data:
+
+1. SubmissionManuscriptVersion
+   Menyimpan versi manuscript, user pengunggah, version_number, round, file_path, dan note. Submission baru otomatis punya v1. Migration juga melakukan backfill manuscript_file lama menjadi v1.
+
+2. SubmissionEditorEvaluation
+   Menyimpan evaluasi masing-masing editor per round. Field pentingnya editor_id, round, recommendation, notes, submitted_at.
+
+3. SubmissionEditorialDecision
+   Menyimpan satu keputusan final per round. Field pentingnya round, decision, notes, decided_by, decided_at.
+
+SubmissionRevision tetap dipakai untuk menyimpan file revisi Author dan file produksi dari Layouter/Desain Cover. Kolom round baru ditambahkan pada tabel ini.
+
+Alur status yang perlu dipahami:
+
+- submitted: submission baru masuk.
+- under_review: sudah mulai diproses, biasanya setelah assignment editor atau evaluasi pertama.
+- revision: Primary Editor meminta perbaikan.
+- accepted: keputusan editorial final menerima naskah.
+- rejected: keputusan editorial final menolak naskah.
+- published: Admin/Operator sudah membuat Book dari submission.
+
+Frontend baru menampilkan:
+
+- Review Cycles Timeline pada Admin.
+- Review Timeline pada Editor.
+- Evaluasi tiap editor, label Primary/Co-editor, keputusan final, catatan, versi manuscript, dan file revisi per round.
+- Author dapat melihat keputusan final dan catatan untuk dirinya.
+
+Ada endpoint review lama yang masih tersedia:
+
+- POST /api/submissions/{submission}/reviews masih menuju SubmissionController::review dan membuat record submission_reviews dengan status revision/accepted/rejected.
+
+Frontend baru memakai evaluations dan final-decision, bukan endpoint legacy tersebut. Route POST /api/editor/submissions/{submission}/reviews masih tertulis di routes/api.php, tetapi EditorPortalController pada commit ini tidak lagi memiliki method review; jangan gunakan endpoint tersebut untuk alur baru. Gunakan /evaluations dan /final-decision.
+
+
+4. PERUBAHAN BACKEND DAN API LAINNYA
+-------------------------------------
+
+SubmissionController diperluas untuk:
+
+- Mengembalikan relasi manuscript versions, evaluations, decisions, editor assignments, layouter assignments, cover assignments, revisions, dan review.
+- Menyediakan daftar editor, layouter, dan desainer cover aktif.
+- Menyimpan assignment primary/co-editor dengan validasi role.
+- Mengunggah revisi dari sisi Admin/Operator.
+- Mengambil data review cycles per round.
+- Menghapus file manuscript awal, cover awal, atau revision tertentu dari Admin.
+- Menerbitkan submission menjadi Book.
+
+AuthorPortalController diperbarui untuk:
+
+- Memaksa manuscript pada submission baru.
+- Mengaitkan submission ke user yang login.
+- Membuat version v1 saat submit.
+- Membuat version dan revision saat Author upload revisi.
+- Menjaga agar Author hanya dapat mengakses submission miliknya.
+- Menggunakan withTrashed saat membuat slug supaya slug bekas data terhapus tidak dipakai ulang.
+
+EditorPortalController diperbarui untuk:
+
+- Memfilter semua data berdasarkan assignment editor.
+- Menyediakan dashboard statistik editor.
+- Menyediakan review cycles.
+- Menyimpan evaluasi individual editor.
+- Membatasi keputusan final ke Primary Editor, Admin, atau Operator.
+
+Controller LayouterPortalController dan CoverPortalController baru menangani dashboard, daftar assigned submission, detail submission, upload file produksi, profile, dan authorization berdasarkan assignment.
+
+AuthController dan router frontend menambahkan dukungan login/redirect untuk Layouter dan Desain Cover.
+
+Perubahan backend pendukung lain:
+
+- Book sekarang punya submission_id, relasi ke Submission, dan field size.
+- Field pages pada Book berubah menjadi string agar bisa menyimpan format seperti "xii + 250 hlm".
+- Publish submission otomatis membuat Book dengan relasi submission_id.
+- Detail buku admin dan detail buku publik menampilkan halaman serta ukuran dan tetap menyediakan download PDF.
+- Slug Author, Book, kategori buku, kategori news, dan submission sekarang mengecek data yang sudah soft deleted juga.
+- Controller news, author, kategori, royalty, setting, dan portal penulis disesuaikan agar mengikuti soft delete dan audit otomatis.
+
+
+5. PERUBAHAN DATABASE, MODEL, SOFT DELETE, DAN AUDIT
+------------------------------------------------------
+
+Migration baru yang penting:
+
+- 2026_08_01_100000_add_production_fields_to_submissions_table.php
+  Menambahkan field produksi sementara lalu field tersebut dibersihkan oleh migration assignment berikutnya.
+- 2026_08_01_110000_setup_layouter_role_and_assignments.php
+  Membuat role Layouter, user contoh Layouter, dan tabel submission_layouter_assignments.
+- 2026_08_01_130000_setup_editor_evaluations_and_decisions.php
+  Menambahkan submissions.current_round, tabel manuscript versions, editor evaluations, dan editorial decisions. Data manuscript lama dibackfill menjadi version 1.
+- 2026_08_01_140000_add_round_to_submission_revisions.php
+  Menambahkan round pada submission_revisions.
+- 2026_08_01_150000_add_size_to_books_table.php
+  Menambahkan ukuran buku.
+- 2026_08_01_151000_change_pages_to_string_in_books_table.php
+  Mengubah pages menjadi string.
+- 2026_08_01_160000_setup_desain_cover_role_and_assignments.php
+  Membuat role Desain Cover, user contoh desainer cover, dan tabel submission_cover_assignments.
+- 2026_08_03_100000_add_submission_id_to_books_table.php
+  Menghubungkan Book ke Submission.
+- 2026_08_03_110000_add_soft_deletes_and_audit_columns.php
+  Menambahkan deleted_at serta created_by, updated_by, dan deleted_by pada tabel-tabel utama.
+- 2026_08_03_120000_change_cascade_to_restrict_on_delete.php
+  Mengubah beberapa foreign key dari cascade delete menjadi restrict delete agar data terkait tidak hilang sembarangan.
+
+Model baru:
+
+- SubmissionCoverAssignment
+- SubmissionEditorEvaluation
+- SubmissionEditorialDecision
+- SubmissionLayouterAssignment
+- SubmissionManuscriptVersion
+- NewsCategoryNews
+
+Submission sekarang memiliki relasi:
+
+- category, user
+- reviews, revisions, manuscriptVersions
+- editorEvaluations, editorialDecisions
+- editorAssignments dan primaryEditorAssignment
+- layouterAssignments
+- coverAssignments
+
+Trait baru:
+
+- HasAuditColumns otomatis mengisi created_by, updated_by, dan deleted_by berdasarkan user yang login.
+- CascadeSoftDeletes melakukan soft delete dan restore pada child relation yang ditentukan.
+
+Submission, Book, News, NewsComment, User, Role, Author, kategori, gallery, review, revision, assignment, evaluation, decision, manuscript version, AppSetting, dan Royalty sekarang memakai SoftDeletes sesuai migration.
+
+
+6. FITUR RESTORE DATA
+----------------------
+
+Admin mendapat menu Pusat Pemulihan Data di /administrator/restore-data.
+
+Endpoint:
+
+- GET /api/restore-data?type=...
+- POST /api/restore-data/{type}/{id}/restore
+- DELETE /api/restore-data/{type}/{id}/force-delete
+
+Tipe data yang didukung:
+
+- books
+- submissions
+- news
+- authors
+- book-categories
+- news-categories
+- users
+- roles
+- royalties
+
+Restore melakukan pengecekan duplicate data aktif. Jika ada data aktif dengan identitas serupa, Admin harus memilih apakah tidak melanjutkan atau memakai overwrite. Force delete membersihkan file utama untuk books, submissions, news, dan authors sesuai tipe data.
+
+
+7. PERUBAHAN FRONTEND
+----------------------
+
+Admin:
+
+- Detail submission dirombak besar-besaran.
+- Ada status timeline Open, Review, Layout & Sampul, dan Done.
+- Ada overview submission, assignment Editor/Layouter/Desain Cover, riwayat file, review summary, modal upload hasil produksi, modal publish, dan tombol hapus file.
+- Ada halaman Review Cycles Timeline.
+- Ada form create/edit submission dari admin.
+- Ada detail buku admin.
+- Ada halaman Restore Data.
+- Menu Restore ditambahkan ke sidebar dan horizontal nav.
+- AdminLayout sekarang memuat ToastContainer dan sinkronisasi public settings.
+
+Author:
+
+- Form submission memakai manuscript wajib saat create.
+- Detail submission menampilkan status timeline, manuscript versions, keputusan editorial, catatan review, file utama, dan riwayat revisi.
+- Ada halaman khusus upload revision yang hanya aktif ketika status revision.
+
+Editor:
+
+- Daftar submission hanya berisi submission yang diassign.
+- Detail editor menampilkan role assignment Primary Editor/Co-editor dan status input review.
+- Halaman Timeline Review memungkinkan editor menyimpan evaluasi.
+- Hanya Primary Editor yang melihat form keputusan final.
+
+Layouter dan Desain Cover:
+
+- Masing-masing memiliki layout portal sendiri dengan sidebar, navbar, horizontal nav, footer, dark/light theme, dashboard statistik, daftar assigned submission, detail, dan profile.
+- Detail menggunakan komponen umum SubmissionOverview, SubmissionTimeline, SubmissionWorkflowSummary, dan SubmissionFileHistory.
+- Layouter memiliki form upload hasil layout.
+- Desain Cover memiliki preview cover awal, opsi memakai cover awal, dan form upload cover baru.
+
+Komponen frontend umum baru:
+
+- SubmissionOverview.vue untuk informasi submission dan tim.
+- SubmissionTimeline.vue untuk status proses.
+- SubmissionWorkflowSummary.vue untuk assignment, evaluasi, dan keputusan.
+- SubmissionFileHistory.vue untuk riwayat file awal, versi manuscript, revisi, layout, dan cover.
+- ToastContainer.vue dan store toast.js untuk notifikasi success/error/warning/loading.
+
+Perubahan kecil lain mencakup penyesuaian tema/style layout publik, detail buku publik, style halaman news, dan perapian admin user/role/category/author/book.
+
+
+8. CATATAN TEKNIS AGAR TIDAK SALAH SAAT LANJUT DEVELOP
+---------------------------------------------------------
+
+1. Nama role harus konsisten:
+   - Gunakan Layouter, bukan Templater, untuk role penataan letak.
+   - Gunakan Desain Cover untuk role sampul.
+
+2. Migration wajib dijalankan karena role, assignment table, current_round, versioning, evaluation, decision, soft delete, audit column, dan relasi Book-Submission semuanya dibuat lewat migration baru.
+
+3. Untuk alur review baru, gunakan:
+   - /evaluations untuk masukan masing-masing editor.
+   - /final-decision untuk keputusan final Primary Editor/Admin.
+   Jangan membangun fitur baru di endpoint /editor/.../reviews yang masih tersisa di routes karena method review di EditorPortalController sudah tidak ada.
+
+4. Ada perbedaan perhitungan round yang perlu disepakati sebelum pengembangan berikutnya:
+   - Saat final decision revision_required, backend menaikkan current_round dari round aktif ke round + 1.
+   - Saat Author upload revision, AuthorPortalController kembali menghitung nextRound = current_round + 1.
+   Akibatnya, pada jalur Author, current_round berpotensi meloncat dua kali (misalnya round 1 diputus revision_required menjadi 2, lalu upload revisi menjadi 3). Jalur upload revisi dari Admin memakai current_round yang sedang aktif. Tim perlu memilih apakah round berubah saat keputusan revisi dibuat atau saat file revisi masuk, lalu menyamakan kedua controller.
+
+5. File layout dan cover disimpan di submission_revisions, bukan di tabel file produksi terpisah. UI mengelompokkan file berdasarkan role user dan kata pada note. Jika upload dilakukan oleh Admin atas nama orang lain, isi ID target dan note dengan jelas agar file terdeteksi sebagai layout/cover.
+
+6. Assignment Layouter/Desain Cover saat ini boleh dilakukan oleh Admin/Operator pada status apa pun. UI mengarahkan proses setelah accepted, tetapi pembatasan status tersebut belum ditegakkan di backend.
+
+7. `Desain Cover` sudah didukung oleh AuthController dan router. Namun daftar role tertentu di SettingController masih menampilkan Layouter tetapi belum memasukkan Desain Cover. Jika role Desain Cover perlu dipilih sebagai default Google/registration role, daftar tersebut perlu disamakan.
+
+8. SubmissionReview adalah struktur review lama yang masih dipertahankan untuk kompatibilitas. Struktur utama yang dipakai alur baru adalah SubmissionEditorEvaluation dan SubmissionEditorialDecision.
+
+9. Commit juga menambahkan beberapa file contoh hasil upload di backend/public_html/storage: gambar news, cover submission, manuscript PDF, dan revision PDF. Jangan menghapusnya jika masih dipakai untuk data/demo.
+
+10. File `_dalwapress-agent/alur.md` ikut ditambahkan pada commit, tetapi isinya masih kosong. Catatan ini menjelaskan alur yang saat ini sudah diimplementasikan.
+
+
+9. RINGKASAN SINGKAT UNTUK DISAMPAIKAN KE TIM
+-----------------------------------------------
+
+Submission sekarang punya alur:
+
+Author submit manuscript v1 -> Admin assign Primary/Co-editor -> Editor isi evaluasi -> Primary Editor tetapkan keputusan -> jika revision, Author upload versi berikutnya dan masuk review lagi -> jika accepted, Admin assign Layouter dan Desain Cover -> hasil layout/cover masuk riwayat file -> Admin publish menjadi Book -> submission menjadi published.
+
+Data review sekarang dibedakan antara evaluasi tiap editor dan keputusan final per round. Semua assignment, file, catatan, actor, versi manuscript, dan keputusan ditampilkan dalam timeline agar prosesnya bisa dilacak.

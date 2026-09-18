@@ -1,0 +1,273 @@
+PANDUAN OPERATOR UII DALWA PRESS
+================================
+
+Dokumen ini dibuat untuk membantu Operator menjalankan proses submission dari naskah masuk sampai menjadi buku terbit. Isinya fokus pada pekerjaan yang perlu dilakukan di dashboard, bukan pada teknis pemrograman.
+
+
+1. AKSES OPERATOR
+-----------------
+
+- Masuk menggunakan akun Operator yang diberikan oleh Admin.
+- Portal Operator: /administrator.
+- Jangan membagikan username dan password kepada orang lain.
+- Jika menu atau tombol tidak terlihat, hubungi Admin. Jangan mencoba mengubah data dengan cara lain.
+
+
+2. PERAN SETIAP TIM
+-------------------
+
+- Author: mengirim naskah buku dan mengunggah revisi.
+- Penulis: mengelola artikel berita; role ini berbeda dari Author submission buku.
+- Editor: membaca dan menilai isi naskah.
+- Primary Editor: editor utama yang memberi keputusan akhir.
+- Co-editor: editor pendamping yang memberi masukan.
+- Layouter: mengerjakan penataan letak naskah. Jika tim menyebutnya "Templater", pilih role Layouter di sistem.
+- Desain Cover: mengerjakan sampul/cover buku.
+- Operator: menerima dan memeriksa submission, mengatur penugasan, memantau proses, membantu upload bila diperlukan, dan menerbitkan buku setelah semua siap.
+- Admin: menangani pengaturan sistem dan membantu jika ada masalah akses atau data.
+
+
+3. ARTI STATUS SUBMISSION
+-------------------------
+
+- Submitted: naskah baru masuk dan belum mulai diproses.
+- Under Review: sedang diperiksa oleh Editor.
+- Revision: Editor meminta Author memperbaiki naskah.
+- Accepted: naskah diterima secara editorial dan dapat masuk tahap produksi.
+- Rejected: naskah ditolak dan tidak dilanjutkan ke produksi.
+- Published: naskah sudah diterbitkan menjadi buku.
+
+Urutan umumnya:
+
+Naskah masuk -> Review Editor -> Revisi bila diperlukan -> Accepted -> Layout dan Cover -> Published
+
+
+4. ALUR KERJA OPERATOR
+----------------------
+
+TAHAP 1 - Memeriksa submission baru
+
+1. Buka menu Submissions.
+2. Buka detail submission yang berstatus Submitted.
+3. Periksa hal-hal berikut:
+   - Judul naskah sudah jelas.
+   - Kategori buku sudah sesuai.
+   - Nama, email, dan nomor kontak Author tersedia.
+   - Manuscript dapat dibuka/diunduh.
+   - Cover awal, jika ada, dapat dibuka/diunduh.
+   - Catatan atau permintaan Author sudah dibaca.
+4. Jika data dasar belum lengkap, hubungi Author atau minta bantuan Admin sebelum lanjut.
+
+File manuscript yang diterima:
+
+- PDF, DOC, atau DOCX.
+- Maksimal 50 MB.
+
+File cover awal Author:
+
+- File gambar.
+- Maksimal 5 MB.
+
+TAHAP 2 - Menugaskan Editor
+
+1. Pada detail submission, buka bagian Assignment Editor.
+2. Pilih satu Primary Editor.
+3. Tambahkan Co-editor bila naskah membutuhkan pemeriksaan dari lebih dari satu editor.
+4. Tulis catatan atau instruksi yang jelas, misalnya fokus pemeriksaan bahasa, isi, referensi, atau struktur bab.
+5. Simpan assignment.
+
+Catatan:
+
+- Primary Editor adalah orang yang nanti menetapkan keputusan akhir.
+- Jangan memilih orang yang sama sebagai Primary Editor dan Co-editor.
+- Setelah Editor ditugaskan, status submission biasanya berubah menjadi Under Review.
+- Sampaikan kepada Editor bahwa ada submission baru yang harus diperiksa.
+
+TAHAP 3 - Memantau proses review
+
+1. Buka menu Review Cycles/Review Timeline dari detail submission.
+2. Perhatikan apakah Editor sudah memberikan evaluasi.
+3. Evaluasi Editor dapat berupa:
+   - Accept: naskah dinilai dapat diterima.
+   - Revision: naskah masih perlu diperbaiki.
+   - Reject: naskah dinilai tidak dapat dilanjutkan.
+4. Tunggu keputusan final dari Primary Editor.
+5. Pastikan catatan keputusan cukup jelas untuk Author.
+
+Round/Cycle adalah putaran review. Jika Author mengirim perbaikan, proses akan masuk ke putaran berikutnya. Operator cukup mengikuti urutan pada timeline dan tidak perlu mengubah nomor round secara manual.
+
+TAHAP 4 - Jika Author diminta revisi
+
+1. Pastikan status submission berubah menjadi Revision.
+2. Sampaikan catatan keputusan Editor kepada Author.
+3. Minta Author mengunggah manuscript revisi melalui portal Author.
+4. Setelah file revisi masuk, periksa bahwa file dapat dibuka dan catatan revisinya tersedia.
+5. Status akan kembali ke Under Review.
+6. Pastikan Editor yang sama atau Editor terkait mengetahui bahwa revisi sudah masuk.
+7. Pantau round berikutnya sampai Primary Editor memberi keputusan final.
+
+Jika Author kesulitan mengunggah file, Operator dapat membantu dari halaman Review Cycles dengan tombol upload revisi, setelah memastikan file tersebut memang sudah dikirim oleh Author melalui jalur yang disepakati.
+
+TAHAP 5 - Jika submission Accepted
+
+Setelah Primary Editor menetapkan Accepted, Operator meneruskan submission ke tahap produksi.
+
+A. Menugaskan Layouter
+
+1. Buka bagian Assignment Layouter.
+2. Pilih layouter yang bertugas.
+3. Tulis instruksi layout, misalnya ukuran buku, format halaman, atau catatan khusus dari Editor.
+4. Simpan assignment.
+5. Sampaikan kepada Layouter bahwa file naskah sudah siap dikerjakan.
+
+B. Menugaskan Desain Cover
+
+1. Buka bagian Assignment Desainer Sampul.
+2. Pilih desainer cover yang bertugas.
+3. Tulis instruksi desain sampul dan informasi penting yang harus diperhatikan.
+4. Simpan assignment.
+5. Sampaikan kepada desainer apakah cover awal Author boleh dijadikan acuan.
+
+Secara alur, assignment Layouter dan Desain Cover dilakukan setelah Accepted. Sistem masih memungkinkan Operator menugaskan lebih awal, tetapi sebaiknya tunggu keputusan Accepted agar pekerjaan produksi tidak dilakukan pada naskah yang masih mungkin berubah.
+
+TAHAP 6 - Memeriksa hasil layout dan cover
+
+Hasil Layout:
+
+- Layouter mengunggah file PDF, DOC, atau DOCX.
+- Maksimal 50 MB.
+- Periksa ukuran halaman, urutan halaman, kerapian teks, gambar, daftar isi, dan kelengkapan file.
+- Jika belum sesuai, tulis catatan perbaikan dan koordinasikan kembali dengan Layouter.
+
+Hasil Desain Cover:
+
+- Desainer dapat memakai cover awal Author jika sudah sesuai.
+- Jika perlu, desainer mengunggah desain baru.
+- File desain dapat berupa PDF, DOC, DOCX, JPG, JPEG, PNG, PSD, AI, ZIP, atau RAR.
+- Maksimal 50 MB.
+- Periksa judul, nama Author, logo, ukuran, resolusi, dan kelengkapan bagian sampul.
+
+Semua file hasil kerja dapat dilihat pada riwayat file submission. Pastikan file yang dipakai untuk terbit adalah file terbaru dan sudah disetujui oleh tim terkait.
+
+TAHAP 7 - Menerbitkan menjadi buku
+
+Sebelum menekan tombol Terbitkan Menjadi Buku, pastikan:
+
+- Status submission sudah Accepted.
+- Hasil layout sudah tersedia atau sudah ada file yang disetujui untuk menjadi file buku.
+- Cover sudah tersedia, baik cover baru maupun cover awal Author.
+- Judul buku sudah benar.
+- Kategori buku sudah benar.
+- Nama Author sudah benar.
+- ISBN sudah benar jika sudah ada.
+- Nama penerbit dan tahun terbit sudah benar.
+- Jumlah halaman sudah diisi.
+- Ukuran buku sudah diisi.
+- Bahasa dan deskripsi buku sudah diperiksa.
+
+Saat diterbitkan:
+
+- File layout terbaru digunakan sebagai file buku.
+- Cover terbaru digunakan jika tersedia.
+- Jika tidak ada cover baru, cover awal Author dapat digunakan.
+- Submission berubah menjadi Published.
+- Data buku muncul di menu Books dan dapat tampil di halaman publik.
+
+Setelah publish, periksa halaman detail buku untuk memastikan cover, file PDF, metadata, dan nama Author sudah benar.
+
+
+5. JIKA SUBMISSION REJECTED
+---------------------------
+
+- Jangan menugaskan Layouter atau Desain Cover.
+- Sampaikan keputusan dan catatan Editor kepada Author melalui jalur komunikasi yang digunakan tim.
+- Simpan informasi submission sebagai arsip sesuai kebijakan penerbit.
+- Jika ada pertanyaan atau permintaan pengecualian, konsultasikan kepada Admin/Primary Editor.
+
+
+6. RIWAYAT FILE DAN CATATAN
+---------------------------
+
+Pada detail submission, periksa bagian riwayat file untuk membedakan:
+
+- Manuscript awal dari Author.
+- Manuscript versi revisi.
+- File hasil layout.
+- File hasil desain cover.
+
+Setiap file sebaiknya memiliki catatan yang jelas. Contoh catatan yang baik:
+
+- "Revisi bab 2 dan penambahan daftar pustaka sesuai catatan Editor."
+- "Layout final ukuran A5, sudah diperiksa oleh Editor."
+- "Desain cover final dengan revisi judul dan logo penerbit."
+
+Hindari catatan yang terlalu umum seperti "file baru" atau "sudah selesai" karena akan menyulitkan pemeriksaan di kemudian hari.
+
+
+7. MENU RESTORE DATA
+--------------------
+
+Jika data terhapus dari menu, jangan langsung panik. Sistem menggunakan tempat pemulihan data.
+
+1. Buka menu Restore Data.
+2. Pilih jenis data yang ingin dicari.
+3. Cari berdasarkan judul atau nama.
+4. Periksa tanggal dan user yang menghapus data.
+5. Gunakan Restore jika data memang perlu dikembalikan.
+6. Jangan memilih hapus permanen kecuali sudah mendapat persetujuan Admin.
+
+Penghapusan permanen dapat membuat data dan file sulit atau tidak bisa dipulihkan.
+
+
+8. CHECKLIST OPERATOR
+---------------------
+
+Submission baru:
+
+- [ ] Data Author lengkap.
+- [ ] Kategori dan judul benar.
+- [ ] Manuscript dapat dibuka.
+- [ ] Catatan Author sudah dibaca.
+- [ ] Primary Editor sudah ditentukan.
+- [ ] Co-editor ditambahkan bila diperlukan.
+
+Review:
+
+- [ ] Editor sudah menerima assignment.
+- [ ] Evaluasi Editor sudah masuk.
+- [ ] Keputusan final dibuat oleh Primary Editor.
+- [ ] Catatan untuk Author jelas.
+- [ ] Revisi Author sudah diperiksa jika diminta.
+
+Produksi:
+
+- [ ] Status sudah Accepted.
+- [ ] Layouter sudah ditugaskan.
+- [ ] Desain Cover sudah ditugaskan.
+- [ ] File layout sudah diperiksa.
+- [ ] File cover sudah diperiksa.
+- [ ] File terbaru sudah dipastikan.
+
+Publish:
+
+- [ ] Metadata buku sudah benar.
+- [ ] Nama Author dan kategori sudah benar.
+- [ ] Jumlah halaman dan ukuran sudah diisi.
+- [ ] Cover sudah tersedia.
+- [ ] File buku yang dipilih sudah benar.
+- [ ] Detail buku setelah publish sudah diperiksa.
+
+
+9. RINGKASAN PALING SINGKAT
+----------------------------
+
+Operator bertugas memastikan setiap submission bergerak ke orang yang tepat pada waktu yang tepat:
+
+1. Periksa naskah masuk.
+2. Tugaskan Primary Editor dan Co-editor bila perlu.
+3. Pantau evaluasi dan keputusan Editor.
+4. Koordinasikan revisi Author.
+5. Setelah Accepted, tugaskan Layouter dan Desain Cover.
+6. Periksa hasil layout dan cover.
+7. Lengkapi metadata dan terbitkan menjadi buku.
+8. Jika ada data terhapus atau masalah akses, hubungi Admin.

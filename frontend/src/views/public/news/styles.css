@@ -167,29 +167,76 @@
   background:
     linear-gradient(180deg, #fbfcfd 0%, #f8fafc 36rem, #ffffff 36rem);
 }
-.article-detail-hero {
-  padding: clamp(2.5rem, 6vw, 5rem) 0 clamp(2rem, 4vw, 3.5rem);
+/* News Top Navigation Bar */
+.news-top-bar {
+  padding: 7.2rem 0 0.85rem;
 }
-.article-back-link {
+
+.news-nav-shell {
+  width: min(1180px, calc(100% - 2rem));
+  margin: 0 auto;
+}
+
+.news-nav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.news-back-pill {
   display: inline-flex;
   align-items: center;
-  gap: 0.55rem;
-  border-bottom: 1px solid transparent;
-  color: rgb(71 85 105);
-  font-size: 0.9rem;
-  font-weight: 900;
-  transition: color 0.2s ease, border-color 0.2s ease;
+  gap: 0.45rem;
+  height: 40px;
+  padding: 0 1.1rem 0 0.85rem;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(226, 232, 240, 0.85);
+  color: #1e293b;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: 0 2px 8px -2px rgba(15, 23, 42, 0.05), 0 1px 2px rgba(15, 23, 42, 0.03);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
 }
-.article-back-link:hover {
-  border-color: rgb(14 165 233);
-  color: rgb(3 105 161);
+
+.news-back-pill:hover {
+  background: #ffffff;
+  border-color: rgba(14, 165, 233, 0.5);
+  color: #0284c7;
+  transform: translateX(-2px);
+  box-shadow: 0 4px 14px -2px rgba(14, 165, 233, 0.16);
 }
+
+.news-back-pill:active {
+  transform: scale(0.96);
+}
+
+.news-breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #64748b;
+}
+
+.article-detail-hero {
+  padding: 0.5rem 0 clamp(2rem, 4vw, 3.5rem);
+}
+
 .article-hero-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 22rem;
   align-items: end;
   gap: clamp(2rem, 6vw, 5rem);
-  margin-top: clamp(2rem, 5vw, 4rem);
+  margin-top: 1.5rem;
 }
 .article-title {
   max-width: 58rem;
@@ -820,9 +867,22 @@
 .public-root[data-theme='dark'] .article-kicker,
 .public-root[data-theme='dark'] .article-meta-line,
 .public-root[data-theme='dark'] .article-media-caption,
-.public-root[data-theme='dark'] .article-body-meta,
-.public-root[data-theme='dark'] .article-back-link {
+.public-root[data-theme='dark'] .article-body-meta {
   color: rgb(125 211 252) !important;
+}
+
+.public-root[data-theme='dark'] .news-back-pill {
+  background: rgba(15, 23, 42, 0.85);
+  border-color: rgba(125, 211, 252, 0.18);
+  color: #cbd5e1;
+  box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.35);
+}
+
+.public-root[data-theme='dark'] .news-back-pill:hover {
+  background: rgba(14, 165, 233, 0.18);
+  border-color: #38bdf8;
+  color: #38bdf8;
+  box-shadow: 0 4px 14px -2px rgba(14, 165, 233, 0.25);
 }
 
 .public-root[data-theme='dark'] .article-reading-pill {
@@ -905,9 +965,65 @@
   }
 }
 
+@media (max-width: 768px) {
+  /* Top Bar & Nav on Mobile: Right-aligned icon-only back button directly below the burger menu */
+  .news-top-bar {
+    padding: 6.25rem 0 0.5rem;
+  }
+
+  .news-nav-bar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: 100%;
+    padding-right: 1.25rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .news-nav-right {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  .news-back-pill {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border-radius: 9999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 3px 10px -2px rgba(15, 23, 42, 0.08);
+  }
+
+  .news-back-text {
+    display: none !important;
+  }
+
+  .news-breadcrumbs {
+    display: none !important;
+  }
+
+  .article-detail-hero {
+    padding: 0.5rem 0 2rem;
+  }
+
+  .article-hero-grid {
+    margin-top: 1rem;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 768px) {
+  .news-nav-bar {
+    padding-right: 1.75rem;
+  }
+}
+
 @media (max-width: 640px) {
   .article-detail-hero {
-    padding-top: 1.75rem;
+    padding-top: 0.5rem;
   }
   .article-title {
     font-size: clamp(2rem, 10vw, 2.85rem);
