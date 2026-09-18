@@ -1,5 +1,5 @@
 <template>
-  <main class="min-h-screen bg-[#f6f8f7] pt-32 text-[#111827]">
+  <main class="min-h-screen bg-[#f6f8f7] dark:bg-[#0b0f19] pt-32 text-[#111827] dark:text-slate-100">
     <section class="contact-hero">
       <div class="mx-auto grid max-w-7xl gap-10 px-5 pb-16 pt-10 lg:grid-cols-[0.95fr_1.05fr] lg:px-8 lg:pt-16">
         <div data-aos="fade-right">
@@ -7,10 +7,10 @@
             <span class="size-2.5 rounded-full bg-sky-600"></span>
             CONTACT UII DALWA PRESS
           </p>
-          <h1 class="mt-6 max-w-3xl text-5xl font-black leading-[1.02] tracking-tight text-[#101418] md:text-7xl">
+          <h1 class="mt-6 max-w-3xl text-5xl font-black leading-[1.02] tracking-tight text-[#101418] dark:text-white md:text-7xl">
             Mari mulai publikasi karya akademik berikutnya.
           </h1>
-          <p class="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
+          <p class="mt-6 max-w-2xl text-lg leading-8 text-slate-600 dark:text-slate-400">
             Hubungi redaksi untuk konsultasi naskah, penerbitan buku, katalog, kerja sama literasi, dan kebutuhan publikasi kampus.
           </p>
         </div>
@@ -19,16 +19,16 @@
           <div v-for="item in contactItems" :key="item.label" class="contact-row">
             <span class="contact-icon material-symbols-outlined">{{ item.icon }}</span>
             <div>
-              <p class="text-sm font-black uppercase tracking-[0.16em] text-sky-700">{{ item.label }}</p>
-              <p class="mt-1 text-lg font-black text-[#101418]">{{ item.value }}</p>
-              <p class="mt-1 text-sm leading-6 text-slate-500">{{ item.note }}</p>
+              <p class="text-sm font-black uppercase tracking-[0.16em] text-sky-700 dark:text-sky-400">{{ item.label }}</p>
+              <p class="mt-1 text-lg font-black text-[#101418] dark:text-white">{{ item.value }}</p>
+              <p class="mt-1 text-sm leading-6 text-slate-500 dark:text-slate-400">{{ item.note }}</p>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="bg-white py-16">
+    <section class="bg-white dark:bg-[#0b0f19] py-16">
       <div class="mx-auto max-w-7xl px-5 lg:px-8" data-aos="fade-up">
         <div class="maps-frame">
           <iframe
@@ -51,8 +51,8 @@
             <span class="size-2.5 rounded-full bg-sky-600"></span>
             Form Kontak
           </p>
-          <h2 class="mt-4 text-3xl font-black tracking-tight text-[#101418] md:text-4xl">Kirim pesan ke redaksi.</h2>
-          <p class="mt-3 leading-7 text-slate-600">
+          <h2 class="mt-4 text-3xl font-black tracking-tight text-[#101418] dark:text-white md:text-4xl">Kirim pesan ke redaksi.</h2>
+          <p class="mt-3 leading-7 text-slate-600 dark:text-slate-400">
             Form ini masih frontend/local preview. Untuk produksi, nanti bisa kita sambungkan ke backend atau WhatsApp gateway.
           </p>
 
@@ -72,7 +72,7 @@
               Kirim Pesan
               <span class="material-symbols-outlined text-[20px]">send</span>
             </button>
-            <p v-if="success" class="rounded-2xl bg-sky-50 px-4 py-3 text-sm font-bold text-sky-700">
+            <p v-if="success" class="rounded-2xl bg-sky-50 dark:bg-sky-950/40 px-4 py-3 text-sm font-bold text-sky-700 dark:text-sky-300">
               Pesan tersimpan di sesi browser. Integrasi backend bisa ditambahkan setelah API kontak tersedia.
             </p>
           </form>

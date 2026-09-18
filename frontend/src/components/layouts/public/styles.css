@@ -31,23 +31,23 @@ html {
 }
 
 .public-root[data-theme='dark'] {
-  --public-bg: #07101f;
-  --public-bg-soft: #0b1324;
-  --public-surface: rgba(15, 23, 42, 0.86);
-  --public-surface-solid: #0f172a;
-  --public-surface-soft: #111c31;
-  --public-border: rgba(148, 163, 184, 0.22);
-  --public-border-soft: rgba(148, 163, 184, 0.18);
+  --public-bg: #0b0f19;
+  --public-bg-soft: #111827;
+  --public-surface: rgba(17, 24, 39, 0.88);
+  --public-surface-solid: #111827;
+  --public-surface-soft: #1f293d;
+  --public-border: rgba(255, 255, 255, 0.08);
+  --public-border-soft: rgba(255, 255, 255, 0.05);
   --public-heading: #f8fafc;
-  --public-body: #cbd5e1;
-  --public-muted: #94a3b8;
-  --public-accent: #38bdf8;
-  --public-accent-strong: #7dd3fc;
-  --public-accent-soft: rgba(14, 165, 233, 0.16);
-  --public-dark: #020617;
-  --public-shadow: 0 20px 62px rgba(0, 0, 0, 0.32);
-  --public-card-shadow: 0 18px 56px rgba(0, 0, 0, 0.26);
-  --public-hero-bg: radial-gradient(circle at 24% 12%, rgba(14, 165, 233, 0.2), transparent 30%), linear-gradient(180deg, #08111f 0%, #0b1324 100%);
+  --public-body: #94a3b8;
+  --public-muted: #64748b;
+  --public-accent: #0284c7;
+  --public-accent-strong: #38bdf8;
+  --public-accent-soft: rgba(2, 132, 199, 0.12);
+  --public-dark: #070a10;
+  --public-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+  --public-card-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+  --public-hero-bg: linear-gradient(180deg, #0b0f19 0%, #0f172a 100%);
   color-scheme: dark;
 }
 
@@ -208,21 +208,17 @@ html {
   backdrop-filter: blur(18px);
 }
 .public-preloader {
-  background:
-    radial-gradient(circle at 50% 38%, rgba(14, 165, 233, 0.14), transparent 24rem),
-    var(--public-bg);
+  background: var(--public-bg);
 }
 
 .public-root[data-theme='dark'] .editorial-loader {
-  border: 1px solid rgba(125, 211, 252, 0.16);
-  background:
-    linear-gradient(145deg, rgba(15, 23, 42, 0.9), rgba(8, 17, 31, 0.84)),
-    radial-gradient(circle at 50% 0%, rgba(14, 165, 233, 0.18), transparent 16rem);
-  box-shadow: 0 34px 100px rgba(0, 0, 0, 0.42);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #111827;
+  box-shadow: 0 34px 100px rgba(0, 0, 0, 0.5);
 }
 
 .public-root[data-theme='dark'] .loader-orbit::before {
-  background: #08111f;
+  background: #111827;
 }
 
 .public-root[data-theme='dark'] .loader-line {
@@ -563,7 +559,7 @@ html {
 
 .public-root[data-theme='dark'] :is(.books-cta-primary, .cta-primary, .contact-submit, .quick-contact, .submission-btn, .book-btn, .toolbar-pill.active, .page-number.active, .page-arrow:hover, .page-number:hover) {
   background: var(--public-accent) !important;
-  color: #07101f !important;
+  color: #ffffff !important;
 }
 
 .public-root[data-theme='dark'] :is(.book-btn.secondary) {
@@ -578,7 +574,7 @@ html {
 
 .public-root[data-theme='dark'] :is(.supporter-marquee) {
   border-color: var(--public-border) !important;
-  background: linear-gradient(90deg, #07101f, #0f172a, #07101f) !important;
+  background: linear-gradient(90deg, #0b0f19, #111827, #0b0f19) !important;
 }
 
 .public-root[data-theme='dark'] :is(.comment-form) {

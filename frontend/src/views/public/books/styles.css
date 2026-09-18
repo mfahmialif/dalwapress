@@ -1503,7 +1503,7 @@
   padding: 0.75rem 1.4rem;
   border-radius: 999px;
   background: #0f172a;
-  border: 1px solid rgba(125, 211, 252, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
   z-index: 10000;
   backdrop-filter: blur(12px);
@@ -1554,18 +1554,15 @@
    ========================================================================== */
 
 .public-root[data-theme='dark'] .books-page {
-  background:
-    radial-gradient(circle at 12% 8%, rgba(14, 165, 233, 0.2), transparent 28rem),
-    radial-gradient(circle at 88% 18%, rgba(56, 189, 248, 0.08), transparent 24rem),
-    linear-gradient(180deg, #07101f 0%, #0b1220 46%, #08111f 100%);
-  color: #e5eef8;
+  background: linear-gradient(180deg, #0b0f19 0%, #0f172a 36rem, #0b0f19 100%);
+  color: #e2e8f0;
 }
 
 .public-root[data-theme='dark'] .books-pill {
-  border: 1px solid rgba(125, 211, 252, 0.18);
-  background: rgba(14, 165, 233, 0.12);
-  color: rgb(186 230 253);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(2, 132, 199, 0.12);
+  color: #38bdf8;
+  box-shadow: none;
 }
 
 .public-root[data-theme='dark'] .book-hero-card,
@@ -1573,16 +1570,14 @@
 .public-root[data-theme='dark'] .book-modal-card,
 .public-root[data-theme='dark'] .book-card-mini,
 .public-root[data-theme='dark'] .book-empty-state {
-  border-color: rgba(125, 211, 252, 0.16);
-  background:
-    linear-gradient(145deg, rgba(15, 23, 42, 0.94), rgba(8, 17, 31, 0.92)),
-    radial-gradient(circle at 8% 0%, rgba(14, 165, 233, 0.12), transparent 18rem);
-  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.4);
+  border-color: rgba(255, 255, 255, 0.08);
+  background: #111827;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
 }
 
 .public-root[data-theme='dark'] .book-tabs-bar {
-  background: rgba(15, 23, 42, 0.85);
-  border-color: rgba(56, 189, 248, 0.16);
+  background: rgba(17, 24, 39, 0.9);
+  border-color: rgba(255, 255, 255, 0.08);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
 }
 
@@ -1596,16 +1591,16 @@
 
 .public-root[data-theme='dark'] .book-tabs-scroll-btn.left {
   background: #1e293b;
-  border: 1px solid rgba(125, 211, 252, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   color: #cbd5e1;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
 }
 
 .public-root[data-theme='dark'] .book-tabs-scroll-btn.right {
   background: #0284c7;
-  border: 1px solid #38bdf8;
+  border: 1px solid #0284c7;
   color: #ffffff;
-  box-shadow: 0 2px 10px rgba(14, 165, 233, 0.45);
+  box-shadow: 0 2px 10px rgba(2, 132, 199, 0.35);
 }
 
 .public-root[data-theme='dark'] .book-tabs-scroll-btn.left:hover {
@@ -1637,7 +1632,7 @@
 }
 
 .public-root[data-theme='dark'] .book-tab-header {
-  border-bottom-color: rgba(125, 211, 252, 0.1);
+  border-bottom-color: rgba(255, 255, 255, 0.08);
 }
 
 .public-root[data-theme='dark'] .book-kdt-copy-btn {
@@ -1731,7 +1726,7 @@
 }
 
 .public-root[data-theme='dark'] .book-kdt-row {
-  border-bottom-color: rgba(125, 211, 252, 0.08);
+  border-bottom-color: rgba(255, 255, 255, 0.08);
 }
 
 .public-root[data-theme='dark'] .book-kdt-key {
@@ -1739,14 +1734,14 @@
 }
 
 .public-root[data-theme='dark'] .book-editorial-card-header {
-  border-bottom-color: rgba(125, 211, 252, 0.1);
+  border-bottom-color: rgba(255, 255, 255, 0.08);
 }
 
 .public-root[data-theme='dark'] .book-sub-btn,
 .public-root[data-theme='dark'] .book-back-pill,
 .public-root[data-theme='dark'] .book-glass-btn {
-  background: rgba(15, 23, 42, 0.85);
-  border-color: rgba(125, 211, 252, 0.18);
+  background: #111827;
+  border-color: rgba(255, 255, 255, 0.1);
   color: #cbd5e1;
   box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.35);
 }
@@ -1754,10 +1749,10 @@
 .public-root[data-theme='dark'] .book-sub-btn:hover,
 .public-root[data-theme='dark'] .book-back-pill:hover,
 .public-root[data-theme='dark'] .book-glass-btn:hover {
-  background: rgba(14, 165, 233, 0.18);
-  border-color: #38bdf8;
+  background: #1e293b;
+  border-color: #0284c7;
   color: #38bdf8;
-  box-shadow: 0 4px 14px -2px rgba(14, 165, 233, 0.25);
+  box-shadow: 0 4px 14px -2px rgba(2, 132, 199, 0.25);
 }
 
 .public-root[data-theme='dark'] .book-glass-btn.book-wa-pill {
@@ -1787,30 +1782,30 @@
 
 .public-root[data-theme='dark'] .book-toolbar-btn.cite,
 .public-root[data-theme='dark'] .book-toolbar-btn.share {
-  background: rgba(15, 23, 42, 0.85);
-  border-color: rgba(56, 189, 248, 0.16);
+  background: #111827;
+  border-color: rgba(255, 255, 255, 0.1);
   color: #cbd5e1;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
 .public-root[data-theme='dark'] .book-toolbar-btn.cite:hover {
-  background: rgba(14, 165, 233, 0.18);
-  border-color: #38bdf8;
+  background: #1e293b;
+  border-color: #0284c7;
   color: #38bdf8;
 }
 
 .public-root[data-theme='dark'] .book-toolbar-btn.share:hover {
-  background: rgba(30, 41, 59, 0.9);
-  border-color: rgba(56, 189, 248, 0.3);
+  background: #1e293b;
+  border-color: rgba(255, 255, 255, 0.18);
   color: #f8fafc;
 }
 
 .public-root[data-theme='dark'] .book-tag-chip,
 .public-root[data-theme='dark'] .book-read-time-badge,
 .public-root[data-theme='dark'] .book-author-contact-item {
-  background: rgba(15, 23, 42, 0.8);
-  border-color: rgba(125, 211, 252, 0.15);
-  color: #93c5fd;
+  background: #1e293b;
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #cbd5e1;
 }
 
 .public-root[data-theme='dark'] .book-cite-style-tabs {
