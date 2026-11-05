@@ -13,6 +13,7 @@
         </div>
         <div class="p-5">
           <h3 class="text-lg font-black" style="color: var(--text-heading)">{{ book.title }}</h3>
+          <p class="mt-0.5 text-xs font-bold text-accent">{{ bookAuthor(book) }}</p>
           <p class="mt-1 text-sm font-bold" style="color: var(--text-muted)">ISBN: {{ book.isbn || '-' }}</p>
           <p class="mt-1 text-sm" style="color: var(--text-muted)">Publish: {{ formatDate(book.published_at) }}</p>
           <div class="mt-4 flex flex-wrap gap-2 text-sm font-black" style="color: var(--text-body)">
@@ -36,6 +37,13 @@ const books = ref({ data: [] })
 
 function formatDate(value) {
   return value ? new Date(value).toLocaleDateString('id-ID') : '-'
+}
+
+function bookAuthor(book) {
+  if (book.authors && book.authors.length > 0) {
+    return book.authors.map(a => a.name).join(', ')
+  }
+  return book.author_names || book.author?.name || '-'
 }
 
 onMounted(async () => {

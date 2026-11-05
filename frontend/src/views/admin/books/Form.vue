@@ -24,19 +24,12 @@
         </label>
       </div>
 
-      <div class="grid gap-4 lg:grid-cols-3">
+      <div class="grid gap-4 lg:grid-cols-2">
         <label class="field">
           <span>Kategori *</span>
           <select v-model="form.category_id" required class="input">
             <option value="">Pilih kategori</option>
             <option v-for="item in categories" :key="item.id" :value="item.id">{{ item.name }}</option>
-          </select>
-        </label>
-        <label class="field">
-          <span>Author *</span>
-          <select v-model="form.author_id" required class="input">
-            <option value="">Pilih author</option>
-            <option v-for="item in authors" :key="item.id" :value="item.id">{{ item.name }}</option>
           </select>
         </label>
         <label class="field">
@@ -48,6 +41,53 @@
             <option value="archived">Archived</option>
           </select>
         </label>
+      </div>
+
+      <!-- Multi-Author Section -->
+      <div class="rounded-xl p-4 border" style="border-color: var(--border); background: var(--bg-input)">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <span class="text-sm font-black" style="color: var(--text-heading)">Daftar Penulis / Authors *</span>
+            <p class="text-xs" style="color: var(--text-muted)">Buku dapat memiliki lebih dari satu penulis (Multi-Author).</p>
+          </div>
+          <button type="button" @click="addAuthor" class="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs font-bold bg-accent text-[var(--text-btn)]">
+            <span class="material-symbols-outlined text-[16px]">add</span>
+            Tambah Penulis
+          </button>
+        </div>
+
+        <div class="space-y-3">
+          <div v-for="(item, idx) in selectedAuthors" :key="idx" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 rounded-lg p-2.5 bg-[var(--bg-card)] border" style="border-color: var(--border)">
+            <span class="text-xs font-black px-2 py-1 rounded bg-[var(--bg-input)] text-center sm:text-left shrink-0" style="color: var(--text-muted)">
+              #{{ idx + 1 }}
+            </span>
+            <div class="flex-1">
+              <select v-model="item.author_id" required class="input py-2 text-sm">
+                <option value="">-- Pilih Author --</option>
+                <option v-for="auth in authors" :key="auth.id" :value="auth.id">
+                  {{ auth.name }} {{ auth.institution ? `(${auth.institution})` : '' }}
+                </option>
+              </select>
+            </div>
+            <div class="w-full sm:w-48">
+              <select v-model="item.role" class="input py-2 text-sm">
+                <option value="Penulis Utama">Penulis Utama</option>
+                <option value="Penulis Pendamping">Penulis Pendamping</option>
+                <option value="Editor / Penyusun">Editor / Penyusun</option>
+                <option value="Kontributor">Kontributor</option>
+              </select>
+            </div>
+            <button
+              v-if="selectedAuthors.length > 1"
+              type="button"
+              @click="removeAuthor(idx)"
+              class="inline-flex items-center justify-center p-2 rounded-lg text-red-400 hover:bg-red-500/10 shrink-0"
+              title="Hapus Penulis"
+            >
+              <span class="material-symbols-outlined text-[18px]">delete</span>
+            </button>
+          </div>
+        </div>
       </div>
 
       <div class="grid gap-4 lg:grid-cols-5">
@@ -131,6 +171,9 @@ const saving = ref(false)
 const error = ref('')
 const categories = ref([])
 const authors = ref([])
+const selectedAuthors = ref([
+  { author_id: '', role: 'Penulis Utama' }
+])
 const coverFile = ref(null)
 const fullFile = ref(null)
 const form = ref({
@@ -149,6 +192,19 @@ const form = ref({
   featured: false,
   status: 'draft',
 })
+
+function addAuthor() {
+  selectedAuthors.value.push({
+    author_id: '',
+    role: selectedAuthors.value.length === 0 ? 'Penulis Utama' : 'Penulis Pendamping'
+  })
+}
+
+function removeAuthor(index) {
+  if (selectedAuthors.value.length > 1) {
+    selectedAuthors.value.splice(index, 1)
+  }
+}
 
 async function loadOptions() {
   const [categoryRes, authorRes] = await Promise.all([
@@ -177,16 +233,43 @@ async function loadBook() {
     featured: !!data.featured,
     status: data.status || 'draft',
   }
+
+  if (data.authors && data.authors.length > 0) {
+    selectedAuthors.value = data.authors.map((a, idx) => ({
+      author_id: a.id,
+      role: a.pivot?.role || (idx === 0 ? 'Penulis Utama' : 'Penulis Pendamping')
+    }))
+  } else if (data.author_id) {
+    selectedAuthors.value = [
+      { author_id: data.author_id, role: 'Penulis Utama' }
+    ]
+  }
 }
 
 async function submit() {
   saving.value = true
   error.value = ''
   try {
+    const validAuthors = selectedAuthors.value.filter(a => a.author_id)
+    if (!validAuthors.length) {
+      error.value = 'Silakan pilih minimal 1 penulis untuk buku ini.'
+      saving.value = false
+      return
+    }
+
+    form.value.author_id = validAuthors[0].author_id
+
     const fd = new FormData()
     Object.entries(form.value).forEach(([key, value]) => {
       if (value !== null && value !== '') fd.append(key, key === 'featured' ? (value ? '1' : '0') : value)
     })
+
+    validAuthors.forEach((item, index) => {
+      fd.append(`authors_data[${index}][author_id]`, item.author_id)
+      fd.append(`authors_data[${index}][role]`, item.role || (index === 0 ? 'Penulis Utama' : 'Penulis Pendamping'))
+      fd.append(`author_ids[${index}]`, item.author_id)
+    })
+
     if (coverFile.value) fd.append('cover', coverFile.value)
     if (fullFile.value) fd.append('full_file', fullFile.value)
 

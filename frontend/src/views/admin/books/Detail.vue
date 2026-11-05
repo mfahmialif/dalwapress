@@ -91,7 +91,17 @@
 
             <div class="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               <Info label="Judul Buku" :value="book.title || '-'" />
-              <Info label="Penulis / Author" :value="book.author?.name || '-'" />
+              <div class="flex flex-col gap-1">
+                <span class="text-xs font-bold uppercase tracking-wider" style="color: var(--text-muted)">Penulis / Authors</span>
+                <div v-if="book.authors && book.authors.length > 0" class="flex flex-wrap gap-1.5 mt-0.5">
+                  <span v-for="auth in book.authors" :key="auth.id" class="inline-flex items-center gap-1 rounded-lg px-2 py-0.5 text-xs font-bold bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                    <span class="material-symbols-outlined text-[13px]">person</span>
+                    {{ auth.name }}
+                    <span v-if="auth.pivot?.role" class="text-[10px] opacity-75">({{ auth.pivot.role }})</span>
+                  </span>
+                </div>
+                <p v-else class="text-sm font-bold" style="color: var(--text-heading)">{{ book.author?.name || '-' }}</p>
+              </div>
               <Info label="Kategori" :value="book.category?.name || '-'" />
               <Info label="ISBN" :value="book.isbn || '-'" />
               <Info label="Penerbit" :value="book.publisher || '-'" />

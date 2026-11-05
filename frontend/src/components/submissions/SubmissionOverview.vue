@@ -4,9 +4,17 @@
       <div>
         <span :class="statusBadge(submission.status)">{{ statusLabel(submission.status) }}</span>
         <h1 class="mt-3 text-2xl font-black" style="color: var(--text-heading)">{{ submission.title }}</h1>
-        <p class="mt-1 text-sm" style="color: var(--text-muted)">
-          Author / Pengirim: <strong style="color: var(--text-heading)">{{ submission.author_name }}</strong>
-        </p>
+        <div class="mt-2 flex flex-wrap items-center gap-1.5 text-sm" style="color: var(--text-muted)">
+          <span>Author / Pengirim:</span>
+          <div v-if="submission.submission_authors?.length" class="flex flex-wrap gap-1.5">
+            <span v-for="sa in submission.submission_authors" :key="sa.id" class="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-bold bg-blue-500/10 text-blue-400 border border-blue-500/20">
+              <span class="material-symbols-outlined text-[13px]">person</span>
+              {{ sa.name }}
+              <span v-if="sa.role" class="text-[10px] opacity-75">({{ sa.role }})</span>
+            </span>
+          </div>
+          <strong v-else style="color: var(--text-heading)">{{ submission.author_name || '-' }}</strong>
+        </div>
       </div>
       <slot name="header-badge"></slot>
     </div>

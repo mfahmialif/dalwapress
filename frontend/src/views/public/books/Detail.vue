@@ -130,7 +130,7 @@
               {{ book.title }}
             </h1>
 
-            <!-- Author Byline Card (High Contrast, Authoritative) -->
+            <!-- Author Byline Card (High Contrast, Authoritative, Multi-Author Supported) -->
             <div class="book-hero-author-card">
               <div class="book-author-avatar-wrap">
                 <img
@@ -145,9 +145,16 @@
                 </span>
               </div>
               <div class="book-hero-author-text">
-                <span class="book-author-kicker">Penulis Utama</span>
+                <span class="book-author-kicker">{{ bookAuthorsList.length > 1 ? 'Tim Penulis / Multi-Author' : 'Penulis Utama' }}</span>
                 <h2 class="book-author-name">{{ bookAuthor }}</h2>
-                <p class="book-author-institution">{{ authorInstitution }}</p>
+                <div v-if="bookAuthorsList.length > 1" class="flex flex-wrap gap-1.5 mt-1.5">
+                  <span v-for="auth in bookAuthorsList" :key="auth.id" class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-md bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 border border-sky-200/60 dark:border-sky-800">
+                    <span class="material-symbols-outlined text-[13px]">person</span>
+                    {{ auth.name }}
+                    <span v-if="auth.pivot?.role" class="text-[10px] opacity-75">({{ auth.pivot.role }})</span>
+                  </span>
+                </div>
+                <p v-else class="book-author-institution">{{ authorInstitution }}</p>
               </div>
             </div>
 
@@ -452,52 +459,56 @@
               </div>
             </div>
 
-            <!-- 4. PANE: TENTANG PENULIS -->
+            <!-- 4. PANE: TENTANG PENULIS (Multi-Author Supported) -->
             <div v-show="activeTab === 'author'" class="book-tab-pane" role="tabpanel">
               <div class="book-tab-header">
                 <div class="flex items-center gap-2.5">
                   <span class="material-symbols-outlined text-sky-600 text-[24px]">person</span>
-                  <h3 class="book-tab-title">Tentang Penulis</h3>
+                  <h3 class="book-tab-title">{{ bookAuthorsList.length > 1 ? 'Tentang Para Penulis' : 'Tentang Penulis' }}</h3>
                 </div>
               </div>
 
-              <div class="book-author-profile mt-6">
-                <div class="book-author-profile-left">
-                  <div class="book-author-big-avatar">
-                    <img
-                      v-if="authorPhotoUrl"
-                      :src="authorPhotoUrl"
-                      :alt="bookAuthor"
-                      class="size-full object-cover"
-                      @error="handleAuthorError"
-                    />
-                    <span v-else class="text-2xl font-black text-sky-700 dark:text-sky-300">
-                      {{ authorInitials }}
-                    </span>
+              <div class="space-y-8 mt-6">
+                <div v-for="auth in bookAuthorsList" :key="auth.id" class="book-author-profile pb-8 border-b border-slate-100 dark:border-slate-800 last:border-b-0 last:pb-0">
+                  <div class="book-author-profile-left">
+                    <div class="book-author-big-avatar">
+                      <img
+                        v-if="getAuthorPhotoUrl(auth)"
+                        :src="getAuthorPhotoUrl(auth)"
+                        :alt="auth.name"
+                        class="size-full object-cover"
+                      />
+                      <span v-else class="text-2xl font-black text-sky-700 dark:text-sky-300">
+                        {{ getAuthorInitials(auth.name) }}
+                      </span>
+                    </div>
                   </div>
-                </div>
-                <div class="book-author-profile-right">
-                  <div class="flex flex-wrap items-center gap-2">
-                    <h4 class="book-author-profile-name">{{ bookAuthor }}</h4>
-                    <span class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800">
-                      <span class="material-symbols-outlined text-[13px]">check_circle</span>
-                      Penulis Terverifikasi
-                    </span>
-                  </div>
-                  <p class="text-xs sm:text-sm font-bold text-sky-600 dark:text-sky-400 mt-1">{{ authorInstitution }}</p>
-                  <p class="text-sm text-slate-700 dark:text-slate-300 mt-4 leading-relaxed book-prose-para">
-                    {{ authorBio }}
-                  </p>
+                  <div class="book-author-profile-right">
+                    <div class="flex flex-wrap items-center gap-2">
+                      <h4 class="book-author-profile-name">{{ auth.name }}</h4>
+                      <span v-if="auth.pivot?.role" class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 border border-sky-200/60 dark:border-sky-800">
+                        {{ auth.pivot.role }}
+                      </span>
+                      <span class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800">
+                        <span class="material-symbols-outlined text-[13px]">check_circle</span>
+                        Penulis Terverifikasi
+                      </span>
+                    </div>
+                    <p class="text-xs sm:text-sm font-bold text-sky-600 dark:text-sky-400 mt-1">{{ getAuthorInstitution(auth) }}</p>
+                    <p class="text-sm text-slate-700 dark:text-slate-300 mt-4 leading-relaxed book-prose-para">
+                      {{ getAuthorBio(auth) }}
+                    </p>
 
-                  <div v-if="book.author?.email || book.author?.phone" class="flex flex-wrap gap-3 mt-5 pt-4 border-t border-slate-100 dark:border-slate-800">
-                    <a v-if="book.author?.email" :href="`mailto:${book.author.email}`" class="book-author-contact-item">
-                      <span class="material-symbols-outlined text-[16px]">mail</span>
-                      <span>{{ book.author.email }}</span>
-                    </a>
-                    <a v-if="book.author?.phone" :href="`tel:${book.author.phone}`" class="book-author-contact-item">
-                      <span class="material-symbols-outlined text-[16px]">phone</span>
-                      <span>{{ book.author.phone }}</span>
-                    </a>
+                    <div v-if="auth.email || auth.phone" class="flex flex-wrap gap-3 mt-5 pt-4 border-t border-slate-100 dark:border-slate-800">
+                      <a v-if="auth.email" :href="`mailto:${auth.email}`" class="book-author-contact-item">
+                        <span class="material-symbols-outlined text-[16px]">mail</span>
+                        <span>{{ auth.email }}</span>
+                      </a>
+                      <a v-if="auth.phone" :href="`tel:${auth.phone}`" class="book-author-contact-item">
+                        <span class="material-symbols-outlined text-[16px]">phone</span>
+                        <span>{{ auth.phone }}</span>
+                      </a>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -822,10 +833,45 @@ const bookCategory = computed(() => {
   return typeof category === 'string' ? category : category?.name || 'Buku Referensi'
 })
 
-const bookAuthor = computed(() => {
-  const author = book.value?.author
-  return typeof author === 'string' ? author : author?.name || '-'
+const bookAuthorsList = computed(() => {
+  if (book.value?.authors && book.value.authors.length > 0) {
+    return book.value.authors
+  }
+  if (book.value?.author) {
+    return [book.value.author]
+  }
+  return []
 })
+
+const bookAuthor = computed(() => {
+  if (bookAuthorsList.value.length > 0) {
+    return bookAuthorsList.value.map(a => a.name).join(', ')
+  }
+  return book.value?.author_names || '-'
+})
+
+function getAuthorPhotoUrl(author) {
+  if (!author?.photo) return ''
+  return fileUrl(author.photo)
+}
+
+function getAuthorInitials(name) {
+  const n = (name || 'DP').trim()
+  const parts = n.split(/\s+/)
+  if (parts.length >= 2) {
+    return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase()
+  }
+  return n.slice(0, 2).toUpperCase()
+}
+
+function getAuthorInstitution(author) {
+  return author?.institution || 'Universitas Islam Internasional Darullughah Wadda\'wah'
+}
+
+function getAuthorBio(author) {
+  return author?.bio ||
+    `Penulis dan akademisi aktif yang telah berkontribusi dalam penerbitan karya ilmiah, buku referensi, dan kajian literasi di lingkungan ${getAuthorInstitution(author)}.`
+}
 
 const authorInstitution = computed(() => {
   return book.value?.author?.institution || 'Universitas Islam Internasional Darullughah Wadda\'wah'
@@ -833,18 +879,14 @@ const authorInstitution = computed(() => {
 
 const authorPhotoUrl = computed(() => {
   if (authorImgError.value) return ''
-  const photo = book.value?.author?.photo
+  const photo = book.value?.author?.photo || bookAuthorsList.value[0]?.photo
   if (!photo) return ''
   return fileUrl(photo)
 })
 
 const authorInitials = computed(() => {
-  const name = (bookAuthor.value || 'DP').trim()
-  const parts = name.split(/\s+/)
-  if (parts.length >= 2) {
-    return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase()
-  }
-  return name.slice(0, 2).toUpperCase()
+  const primaryName = bookAuthorsList.value[0]?.name || bookAuthor.value || 'DP'
+  return getAuthorInitials(primaryName)
 })
 
 const authorBio = computed(() => {

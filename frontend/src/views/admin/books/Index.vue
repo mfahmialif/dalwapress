@@ -61,7 +61,7 @@
                 </div>
               </td>
               <td class="px-4 py-4 text-sm" style="color: var(--text-body)">{{ book.category?.name || '-' }}</td>
-              <td class="px-4 py-4 text-sm" style="color: var(--text-body)">{{ book.author?.name || '-' }}</td>
+              <td class="px-4 py-4 text-sm" style="color: var(--text-body)">{{ bookAuthorDisplay(book) }}</td>
               <td class="px-4 py-4 text-sm" style="color: var(--text-muted)">{{ book.year || '-' }}</td>
               <td class="px-4 py-4"><span :class="statusBadge(book.status)">{{ statusLabel(book.status) }}</span></td>
               <td class="px-4 py-4 text-right">
@@ -174,6 +174,13 @@ async function removeBook(book) {
     toast.dismiss(toastId)
     toast.error(err.response?.data?.message || 'Gagal menghapus buku.')
   }
+}
+
+function bookAuthorDisplay(book) {
+  if (book.authors && book.authors.length > 0) {
+    return book.authors.map(a => a.name).join(', ')
+  }
+  return book.author_names || book.author?.name || '-'
 }
 
 function statusLabel(value) {

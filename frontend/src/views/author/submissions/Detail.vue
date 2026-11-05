@@ -16,6 +16,17 @@
             <span :class="statusBadge(item.status)">{{ statusLabel(item.status) }}</span>
             <h2 class="mt-3 text-2xl font-black" style="color: var(--text-heading)">{{ item.title }}</h2>
             <p class="mt-1 text-sm font-bold" style="color: var(--text-muted)">Kategori: {{ item.category?.name || '-' }} · Tanggal Submit: {{ formatDate(item.submitted_at) }}</p>
+            <div class="mt-2 flex flex-wrap items-center gap-1.5 text-sm" style="color: var(--text-muted)">
+              <span>Penulis / Author:</span>
+              <div v-if="item.submission_authors?.length" class="flex flex-wrap gap-1.5">
+                <span v-for="sa in item.submission_authors" :key="sa.id" class="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-bold bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                  <span class="material-symbols-outlined text-[13px]">person</span>
+                  {{ sa.name }}
+                  <span v-if="sa.role" class="text-[10px] opacity-75">({{ sa.role }})</span>
+                </span>
+              </div>
+              <strong v-else style="color: var(--text-heading)">{{ item.author_name }}</strong>
+            </div>
           </div>
         </div>
 

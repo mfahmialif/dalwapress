@@ -41,6 +41,9 @@
             <tr v-for="item in items" :key="item.id" class="table-row">
               <td class="px-4 py-4">
                 <p class="font-black" style="color: var(--text-heading)">{{ item.title }}</p>
+                <p v-if="item.submission_authors?.length > 1" class="text-xs font-bold text-accent">
+                  Penulis: {{ item.submission_authors.map(a => a.name).join(', ') }}
+                </p>
                 <p class="text-xs" style="color: var(--text-muted)">{{ item.note || '-' }}</p>
               </td>
               <td class="px-4 py-4 text-sm" style="color: var(--text-body)">{{ item.category?.name || '-' }}</td>

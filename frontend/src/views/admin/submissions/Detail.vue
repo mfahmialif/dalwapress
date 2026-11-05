@@ -97,7 +97,17 @@
           <div>
             <span :class="statusBadge(submission.status)">{{ statusLabel(submission.status) }}</span>
             <h1 class="mt-3 text-2xl font-black" style="color: var(--text-heading)">{{ submission.title }}</h1>
-            <p class="mt-1 text-sm" style="color: var(--text-muted)">Author / Pengirim: <strong style="color: var(--text-heading)">{{ submission.author_name }}</strong></p>
+            <div class="mt-2 flex flex-wrap items-center gap-1.5 text-sm" style="color: var(--text-muted)">
+              <span>Penulis / Author:</span>
+              <div v-if="submission.submission_authors?.length" class="flex flex-wrap gap-1.5">
+                <span v-for="sa in submission.submission_authors" :key="sa.id" class="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-bold bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                  <span class="material-symbols-outlined text-[13px]">person</span>
+                  {{ sa.name }}
+                  <span v-if="sa.role" class="text-[10px] opacity-75">({{ sa.role }})</span>
+                </span>
+              </div>
+              <strong v-else style="color: var(--text-heading)">{{ submission.author_name }}</strong>
+            </div>
           </div>
         </div>
 
@@ -612,10 +622,30 @@
                 </select>
               </label>
 
-              <label class="field" :class="modalLabel">
-                <span>Nama Penulis / Author *</span>
-                <input v-model="publishForm.author_name" required class="input" :class="modalInput" placeholder="Nama penulis" />
-              </label>
+              <!-- Authors Multi-Author Section in Publish Modal -->
+              <div class="rounded-xl p-3 border" style="border-color: var(--border); background: var(--bg-card)">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-xs font-bold uppercase tracking-wider" style="color: var(--text-muted)">Penulis Buku (Multi-Author) *</span>
+                  <button type="button" @click="addPublishAuthor" class="inline-flex items-center gap-1 text-xs font-bold text-accent hover:underline">
+                    <span class="material-symbols-outlined text-[14px]">add</span>
+                    Tambah Penulis
+                  </button>
+                </div>
+                <div class="space-y-2">
+                  <div v-for="(auth, idx) in publishAuthors" :key="idx" class="flex items-center gap-2">
+                    <input v-model="auth.name" required class="input flex-1 py-1.5 text-xs" :class="modalInput" placeholder="Nama penulis" />
+                    <select v-model="auth.role" class="input w-36 py-1.5 text-xs" :class="modalInput">
+                      <option value="Penulis Utama">Penulis Utama</option>
+                      <option value="Penulis Pendamping">Penulis Pendamping</option>
+                      <option value="Editor / Penyusun">Editor / Penyusun</option>
+                      <option value="Kontributor">Kontributor</option>
+                    </select>
+                    <button v-if="publishAuthors.length > 1" type="button" @click="removePublishAuthor(idx)" class="p-1 text-red-400 hover:text-red-300" title="Hapus">
+                      <span class="material-symbols-outlined text-[16px]">close</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
 
               <label class="field" :class="modalLabel">
                 <span>Nomor ISBN</span>
@@ -1215,6 +1245,10 @@ const bookCategories = ref([])
 const publishMsg = ref('')
 const publishSuccess = ref(false)
 
+const publishAuthors = ref([
+  { name: '', role: 'Penulis Utama' }
+])
+
 const publishForm = ref({
   title: '',
   category_id: '',
@@ -1228,8 +1262,42 @@ const publishForm = ref({
   description: '',
 })
 
+function addPublishAuthor() {
+  publishAuthors.value.push({
+    name: '',
+    role: publishAuthors.value.length === 0 ? 'Penulis Utama' : 'Penulis Pendamping'
+  })
+}
+
+function removePublishAuthor(index) {
+  if (publishAuthors.value.length > 1) {
+    publishAuthors.value.splice(index, 1)
+  }
+}
+
 async function openPublishModal() {
   if (!submission.value) return
+
+  if (submission.value.submission_authors && submission.value.submission_authors.length > 0) {
+    publishAuthors.value = submission.value.submission_authors.map((sa, idx) => ({
+      name: sa.name,
+      author_id: sa.author_id || null,
+      email: sa.email || '',
+      phone: sa.phone || '',
+      institution: sa.institution || '',
+      role: sa.role || (idx === 0 ? 'Penulis Utama' : 'Penulis Pendamping')
+    }))
+  } else {
+    publishAuthors.value = [
+      {
+        name: submission.value.author_name || '',
+        email: submission.value.email || '',
+        phone: submission.value.phone || '',
+        role: 'Penulis Utama'
+      }
+    ]
+  }
+
   publishForm.value = {
     title: submission.value.title || '',
     category_id: submission.value.category_id || '',
@@ -1259,7 +1327,13 @@ async function submitPublishForm() {
   publishing.value = true
   publishMsg.value = ''
   try {
-    const { data } = await api.post(`/submissions/${route.params.id}/publish`, publishForm.value)
+    const validAuthors = publishAuthors.value.filter(a => a.name.trim())
+    const payload = {
+      ...publishForm.value,
+      authors: validAuthors,
+      author_name: validAuthors.map(a => a.name.trim()).join(', ')
+    }
+    const { data } = await api.post(`/submissions/${route.params.id}/publish`, payload)
     submission.value = data.submission
     publishSuccess.value = true
     publishMsg.value = 'Sukses! Naskah berhasil diterbitkan menjadi data Buku.'

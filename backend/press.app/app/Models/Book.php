@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
 
@@ -19,6 +20,7 @@ class Book extends Model
 
     protected $appends = [
         'cover_url',
+        'author_names',
     ];
 
     protected $fillable = [
@@ -62,6 +64,23 @@ class Book extends Model
     public function author(): BelongsTo
     {
         return $this->belongsTo(Author::class);
+    }
+
+    public function authors(): BelongsToMany
+    {
+        return $this->belongsToMany(Author::class, 'book_authors')
+            ->withPivot(['role', 'sort_order'])
+            ->withTimestamps()
+            ->orderByPivot('sort_order', 'asc');
+    }
+
+    public function getAuthorNamesAttribute(): string
+    {
+        if ($this->relationLoaded('authors') && $this->authors->isNotEmpty()) {
+            return $this->authors->pluck('name')->join(', ');
+        }
+
+        return $this->author?->name ?? '-';
     }
 
     public function galleries(): HasMany

@@ -86,7 +86,7 @@ class LayouterPortalController extends Controller
         $this->authorizeAssignedOrAdmin($request, $submission);
 
         $data = $request->validate([
-            'revision_file' => 'required|mimes:pdf,doc,docx|max:51200',
+            'revision_file' => 'required|file|max:51200|extensions:pdf,doc,docx',
             'note' => 'nullable|string',
             'layouter_id' => 'nullable|exists:users,id',
         ]);

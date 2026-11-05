@@ -99,7 +99,10 @@ function bookCategory(book) {
 }
 
 function bookAuthor(book) {
-  return book.author?.name || book.author || '-'
+  if (book.authors && book.authors.length > 0) {
+    return book.authors.map(a => a.name).join(', ')
+  }
+  return book.author_names || book.author?.name || book.author || '-'
 }
 
 function debouncedFetch() {

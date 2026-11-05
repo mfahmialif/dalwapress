@@ -7,10 +7,7 @@
 
     <form class="rounded-2xl p-5" style="background: var(--bg-card); border: 1px solid var(--border)" @submit.prevent="submit">
       <div class="grid gap-4 lg:grid-cols-2">
-        <label class="field"><span>Nama Pengirim / Author *</span><input v-model="form.author_name" class="input" required /></label>
-        <label class="field"><span>Email *</span><input v-model="form.email" type="email" class="input" required /></label>
-        <label class="field"><span>Nomor HP / Telepon *</span><input v-model="form.phone" type="text" class="input" required /></label>
-        <label class="field"><span>Judul buku *</span><input v-model="form.title" class="input" required /></label>
+        <label class="field"><span>Judul buku *</span><input v-model="form.title" class="input" required placeholder="Masukkan judul buku..." /></label>
         <label class="field">
           <span>Kategori *</span>
           <select v-model="form.category_id" class="input" required>
@@ -18,6 +15,60 @@
             <option v-for="item in categories" :key="item.id" :value="item.id">{{ item.name }}</option>
           </select>
         </label>
+      </div>
+
+      <!-- Multi-Author Section -->
+      <div class="mt-4 rounded-xl p-4 border" style="border-color: var(--border); background: var(--bg-input)">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <span class="text-sm font-black" style="color: var(--text-heading)">Penulis / Authors *</span>
+            <p class="text-xs" style="color: var(--text-muted)">Anda dapat menambahkan rekan penulis (co-author) bila buku ini ditulis bersama.</p>
+          </div>
+          <button type="button" @click="addAuthor" class="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs font-bold bg-accent text-[var(--text-btn)]">
+            <span class="material-symbols-outlined text-[16px]">add</span>
+            Tambah Penulis
+          </button>
+        </div>
+
+        <div class="space-y-3">
+          <div v-for="(auth, idx) in authorsList" :key="idx" class="rounded-xl p-3 border bg-[var(--bg-card)] flex flex-col gap-3" style="border-color: var(--border)">
+            <div class="flex items-center justify-between border-b pb-2" style="border-color: var(--border)">
+              <span class="text-xs font-bold text-accent">Penulis #{{ idx + 1 }} {{ idx === 0 ? '(Penulis Utama / Anda)' : '(Co-Author)' }}</span>
+              <button
+                v-if="authorsList.length > 1 && idx > 0"
+                type="button"
+                @click="removeAuthor(idx)"
+                class="text-xs font-bold text-red-400 hover:text-red-300 inline-flex items-center gap-0.5"
+              >
+                <span class="material-symbols-outlined text-[16px]">delete</span>
+                Hapus
+              </button>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+              <label class="field">
+                <span>Nama Lengkap *</span>
+                <input v-model="auth.name" type="text" class="input py-2 text-sm" required placeholder="Nama lengkap" />
+              </label>
+              <label class="field">
+                <span>Email</span>
+                <input v-model="auth.email" type="email" class="input py-2 text-sm" placeholder="Email" />
+              </label>
+              <label class="field">
+                <span>No. HP / WhatsApp</span>
+                <input v-model="auth.phone" type="text" class="input py-2 text-sm" placeholder="Nomor telepon" />
+              </label>
+              <label class="field">
+                <span>Peran</span>
+                <select v-model="auth.role" class="input py-2 text-sm">
+                  <option value="Penulis Utama">Penulis Utama</option>
+                  <option value="Penulis Pendamping">Penulis Pendamping</option>
+                  <option value="Editor / Penyusun">Editor / Penyusun</option>
+                  <option value="Kontributor">Kontributor</option>
+                </select>
+              </label>
+            </div>
+          </div>
+        </div>
       </div>
 
       <label class="field mt-4"><span>Deskripsi</span><textarea v-model="form.description" class="input min-h-32"></textarea></label>
@@ -62,7 +113,25 @@ const manuscriptFile = ref(null)
 const coverFile = ref(null)
 const saving = ref(false)
 const message = ref('')
+const authorsList = ref([
+  { name: '', email: '', phone: '', role: 'Penulis Utama' }
+])
 const form = ref({ author_name: '', email: '', phone: '', category_id: '', title: '', description: '', note: '' })
+
+function addAuthor() {
+  authorsList.value.push({
+    name: '',
+    email: '',
+    phone: '',
+    role: 'Penulis Pendamping'
+  })
+}
+
+function removeAuthor(index) {
+  if (authorsList.value.length > 1 && index > 0) {
+    authorsList.value.splice(index, 1)
+  }
+}
 
 async function loadData() {
   const { data } = await api.get('/book-categories', { params: { all: 1 } })
@@ -70,21 +139,49 @@ async function loadData() {
 
   if (isEdit.value) {
     const res = await api.get(`/author/submissions/${route.params.id}`)
+    const d = res.data
     form.value = {
-      author_name: res.data.author_name || '',
-      email: res.data.email || '',
-      phone: res.data.phone || '',
-      category_id: res.data.category_id,
-      title: res.data.title,
-      description: res.data.description || '',
-      note: res.data.note || '',
+      author_name: d.author_name || '',
+      email: d.email || '',
+      phone: d.phone || '',
+      category_id: d.category_id,
+      title: d.title,
+      description: d.description || '',
+      note: d.note || '',
+    }
+
+    if (d.submission_authors && d.submission_authors.length > 0) {
+      authorsList.value = d.submission_authors.map((sa, idx) => ({
+        author_id: sa.author_id || null,
+        name: sa.name || '',
+        email: sa.email || '',
+        phone: sa.phone || '',
+        role: sa.role || (idx === 0 ? 'Penulis Utama' : 'Penulis Pendamping')
+      }))
+    } else if (d.author_name) {
+      authorsList.value = [
+        { name: d.author_name, email: d.email || '', phone: d.phone || '', role: 'Penulis Utama' }
+      ]
     }
   } else {
     try {
       const { data: user } = await api.get('/user')
-      form.value.author_name = user.author?.name || user.name || ''
-      form.value.email = user.email || ''
-      form.value.phone = user.author?.phone || ''
+      const authorName = user.author?.name || user.name || ''
+      const authorEmail = user.email || ''
+      const authorPhone = user.author?.phone || ''
+      form.value.author_name = authorName
+      form.value.email = authorEmail
+      form.value.phone = authorPhone
+
+      authorsList.value = [
+        {
+          author_id: user.author?.id || null,
+          name: authorName,
+          email: authorEmail,
+          phone: authorPhone,
+          role: 'Penulis Utama'
+        }
+      ]
     } catch (e) {
       console.error('Failed to fetch user info', e)
     }
@@ -95,10 +192,31 @@ async function submit() {
   saving.value = true
   message.value = ''
   try {
+    const validAuthors = authorsList.value.filter(a => a.name.trim())
+    if (!validAuthors.length) {
+      message.value = 'Silakan masukkan minimal 1 nama penulis.'
+      saving.value = false
+      return
+    }
+
+    form.value.author_name = validAuthors.map(a => a.name.trim()).join(', ')
+    form.value.email = validAuthors[0].email || form.value.email
+    form.value.phone = validAuthors[0].phone || form.value.phone
+
     const fd = new FormData()
     Object.entries(form.value).forEach(([key, value]) => {
       if (value !== null && value !== undefined) fd.append(key, value)
     })
+
+    fd.append('author_names_json', JSON.stringify(validAuthors))
+    validAuthors.forEach((item, idx) => {
+      fd.append(`authors[${idx}][name]`, item.name.trim())
+      if (item.author_id) fd.append(`authors[${idx}][author_id]`, item.author_id)
+      if (item.email) fd.append(`authors[${idx}][email]`, item.email)
+      if (item.phone) fd.append(`authors[${idx}][phone]`, item.phone)
+      if (item.role) fd.append(`authors[${idx}][role]`, item.role)
+    })
+
     if (manuscriptFile.value) fd.append('manuscript_file', manuscriptFile.value)
     if (coverFile.value) fd.append('cover_file', coverFile.value)
 

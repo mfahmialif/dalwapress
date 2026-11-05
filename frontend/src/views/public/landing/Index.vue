@@ -86,7 +86,7 @@ async function fetchBooks() {
       image: bookCoverUrl(book),
       category: book.category?.name || 'Buku',
       title: book.title,
-      author: book.author?.name || '-',
+      author: book.authors?.length ? book.authors.map(a => a.name).join(', ') : (book.author_names || book.author?.name || '-'),
     }))
   } catch {
     books.value = []

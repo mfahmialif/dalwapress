@@ -17,14 +17,15 @@ class SubmissionController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Submission::query()->with(['category', 'reviews', 'editorAssignments.editor', 'layouterAssignments.layouter', 'coverAssignments.designer']);
+        $query = Submission::query()->with(['category', 'submissionAuthors.author', 'reviews', 'editorAssignments.editor', 'layouterAssignments.layouter', 'coverAssignments.designer']);
 
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(fn ($q) => $q
                 ->where('title', 'like', "%{$search}%")
                 ->orWhere('author_name', 'like', "%{$search}%")
-                ->orWhere('email', 'like', "%{$search}%"));
+                ->orWhere('email', 'like', "%{$search}%")
+                ->orWhereHas('submissionAuthors', fn ($sa) => $sa->where('name', 'like', "%{$search}%")));
         }
 
         if ($request->filled('category_id')) {
@@ -43,14 +44,18 @@ class SubmissionController extends Controller
         $data = $request->validate([
             'category_id' => 'required|exists:book_categories,id',
             'title' => 'required|string|max:255',
-            'author_name' => 'required|string|max:255',
+            'author_name' => 'nullable|string|max:255',
             'email' => 'nullable|email|max:255',
             'phone' => 'nullable|string|max:50',
-            'manuscript_file' => 'nullable|mimes:pdf,doc,docx|max:51200',
+            'manuscript_file' => 'nullable|file|max:51200|extensions:pdf,doc,docx',
             'cover_file' => 'nullable|image|max:5120',
             'description' => 'nullable|string',
             'note' => 'nullable|string',
         ]);
+
+        if (empty($data['author_name'])) {
+            $data['author_name'] = 'Penulis';
+        }
 
         $data['slug'] = $this->uniqueSlug($data['title']);
         $data['status'] = 'submitted';
@@ -64,13 +69,17 @@ class SubmissionController extends Controller
             $data['cover_file'] = $request->file('cover_file')->store('submissions/covers', 'public');
         }
 
-        return response()->json(Submission::create($data)->load(['category', 'reviews']), 201);
+        $submission = Submission::create($data);
+        $this->syncSubmissionAuthors($submission, $request);
+
+        return response()->json($submission->fresh()->load(['category', 'submissionAuthors.author', 'reviews']), 201);
     }
 
     public function show(Submission $submission)
     {
         return response()->json($submission->load([
             'category',
+            'submissionAuthors.author',
             'manuscriptVersions.user.role',
             'editorEvaluations.editor',
             'editorialDecisions.decider',
@@ -90,13 +99,13 @@ class SubmissionController extends Controller
         $data = $request->validate([
             'category_id' => 'required|exists:book_categories,id',
             'title' => 'required|string|max:255',
-            'author_name' => 'required|string|max:255',
+            'author_name' => 'nullable|string|max:255',
             'email' => 'nullable|email|max:255',
             'phone' => 'nullable|string|max:50',
             'description' => 'nullable|string',
             'note' => 'nullable|string',
             'status' => 'required|in:submitted,under_review,revision,accepted,rejected,published',
-            'manuscript_file' => 'nullable|mimes:pdf,doc,docx|max:51200',
+            'manuscript_file' => 'nullable|file|max:51200|extensions:pdf,doc,docx',
             'cover_file' => 'nullable|image|max:10240',
         ]);
 
@@ -123,8 +132,15 @@ class SubmissionController extends Controller
         }
 
         $submission->update($data);
+        $this->syncSubmissionAuthors($submission, $request);
 
-        return response()->json($submission->load(['category', 'reviews', 'editorAssignments.editor', 'layouterAssignments.layouter']));
+        return response()->json($submission->fresh()->load([
+            'category',
+            'submissionAuthors.author',
+            'reviews',
+            'editorAssignments.editor',
+            'layouterAssignments.layouter',
+        ]));
     }
 
     public function destroy(Submission $submission)
@@ -340,7 +356,7 @@ class SubmissionController extends Controller
         $this->authorizeAdminOrOperator($request);
 
         $data = $request->validate([
-            'revision_file' => 'required|mimes:pdf,doc,docx|max:51200',
+            'revision_file' => 'required|file|max:51200|extensions:pdf,doc,docx',
             'note' => 'nullable|string',
         ]);
 
@@ -443,6 +459,9 @@ class SubmissionController extends Controller
             'title' => 'nullable|string|max:255',
             'category_id' => 'nullable|exists:book_categories,id',
             'author_name' => 'nullable|string|max:255',
+            'author_ids' => 'nullable|array',
+            'author_ids.*' => 'exists:authors,id',
+            'authors' => 'nullable|array',
             'isbn' => 'nullable|string|max:255',
             'year' => 'nullable|integer',
             'publisher' => 'nullable|string|max:255',
@@ -469,28 +488,96 @@ class SubmissionController extends Controller
             ]);
         }
 
-        $authorName = $input['author_name'] ?? ($submission->author_name ?: ($submission->user?->name ?: 'Penulis'));
-        $authorId = null;
+        $bookAuthorsData = [];
 
-        if ($submission->user_id) {
-            $user = \App\Models\User::with('author')->find($submission->user_id);
-            if ($user && $user->author) {
-                $authorId = $user->author->id;
+        if (!empty($input['author_ids']) && is_array($input['author_ids'])) {
+            foreach ($input['author_ids'] as $idx => $authId) {
+                if ($authId) {
+                    $bookAuthorsData[$authId] = [
+                        'role' => $idx === 0 ? 'Penulis Utama' : 'Penulis Pendamping',
+                        'sort_order' => $idx,
+                    ];
+                }
+            }
+        } elseif (!empty($input['authors']) && is_array($input['authors'])) {
+            foreach ($input['authors'] as $idx => $item) {
+                $aName = is_array($item) ? trim($item['name'] ?? '') : trim((string)$item);
+                if (!$aName) continue;
+                $aId = is_array($item) && !empty($item['author_id']) ? $item['author_id'] : null;
+                if (!$aId) {
+                    $author = \App\Models\Author::firstOrCreate(
+                        ['name' => $aName],
+                        [
+                            'user_id' => $idx === 0 ? $submission->user_id : null,
+                            'slug' => Str::slug($aName) . '-' . rand(100, 999),
+                            'email' => (is_array($item) ? $item['email'] ?? null : null) ?: ($idx === 0 ? $submission->email : null) ?: 'author@uiidalwapress.com',
+                            'phone' => (is_array($item) ? $item['phone'] ?? null : null) ?: ($idx === 0 ? $submission->phone : null),
+                            'institution' => is_array($item) ? $item['institution'] ?? null : null,
+                        ]
+                    );
+                    $aId = $author->id;
+                }
+                $bookAuthorsData[$aId] = [
+                    'role' => (is_array($item) ? $item['role'] ?? null : null) ?: ($idx === 0 ? 'Penulis Utama' : 'Penulis Pendamping'),
+                    'sort_order' => $idx,
+                ];
+            }
+        } else {
+            $subAuthors = $submission->submissionAuthors()->orderBy('sort_order', 'asc')->get();
+            if ($subAuthors->isNotEmpty()) {
+                foreach ($subAuthors as $idx => $sa) {
+                    $aId = $sa->author_id;
+                    if (!$aId) {
+                        $author = \App\Models\Author::firstOrCreate(
+                            ['name' => $sa->name],
+                            [
+                                'user_id' => $idx === 0 ? $submission->user_id : null,
+                                'slug' => Str::slug($sa->name) . '-' . rand(100, 999),
+                                'email' => $sa->email ?: ($idx === 0 ? $submission->email : null) ?: 'author@uiidalwapress.com',
+                                'phone' => $sa->phone ?: ($idx === 0 ? $submission->phone : null),
+                                'institution' => $sa->institution,
+                            ]
+                        );
+                        $aId = $author->id;
+                        $sa->updateQuietly(['author_id' => $aId]);
+                    }
+                    $bookAuthorsData[$aId] = [
+                        'role' => $sa->role ?: ($idx === 0 ? 'Penulis Utama' : 'Penulis Pendamping'),
+                        'sort_order' => $idx,
+                    ];
+                }
+            } else {
+                $authorName = $input['author_name'] ?? ($submission->author_name ?: ($submission->user?->name ?: 'Penulis'));
+                $authorId = null;
+
+                if ($submission->user_id) {
+                    $user = \App\Models\User::with('author')->find($submission->user_id);
+                    if ($user && $user->author) {
+                        $authorId = $user->author->id;
+                    }
+                }
+
+                if (!$authorId) {
+                    $author = \App\Models\Author::firstOrCreate(
+                        ['name' => $authorName],
+                        [
+                            'user_id' => $submission->user_id,
+                            'slug' => Str::slug($authorName) . '-' . rand(100, 999),
+                            'email' => $submission->email ?: 'author@uiidalwapress.com',
+                            'phone' => $submission->phone,
+                        ]
+                    );
+                    $authorId = $author->id;
+                }
+
+                $bookAuthorsData[$authorId] = [
+                    'role' => 'Penulis Utama',
+                    'sort_order' => 0,
+                ];
             }
         }
 
-        if (!$authorId) {
-            $author = \App\Models\Author::firstOrCreate(
-                ['name' => $authorName],
-                [
-                    'user_id' => $submission->user_id,
-                    'slug' => Str::slug($authorName) . '-' . rand(100, 999),
-                    'email' => $submission->email ?: 'author@uiidalwapress.com',
-                    'phone' => $submission->phone,
-                ]
-            );
-            $authorId = $author->id;
-        }
+        $primaryAuthorId = array_key_first($bookAuthorsData);
 
         $latestLayouterFile = $submission->revisions()
             ->where(function ($query) {
@@ -529,7 +616,7 @@ class SubmissionController extends Controller
 
         $book = \App\Models\Book::create([
             'category_id' => $input['category_id'] ?? $submission->category_id,
-            'author_id' => $authorId,
+            'author_id' => $primaryAuthorId,
             'submission_id' => $submission->id,
             'title' => $bookTitle,
             'slug' => $bookSlug,
@@ -546,6 +633,10 @@ class SubmissionController extends Controller
             'published_at' => now(),
         ]);
 
+        if (!empty($bookAuthorsData)) {
+            $book->authors()->sync($bookAuthorsData);
+        }
+
         $submission->update([
             'status' => 'published',
             'reviewed_at' => now(),
@@ -553,7 +644,7 @@ class SubmissionController extends Controller
 
         return response()->json([
             'message' => 'Naskah berhasil diterbitkan menjadi data Buku!',
-            'book' => $book->load(['category', 'author']),
+            'book' => $book->load(['category', 'author', 'authors']),
             'submission' => $submission->fresh()->load([
                 'category',
                 'manuscriptVersions.user.role',
@@ -607,6 +698,84 @@ class SubmissionController extends Controller
                 'revisions.user.role',
             ]),
         ]);
+    }
+
+    private function syncSubmissionAuthors(Submission $submission, Request $request): void
+    {
+        $authorsData = [];
+
+        if ($request->has('authors') && is_array($request->authors)) {
+            foreach ($request->authors as $index => $item) {
+                if (is_string($item)) {
+                    $decoded = json_decode($item, true);
+                    if (is_array($decoded)) {
+                        $item = $decoded;
+                    } else {
+                        $item = ['name' => $item];
+                    }
+                }
+
+                $name = trim($item['name'] ?? '');
+                if (!$name) continue;
+
+                $authorsData[] = [
+                    'submission_id' => $submission->id,
+                    'author_id' => !empty($item['author_id']) ? $item['author_id'] : null,
+                    'name' => $name,
+                    'email' => $item['email'] ?? null,
+                    'phone' => $item['phone'] ?? null,
+                    'institution' => $item['institution'] ?? null,
+                    'role' => $item['role'] ?? ($index === 0 ? 'Penulis Utama' : 'Penulis Pendamping'),
+                    'sort_order' => $index,
+                ];
+            }
+        } elseif ($request->filled('author_names_json')) {
+            $parsed = json_decode($request->author_names_json, true);
+            if (is_array($parsed)) {
+                foreach ($parsed as $index => $item) {
+                    $name = is_array($item) ? trim($item['name'] ?? '') : trim((string)$item);
+                    if (!$name) continue;
+                    $authorsData[] = [
+                        'submission_id' => $submission->id,
+                        'author_id' => is_array($item) ? ($item['author_id'] ?? null) : null,
+                        'name' => $name,
+                        'email' => is_array($item) ? ($item['email'] ?? null) : null,
+                        'phone' => is_array($item) ? ($item['phone'] ?? null) : null,
+                        'institution' => is_array($item) ? ($item['institution'] ?? null) : null,
+                        'role' => is_array($item) ? ($item['role'] ?? ($index === 0 ? 'Penulis Utama' : 'Penulis Pendamping')) : ($index === 0 ? 'Penulis Utama' : 'Penulis Pendamping'),
+                        'sort_order' => $index,
+                    ];
+                }
+            }
+        }
+
+        if (empty($authorsData)) {
+            $name = $request->input('author_name') ?: ($submission->author_name ?: 'Penulis');
+            $authorId = null;
+            if ($submission->user_id) {
+                $authorId = \App\Models\Author::where('user_id', $submission->user_id)->value('id');
+            }
+            $authorsData[] = [
+                'submission_id' => $submission->id,
+                'author_id' => $authorId,
+                'name' => $name,
+                'email' => $request->input('email') ?: $submission->email,
+                'phone' => $request->input('phone') ?: $submission->phone,
+                'institution' => null,
+                'role' => 'Penulis Utama',
+                'sort_order' => 0,
+            ];
+        }
+
+        $submission->submissionAuthors()->delete();
+        foreach ($authorsData as $authorRecord) {
+            $submission->submissionAuthors()->create($authorRecord);
+        }
+
+        $combinedNames = collect($authorsData)->pluck('name')->filter()->join(', ');
+        if ($combinedNames && $submission->author_name !== $combinedNames) {
+            $submission->updateQuietly(['author_name' => $combinedNames]);
+        }
     }
 }
 

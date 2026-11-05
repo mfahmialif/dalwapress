@@ -34,10 +34,10 @@ class RoyaltyController extends Controller
         $this->authorizeAdminOrOperator($request);
 
         $data = $this->validatedData($request);
-        $book = Book::with('author')->findOrFail($data['book_id']);
+        $book = Book::with(['author', 'authors'])->findOrFail($data['book_id']);
         $this->validatePublishedBook($book);
 
-        $data['author_id'] = $book->author_id;
+        $data['author_id'] = (!empty($data['author_id'])) ? $data['author_id'] : $book->author_id;
         $data = $this->calculateAmounts($data);
         $data = $this->normalizePaidAt($data);
 
@@ -58,10 +58,10 @@ class RoyaltyController extends Controller
         $this->authorizeAdminOrOperator($request);
 
         $data = $this->validatedData($request);
-        $book = Book::with('author')->findOrFail($data['book_id']);
+        $book = Book::with(['author', 'authors'])->findOrFail($data['book_id']);
         $this->validatePublishedBook($book);
 
-        $data['author_id'] = $book->author_id;
+        $data['author_id'] = (!empty($data['author_id'])) ? $data['author_id'] : ($royalty->author_id ?: $book->author_id);
         $data = $this->calculateAmounts($data);
         $data = $this->normalizePaidAt($data, $royalty);
 
@@ -116,6 +116,7 @@ class RoyaltyController extends Controller
     {
         return $request->validate([
             'book_id' => 'required|exists:books,id',
+            'author_id' => 'nullable|exists:authors,id',
             'period_month' => 'required|integer|min:1|max:12',
             'period_year' => 'required|integer|min:2000|max:2100',
             'sold_qty' => 'required|integer|min:0',

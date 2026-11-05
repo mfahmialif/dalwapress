@@ -43,11 +43,15 @@ class AuthorPortalController extends Controller
         $this->authorizeAuthor($request);
         $query = Submission::query()
             ->where('user_id', $request->user()->id)
-            ->with(['category', 'reviews' => fn ($q) => $q->latest('created_at')]);
+            ->with(['category', 'submissionAuthors', 'reviews' => fn ($q) => $q->latest('created_at')]);
 
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where('title', 'like', "%{$search}%");
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                    ->orWhere('author_name', 'like', "%{$search}%")
+                    ->orWhereHas('submissionAuthors', fn ($sa) => $sa->where('name', 'like', "%{$search}%"));
+            });
         }
 
         if ($request->filled('status')) {
@@ -68,7 +72,7 @@ class AuthorPortalController extends Controller
             'phone' => 'nullable|string|max:50',
             'description' => 'nullable|string',
             'note' => 'nullable|string',
-            'manuscript_file' => 'required|mimes:pdf,doc,docx|max:51200',
+            'manuscript_file' => 'required|file|max:51200|extensions:pdf,doc,docx',
             'cover_file' => 'nullable|image|max:5120',
         ]);
 
@@ -87,6 +91,7 @@ class AuthorPortalController extends Controller
         }
 
         $submission = Submission::create($data);
+        $this->syncSubmissionAuthors($submission, $request, $user);
 
         SubmissionManuscriptVersion::create([
             'submission_id' => $submission->id,
@@ -97,7 +102,7 @@ class AuthorPortalController extends Controller
             'note' => 'Submission naskah awal',
         ]);
 
-        return response()->json($submission->load(['category', 'manuscriptVersions.user', 'editorEvaluations.editor', 'editorialDecisions.decider', 'revisions']), 201);
+        return response()->json($submission->load(['category', 'submissionAuthors.author', 'manuscriptVersions.user', 'editorEvaluations.editor', 'editorialDecisions.decider', 'revisions']), 201);
     }
 
     public function showSubmission(Request $request, Submission $submission)
@@ -105,7 +110,7 @@ class AuthorPortalController extends Controller
         $this->authorizeAuthor($request);
         $this->authorizeOwnedSubmission($request, $submission);
 
-        return response()->json($submission->load(['category', 'manuscriptVersions.user', 'editorEvaluations.editor', 'editorialDecisions.decider', 'revisions']));
+        return response()->json($submission->load(['category', 'submissionAuthors.author', 'manuscriptVersions.user', 'editorEvaluations.editor', 'editorialDecisions.decider', 'revisions']));
     }
 
     public function updateSubmission(Request $request, Submission $submission)
@@ -120,9 +125,12 @@ class AuthorPortalController extends Controller
         $data = $request->validate([
             'category_id' => 'required|exists:book_categories,id',
             'title' => 'required|string|max:255',
+            'author_name' => 'nullable|string|max:255',
+            'email' => 'nullable|email|max:255',
+            'phone' => 'nullable|string|max:50',
             'description' => 'nullable|string',
             'note' => 'nullable|string',
-            'manuscript_file' => 'nullable|mimes:pdf,doc,docx|max:51200',
+            'manuscript_file' => 'nullable|file|max:51200|extensions:pdf,doc,docx',
             'cover_file' => 'nullable|image|max:5120',
         ]);
 
@@ -139,8 +147,9 @@ class AuthorPortalController extends Controller
         }
 
         $submission->update($data);
+        $this->syncSubmissionAuthors($submission, $request, $request->user()->load('author'));
 
-        return response()->json($submission->load(['category', 'manuscriptVersions.user', 'editorEvaluations.editor', 'editorialDecisions.decider', 'revisions']));
+        return response()->json($submission->load(['category', 'submissionAuthors.author', 'manuscriptVersions.user', 'editorEvaluations.editor', 'editorialDecisions.decider', 'revisions']));
     }
 
     public function deleteSubmission(Request $request, Submission $submission)
@@ -167,7 +176,7 @@ class AuthorPortalController extends Controller
         }
 
         $data = $request->validate([
-            'revision_file' => 'required|mimes:pdf,doc,docx|max:51200',
+            'revision_file' => 'required|file|max:51200|extensions:pdf,doc,docx',
             'note' => 'nullable|string',
         ]);
 
@@ -218,7 +227,7 @@ class AuthorPortalController extends Controller
     {
         $this->authorizeAuthor($request);
         return $this->publishedBooksQuery($request->user()->id)
-            ->with(['category', 'author'])
+            ->with(['category', 'author', 'authors'])
             ->latest('published_at')
             ->paginate($request->input('per_page', 9));
     }
@@ -337,7 +346,85 @@ class AuthorPortalController extends Controller
     {
         return Book::query()
             ->where('status', 'published')
-            ->whereHas('author', fn ($query) => $query->where('user_id', $userId));
+            ->where(function ($query) use ($userId) {
+                $query->whereHas('author', fn ($q) => $q->where('user_id', $userId))
+                    ->orWhereHas('authors', fn ($q) => $q->where('user_id', $userId));
+            });
+    }
+
+    private function syncSubmissionAuthors(Submission $submission, Request $request, $defaultUser = null): void
+    {
+        $authorsData = [];
+
+        if ($request->has('authors') && is_array($request->authors)) {
+            foreach ($request->authors as $index => $item) {
+                if (is_string($item)) {
+                    $decoded = json_decode($item, true);
+                    if (is_array($decoded)) {
+                        $item = $decoded;
+                    } else {
+                        $item = ['name' => $item];
+                    }
+                }
+
+                $name = trim($item['name'] ?? '');
+                if (!$name) continue;
+
+                $authorsData[] = [
+                    'submission_id' => $submission->id,
+                    'author_id' => !empty($item['author_id']) ? $item['author_id'] : null,
+                    'name' => $name,
+                    'email' => $item['email'] ?? null,
+                    'phone' => $item['phone'] ?? null,
+                    'institution' => $item['institution'] ?? null,
+                    'role' => $item['role'] ?? ($index === 0 ? 'Penulis Utama' : 'Penulis Pendamping'),
+                    'sort_order' => $index,
+                ];
+            }
+        } elseif ($request->filled('author_names_json')) {
+            $parsed = json_decode($request->author_names_json, true);
+            if (is_array($parsed)) {
+                foreach ($parsed as $index => $item) {
+                    $name = is_array($item) ? trim($item['name'] ?? '') : trim((string)$item);
+                    if (!$name) continue;
+                    $authorsData[] = [
+                        'submission_id' => $submission->id,
+                        'author_id' => is_array($item) ? ($item['author_id'] ?? null) : null,
+                        'name' => $name,
+                        'email' => is_array($item) ? ($item['email'] ?? null) : null,
+                        'phone' => is_array($item) ? ($item['phone'] ?? null) : null,
+                        'institution' => is_array($item) ? ($item['institution'] ?? null) : null,
+                        'role' => is_array($item) ? ($item['role'] ?? ($index === 0 ? 'Penulis Utama' : 'Penulis Pendamping')) : ($index === 0 ? 'Penulis Utama' : 'Penulis Pendamping'),
+                        'sort_order' => $index,
+                    ];
+                }
+            }
+        }
+
+        if (empty($authorsData)) {
+            $name = $request->input('author_name') ?: ($submission->author_name ?: ($defaultUser?->author?->name ?: $defaultUser?->name ?: 'Penulis'));
+            $authorId = $defaultUser?->author?->id;
+            $authorsData[] = [
+                'submission_id' => $submission->id,
+                'author_id' => $authorId,
+                'name' => $name,
+                'email' => $request->input('email') ?: ($submission->email ?: $defaultUser?->email),
+                'phone' => $request->input('phone') ?: ($submission->phone ?: $defaultUser?->author?->phone),
+                'institution' => $defaultUser?->author?->institution,
+                'role' => 'Penulis Utama',
+                'sort_order' => 0,
+            ];
+        }
+
+        $submission->submissionAuthors()->delete();
+        foreach ($authorsData as $authorRecord) {
+            $submission->submissionAuthors()->create($authorRecord);
+        }
+
+        $combinedNames = collect($authorsData)->pluck('name')->filter()->join(', ');
+        if ($combinedNames && $submission->author_name !== $combinedNames) {
+            $submission->updateQuietly(['author_name' => $combinedNames]);
+        }
     }
 
     private function royaltiesQuery(int $userId)

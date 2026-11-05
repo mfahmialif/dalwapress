@@ -12,7 +12,7 @@ class BookController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Book::query()->with(['category', 'author', 'galleries']);
+        $query = Book::query()->with(['category', 'author', 'authors', 'galleries']);
 
         if ($request->filled('search')) {
             $search = $request->search;
@@ -20,7 +20,8 @@ class BookController extends Controller
                 ->where('title', 'like', "%{$search}%")
                 ->orWhere('isbn', 'like', "%{$search}%")
                 ->orWhere('description', 'like', "%{$search}%")
-                ->orWhereHas('author', fn ($author) => $author->where('name', 'like', "%{$search}%")));
+                ->orWhereHas('author', fn ($author) => $author->where('name', 'like', "%{$search}%"))
+                ->orWhereHas('authors', fn ($author) => $author->where('name', 'like', "%{$search}%")));
         }
 
         if ($request->filled('category_id')) {
@@ -28,7 +29,9 @@ class BookController extends Controller
         }
 
         if ($request->filled('author_id')) {
-            $query->where('author_id', $request->author_id);
+            $query->where(fn ($q) => $q
+                ->where('author_id', $request->author_id)
+                ->orWhereHas('authors', fn ($author) => $author->where('authors.id', $request->author_id)));
         }
 
         if ($request->filled('status')) {
@@ -53,7 +56,7 @@ class BookController extends Controller
             $book->increment('views');
         }
 
-        return response()->json($book->load(['category', 'author', 'galleries']));
+        return response()->json($book->load(['category', 'author', 'authors', 'galleries']));
     }
 
     public function store(Request $request)
@@ -67,9 +70,10 @@ class BookController extends Controller
             : null;
 
         $book = Book::create($data);
+        $this->syncAuthors($book, $request);
         $this->storeGalleries($request, $book);
 
-        return response()->json($book->load(['category', 'author', 'galleries']), 201);
+        return response()->json($book->fresh()->load(['category', 'author', 'authors', 'galleries']), 201);
     }
 
     public function update(Request $request, Book $book)
@@ -87,9 +91,10 @@ class BookController extends Controller
             : null;
 
         $book->update($data);
+        $this->syncAuthors($book, $request);
         $this->storeGalleries($request, $book);
 
-        return response()->json($book->load(['category', 'author', 'galleries']));
+        return response()->json($book->fresh()->load(['category', 'author', 'authors', 'galleries']));
     }
 
     public function destroy(Book $book)
@@ -123,9 +128,14 @@ class BookController extends Controller
 
     private function validatedData(Request $request): array
     {
-        return $request->validate([
+        $data = $request->validate([
             'category_id' => 'required|exists:book_categories,id',
-            'author_id' => 'required|exists:authors,id',
+            'author_id' => 'nullable|exists:authors,id',
+            'author_ids' => 'nullable|array',
+            'author_ids.*' => 'exists:authors,id',
+            'authors_data' => 'nullable|array',
+            'authors_data.*.author_id' => 'required|exists:authors,id',
+            'authors_data.*.role' => 'nullable|string|max:100',
             'title' => 'required|string|max:255',
             'isbn' => 'nullable|string|max:255',
             'year' => 'nullable|integer|min:1000|max:9999',
@@ -134,7 +144,7 @@ class BookController extends Controller
             'size' => 'nullable|string|max:255',
             'language' => 'nullable|string|max:255',
             'cover' => 'nullable|image|max:5120',
-            'full_file' => 'nullable|mimes:pdf|max:102400',
+            'full_file' => 'nullable|file|max:102400|extensions:pdf',
             'description' => 'nullable|string',
             'table_of_contents' => 'nullable|string',
             'tags' => 'nullable|string|max:255',
@@ -146,6 +156,56 @@ class BookController extends Controller
             'remove_preview_file' => 'nullable|boolean',
             'remove_full_file' => 'nullable|boolean',
         ]);
+
+        if (empty($data['author_id'])) {
+            if (!empty($data['author_ids'])) {
+                $data['author_id'] = $data['author_ids'][0];
+            } elseif (!empty($data['authors_data'])) {
+                $data['author_id'] = $data['authors_data'][0]['author_id'];
+            }
+        }
+
+        unset($data['author_ids'], $data['authors_data']);
+
+        return $data;
+    }
+
+    private function syncAuthors(Book $book, Request $request): void
+    {
+        $authorsData = [];
+
+        if ($request->has('authors_data') && is_array($request->authors_data)) {
+            foreach ($request->authors_data as $index => $item) {
+                if (!empty($item['author_id'])) {
+                    $authorsData[$item['author_id']] = [
+                        'role' => $item['role'] ?? ($index === 0 ? 'Penulis Utama' : 'Penulis Pendamping'),
+                        'sort_order' => $index,
+                    ];
+                }
+            }
+        } elseif ($request->has('author_ids') && is_array($request->author_ids)) {
+            foreach ($request->author_ids as $index => $id) {
+                if ($id) {
+                    $authorsData[$id] = [
+                        'role' => $index === 0 ? 'Penulis Utama' : 'Penulis Pendamping',
+                        'sort_order' => $index,
+                    ];
+                }
+            }
+        } elseif ($book->author_id) {
+            $authorsData[$book->author_id] = [
+                'role' => 'Penulis Utama',
+                'sort_order' => 0,
+            ];
+        }
+
+        if (!empty($authorsData)) {
+            $book->authors()->sync($authorsData);
+            $firstAuthorId = array_key_first($authorsData);
+            if ($book->author_id !== $firstAuthorId) {
+                $book->updateQuietly(['author_id' => $firstAuthorId]);
+            }
+        }
     }
 
     private function storeFiles(Request $request, array $data, ?Book $book = null): array

@@ -46,8 +46,14 @@
                 <p class="text-xs" style="color: var(--text-muted)">Masuk: {{ formatDate(item.submitted_at || item.created_at) }}</p>
               </td>
               <td class="px-4 py-4 text-sm" style="color: var(--text-body)">
-                {{ item.author_name }}
-                <p class="text-xs" style="color: var(--text-muted)">{{ item.email || '-' }}</p>
+                <div v-if="item.submission_authors?.length" class="flex flex-col gap-0.5">
+                  <span class="font-bold">{{ item.submission_authors.map(a => a.name).join(', ') }}</span>
+                  <span class="text-xs" style="color: var(--text-muted)">{{ item.email || '-' }}</span>
+                </div>
+                <div v-else>
+                  {{ item.author_name }}
+                  <p class="text-xs" style="color: var(--text-muted)">{{ item.email || '-' }}</p>
+                </div>
               </td>
               <td class="px-4 py-4 text-sm" style="color: var(--text-body)">{{ item.category?.name || '-' }}</td>
               <td class="px-4 py-4"><span :class="statusBadge(item.status)">{{ statusLabel(item.status) }}</span></td>

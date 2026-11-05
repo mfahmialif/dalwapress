@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Traits\HasAuditColumns;
@@ -17,6 +18,7 @@ class Submission extends Model
         'reviews', 'revisions', 'editorAssignments',
         'layouterAssignments', 'coverAssignments',
         'manuscriptVersions', 'editorEvaluations', 'editorialDecisions',
+        'submissionAuthors',
     ];
 
     protected $fillable = [
@@ -54,6 +56,19 @@ class Submission extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function submissionAuthors(): HasMany
+    {
+        return $this->hasMany(SubmissionAuthor::class)->orderBy('sort_order', 'asc');
+    }
+
+    public function authors(): BelongsToMany
+    {
+        return $this->belongsToMany(Author::class, 'submission_authors')
+            ->withPivot(['name', 'email', 'phone', 'institution', 'role', 'sort_order'])
+            ->withTimestamps()
+            ->orderByPivot('sort_order', 'asc');
     }
 
     public function reviews(): HasMany

@@ -89,7 +89,7 @@ class CoverPortalController extends Controller
         $useInitialCover = $request->boolean('use_initial_cover');
 
         $data = $request->validate([
-            'revision_file' => $useInitialCover ? 'nullable|file' : 'required|file|mimes:pdf,doc,docx,jpg,jpeg,png,psd,ai,zip,rar|max:51200',
+            'revision_file' => $useInitialCover ? 'nullable|file' : 'required|file|max:51200|extensions:pdf,doc,docx,jpg,jpeg,png,psd,ai,zip,rar',
             'note' => 'nullable|string',
             'cover_designer_id' => 'nullable|exists:users,id',
             'use_initial_cover' => 'nullable|boolean',

@@ -23,10 +23,19 @@
       <div class="grid gap-4 lg:grid-cols-2">
         <label class="field lg:col-span-2">
           <span>Buku Published</span>
-          <select v-model="form.book_id" required class="field-input">
+          <select v-model="form.book_id" @change="onBookChange" required class="field-input">
             <option value="">Pilih buku</option>
             <option v-for="book in publishedBooks" :key="book.id" :value="book.id">
-              {{ book.title }} - {{ book.author?.name || '-' }}
+              {{ book.title }} - {{ book.authors?.length ? book.authors.map(a => a.name).join(', ') : (book.author?.name || '-') }}
+            </option>
+          </select>
+        </label>
+
+        <label v-if="selectedBookAuthors.length > 1" class="field lg:col-span-2">
+          <span>Penerima Royalti (Penulis) *</span>
+          <select v-model="form.author_id" class="field-input">
+            <option v-for="auth in selectedBookAuthors" :key="auth.id" :value="auth.id">
+              {{ auth.name }} ({{ auth.pivot?.role || 'Penulis' }})
             </option>
           </select>
         </label>
@@ -120,6 +129,7 @@ const months = [
 
 const form = ref({
   book_id: '',
+  author_id: '',
   period_month: new Date().getMonth() + 1,
   period_year: new Date().getFullYear(),
   sold_qty: 0,
@@ -129,6 +139,20 @@ const form = ref({
   paid_at: '',
   notes: '',
 })
+
+const selectedBookAuthors = computed(() => {
+  const b = publishedBooks.value.find(item => item.id === form.value.book_id)
+  return b?.authors || []
+})
+
+function onBookChange() {
+  const authors = selectedBookAuthors.value
+  if (authors.length > 0) {
+    form.value.author_id = authors[0].id
+  } else {
+    form.value.author_id = ''
+  }
+}
 
 const calculatedGross = computed(() => Number(form.value.sold_qty || 0) * Number(form.value.sale_price_per_unit || 0))
 const calculatedRoyalty = computed(() => Number(form.value.sold_qty || 0) * Number(form.value.royalty_per_unit || 0))
@@ -142,6 +166,7 @@ async function loadRoyalty() {
   const { data } = await api.get(`/royalties/${route.params.id}`)
   form.value = {
     book_id: data.book_id || '',
+    author_id: data.author_id || '',
     period_month: data.period_month || new Date().getMonth() + 1,
     period_year: data.period_year || new Date().getFullYear(),
     sold_qty: data.sold_qty || 0,
